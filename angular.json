@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "The-Snip-Society-FE": {
+    "sage-barbershop-fe": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/the-snip-society-fe",
+            "outputPath": "dist/sage-barbershop-fe",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -62,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "The-Snip-Society-FE:build:production"
+              "buildTarget": "sage-barbershop-fe:build:production"
             },
             "development": {
-              "buildTarget": "The-Snip-Society-FE:build:development"
+              "buildTarget": "sage-barbershop-fe:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -73,7 +73,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "The-Snip-Society-FE:build"
+            "buildTarget": "sage-barbershop-fe:build"
           }
         },
         "test": {
