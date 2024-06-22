@@ -1,0 +1,39 @@
+<!-- detail.component.html -->
+<div *ngIf="charging">
+    <div class="spinner"></div>
+  </div>
+  
+  <div *ngIf="!charging && invoice">
+    <h2>Invoice Detail</h2>
+
+    <div class="summary">
+      <p><strong>Date:</strong> {{ invoice.date | date: 'short' }}</p>
+      <p><strong>Total:</strong> {{ invoice.total | currency }}</p>
+      <p><strong>Status:</strong> {{ invoice.status ? 'Paid' : 'Pending' }}</p>
+      <p><strong>User:</strong> {{ invoice.User.name }} {{ invoice.User.surname }}</p>
+      <p><strong>Branch:</strong> {{ invoice.branch.name }}</p>
+    </div>
+  
+    <h3>Detail Table</h3>
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Sequence</th>
+          <th>Service/Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of invoice.InvoiceDetail">
+          <td>{{ detail.sequence }}</td>
+          <td>{{ detail.service ? detail.service.name : detail.product.name }}</td>
+          <td>{{ detail.quantity }}</td>
+          <td>{{ detail.price | currency }}</td>
+          <td>{{ detail.subtotal | currency }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
