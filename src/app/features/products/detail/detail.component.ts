@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { CrudInvoicesService } from '../services/crud-invoices.service';
 import { ActivatedRoute } from '@angular/router';
+import { CrudProductsService } from '../services/crud-products.service';
 
 @Component({
   selector: 'app-detail',
@@ -8,12 +8,12 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './detail.component.scss'
 })
 export class DetailComponent {
-  invoice: any = null;
+  product: any = null;
   charging: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
-    private invoiceService: CrudInvoicesService
+    private productService: CrudProductsService
   ) { }
 
   ngOnInit(): void {
@@ -23,10 +23,9 @@ export class DetailComponent {
 
   fetchInvoiceDetail(id: number): void {
     this.charging = true;
-    this.invoiceService.findById(id).subscribe({
+    this.productService.findById(id).subscribe({
       next: (data) => {
-        this.invoice = data.shift();
-        console.log("🚀 ~ DetailComponent ~ this.invoiceService.findById ~ this.invoice:", this.invoice)
+        this.product = data.shift();
         this.charging = false;
       },
       error: (error) => {

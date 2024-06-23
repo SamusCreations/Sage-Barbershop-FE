@@ -1,43 +1,30 @@
-<div class="relative overflow-x-auto" *ngIf="chargingSuccesfully">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr>
-          <th scope="col" class="px-6 py-3">
-            Date
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Branch
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Status
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Total
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let invoice of invoices" class="bg-white border-b">
-          <td class="px-6 py-4">
-            {{ invoice.date | date: 'short' }}
-          </td>
-          <td class="px-6 py-4">
-            {{ invoice.branch.name }}
-          </td>
-          <td class="px-6 py-4">
-            {{ invoice.status ? 'Paid' : 'Pending' }}
-          </td>
-          <td class="px-6 py-4">
-            {{ invoice.total | currency }}
-          </td>
-          <td class="px-6 py-4">
-            <button (click)="viewDetail(invoice.id)" class="text-blue-500 hover:underline">View Detail</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div *ngIf="charging" class="spinner-container">
+  <div class="spinner"></div>
 </div>
-<div class="spinner" *ngIf="charging"></div>
+
+<div class="relative overflow-x-auto" *ngIf="!charging">
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Branch</th>
+        <th scope="col">Status</th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let invoice of invoices">
+        <td>{{ invoice.date | date: 'short' }}</td>
+        <td>{{ invoice.branch.name }}</td>
+        <td [class]="invoice.status ? 'status-paid' : 'status-pending'">
+          {{ invoice.status ? 'Paid' : 'Pending' }}
+        </td>
+        <td>{{ invoice.total | currency }}</td>
+        <td>
+          <button (click)="viewDetail(invoice.id)" class="view-detail-button">View Detail</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

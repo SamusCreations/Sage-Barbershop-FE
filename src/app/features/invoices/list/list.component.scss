@@ -1,0 +1,90 @@
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$pending-color: #e74c3c;
+$background-color: #ecf0f1;
+$font-color: #2c3e50;
+$table-header-bg: #f8f9fa;
+$table-row-bg: #fff;
+$border-color: #ddd;
+$hover-color: #f1f1f1;
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  thead {
+    background-color: $table-header-bg;
+
+    th {
+      padding: 12px 15px;
+      text-align: left;
+      font-size: 14px;
+      color: $font-color;
+      border-bottom: 2px solid $border-color;
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(even) {
+        background-color: lighten($table-row-bg, 2%);
+      }
+
+      &:hover {
+        background-color: $hover-color;
+      }
+
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid $border-color;
+        color: $font-color;
+
+        &.status-paid {
+          color: $secondary-color;
+          font-weight: bold;
+        }
+
+        &.status-pending {
+          color: $pending-color;
+          font-weight: bold;
+        }
+
+        .view-detail-button {
+          color: $primary-color;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-decoration: underline;
+          font-size: 14px;
+
+          &:hover {
+            color: darken($primary-color, 10%);
+          }
+        }
+      }
+    }
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: red;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

@@ -1,28 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { CrudInvoicesService } from '../services/crud-invoices.service';
-import { Observer } from 'rxjs';
+import { Component } from '@angular/core';
+import { CrudServicesService } from '../services/crud-services.service';
 import { Router } from '@angular/router';
+import { Observer } from 'rxjs';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
-export class ListComponent implements OnInit{
-  invoices: any[] = [];
+export class ListComponent {
+  services: any[] = [];
   charging: boolean = true
   chargingSuccesfully: boolean = false
 
-  constructor(private invoiceService: CrudInvoicesService, private router: Router) { }
+  constructor(private servicesService: CrudServicesService, private router: Router) { }
 
   ngOnInit(): void {
-    this.fetchInvoices();
+    this.fetchServices();
   }
 
-  async fetchInvoices(): Promise<void> {
+  async fetchServices(): Promise<void> {
     const observer: Observer<any> = {
       next: (data) => {
-        this.invoices = data;
+        this.services = data;
         this.chargingSuccesfully = true
       },
       error: (error) => {
@@ -35,13 +35,10 @@ export class ListComponent implements OnInit{
       }
     };
 
-    this.invoiceService.getAll().subscribe(observer);
+    this.servicesService.getAll().subscribe(observer);
   }
 
   viewDetail(id: number): void {
-    this.router.navigate(['/invoices/detail', id]);
+    this.router.navigate(['/services/detail', id]);
   }
-
 }
-
-

@@ -1,0 +1,16 @@
+<div class="service-detail" *ngIf="!charging">
+    <h2>Service Detail</h2>
+  
+    <div class="summary">
+      <p><strong>Name:</strong> {{ service.name }}</p>
+      <p><strong>Description:</strong> {{ service.description }}</p>
+      <p><strong>Price:</strong> {{ service.price | currency }}</p>
+      <p><strong>Duration:</strong> {{ service.duration }} minutes</p>
+    </div>
+  </div>
+  
+
+
+  <div class="spinner-container" *ngIf="charging">
+    <div class="spinner"></div>
+  </div>

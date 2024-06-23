@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,7 @@ export class HeaderComponent {
   isDropdownOpen = false;
   isSubMenuOpen = false;
 
+  constructor(private router: Router){}
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
@@ -20,5 +22,11 @@ export class HeaderComponent {
 
   toggleSubMenu() {
     this.isSubMenuOpen = !this.isSubMenuOpen;
+  }
+
+  navigateTo(path: string) {
+    this.isDropdownOpen = false;
+    this.isMobileMenuOpen = false;
+    this.router.navigate([path]);
   }
 }

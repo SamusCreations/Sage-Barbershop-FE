@@ -1,0 +1,12 @@
+<div *ngIf="charging" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
+
+<div class="services-container" *ngIf="!charging">
+    <div class="service-card" *ngFor="let service of services">
+      <h3>{{ service.name }}</h3>
+      <p class="description">{{ service.description }}</p>
+      <p class="price">{{ service.price | currency }}</p>
+      <button class="view-detail-button" (click)="viewDetail(service.id)">View Detail</button>
+    </div>
+  </div>

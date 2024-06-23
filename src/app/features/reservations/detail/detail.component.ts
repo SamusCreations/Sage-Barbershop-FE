@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CrudInvoicesService } from '../services/crud-invoices.service';
 import { ActivatedRoute } from '@angular/router';
+import { CrudReservationsService } from '../services/crud-reservations.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-detail',
@@ -8,12 +9,13 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './detail.component.scss'
 })
 export class DetailComponent {
-  invoice: any = null;
+  reservation: any = null;
   charging: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
-    private invoiceService: CrudInvoicesService
+    private reservationService: CrudReservationsService,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -23,10 +25,9 @@ export class DetailComponent {
 
   fetchInvoiceDetail(id: number): void {
     this.charging = true;
-    this.invoiceService.findById(id).subscribe({
+    this.reservationService.findById(id).subscribe({
       next: (data) => {
-        this.invoice = data.shift();
-        console.log("🚀 ~ DetailComponent ~ this.invoiceService.findById ~ this.invoice:", this.invoice)
+        this.reservation = data.shift();
         this.charging = false;
       },
       error: (error) => {
@@ -34,5 +35,8 @@ export class DetailComponent {
         this.charging = false;
       }
     });
+  }
+  goBack(): void {
+    this.location.back(); // Navega hacia atrás en el historial
   }
 }

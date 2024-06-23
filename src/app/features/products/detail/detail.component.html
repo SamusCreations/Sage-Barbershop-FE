@@ -1,0 +1,37 @@
+<div class="product-detail" *ngIf="!charging && product">
+    <h2>Product Detail</h2>
+  
+    <div class="summary">
+      <p><strong>Name:</strong> {{ product.name }}</p>
+      <p><strong>Description:</strong> {{ product.description }}</p>
+      <p><strong>Price:</strong> {{ product.price | currency }}</p>
+      <p><strong>Category:</strong> {{ product.category.description }}</p>
+      <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+    </div>
+  
+    <h3>Detail Table</h3>
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.price | currency }}</td>
+          <td>{{ product.category.description }}</td>
+          <td>{{ product.quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="spinner-container" *ngIf="charging">
+    <div class="spinner"></div>
+  </div>

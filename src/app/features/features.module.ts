@@ -6,6 +6,9 @@ import { SharedModule } from '../shared/shared.module';
 import { HomeModule } from './home/home.module';
 import { AuthModule } from './auth/auth.module';
 import { InvoicesModule } from './invoices/invoices.module';
+import { ProductsModule } from './products/products.module';
+import { ServicesModule } from './services/services.module';
+import { ReservationsModule } from './reservations/reservations.module';
 
 @NgModule({
   declarations: [],
@@ -14,7 +17,10 @@ import { InvoicesModule } from './invoices/invoices.module';
     CommonModule, 
     HomeModule, 
     AuthModule, 
-    InvoicesModule
+    InvoicesModule,
+    ProductsModule,
+    ServicesModule,
+    ReservationsModule
   ],
 })
 export class FeaturesModule {}

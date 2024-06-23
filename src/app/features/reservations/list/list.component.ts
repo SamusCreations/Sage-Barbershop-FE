@@ -1,28 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { CrudInvoicesService } from '../services/crud-invoices.service';
-import { Observer } from 'rxjs';
+import { CrudReservationsService } from '../services/crud-reservations.service';
 import { Router } from '@angular/router';
+import { Observer } from 'rxjs';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
-export class ListComponent implements OnInit{
-  invoices: any[] = [];
+export class ListComponent implements OnInit {
+  reservations: any[] = [];
   charging: boolean = true
   chargingSuccesfully: boolean = false
 
-  constructor(private invoiceService: CrudInvoicesService, private router: Router) { }
+  constructor(private reservationsService: CrudReservationsService, private router: Router) { }
 
   ngOnInit(): void {
-    this.fetchInvoices();
+    this.fetchProducts();
   }
 
-  async fetchInvoices(): Promise<void> {
+  async fetchProducts(): Promise<void> {
     const observer: Observer<any> = {
       next: (data) => {
-        this.invoices = data;
+        this.reservations = data;
         this.chargingSuccesfully = true
       },
       error: (error) => {
@@ -35,13 +35,10 @@ export class ListComponent implements OnInit{
       }
     };
 
-    this.invoiceService.getAll().subscribe(observer);
+    this.reservationsService.getAll().subscribe(observer);
   }
 
   viewDetail(id: number): void {
-    this.router.navigate(['/invoices/detail', id]);
+    this.router.navigate(['/reservations/detail', id]);
   }
-
 }
-
-
