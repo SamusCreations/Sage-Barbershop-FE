@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.scss'
+  styleUrl: './detail.component.scss',
 })
 export class DetailComponent {
   invoice: any = null;
@@ -14,7 +14,7 @@ export class DetailComponent {
   constructor(
     private route: ActivatedRoute,
     private invoiceService: CrudInvoicesService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id');
@@ -26,13 +26,18 @@ export class DetailComponent {
     this.invoiceService.findById(id).subscribe({
       next: (data) => {
         this.invoice = data.shift();
-        console.log("🚀 ~ DetailComponent ~ this.invoiceService.findById ~ this.invoice:", this.invoice)
+        console.log(
+          '🚀 ~ DetailComponent ~ this.invoiceService.findById ~ this.invoice:',
+          this.invoice
+        );
         this.charging = false;
       },
       error: (error) => {
         console.error('Error fetching invoice detail:', error);
         this.charging = false;
-      }
+      },
     });
   }
+
+  
 }

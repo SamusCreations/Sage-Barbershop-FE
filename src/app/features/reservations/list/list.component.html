@@ -1,20 +1,79 @@
-<div *ngIf="charging" class="spinner-container">
-    <div class="spinner"></div>
-  </div>
+<!-- <div *ngIf="charging" class="spinner-container">
+  <div class="spinner"></div>
+</div>
 <div class="reservation-list" *ngIf="!charging">
-    <div *ngFor="let reservation of reservations" class="reservation-card" [ngStyle]="{'border-color': reservation.status.color}">
-      <div class="card-header">
-        <h3 class="card-title">{{ reservation.service.name }} - {{ reservation.branch.name }}</h3>
-        <span class="status-badge" [ngStyle]="{'background-color': reservation.status.color}">{{ reservation.status.description }}</span>
-      </div>
-      <div class="card-body">
-        <p><strong>Date:</strong> {{ reservation.date | date: 'medium' }}</p>
-        <p><strong>Client:</strong> {{ reservation.User.name }} {{ reservation.User.surname }}</p>
-        <p><strong>Service:</strong> {{ reservation.service.description }}</p>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-primary" (click)="viewDetail(reservation.id)">View Details</button>
-      </div>
+  <div
+    *ngFor="let reservation of reservations"
+    class="reservation-card"
+    [ngStyle]="{ 'border-color': reservation.status.color }"
+  >
+    <div class="card-header">
+      <h3 class="card-title">
+        {{ reservation.service.name }} - {{ reservation.branch.name }}
+      </h3>
+      <span
+        class="status-badge"
+        [ngStyle]="{ 'background-color': reservation.status.color }"
+        >{{ reservation.status.description }}</span
+      >
+    </div>
+    <div class="card-body">
+      <p><strong>Date:</strong> {{ reservation.date | date : "medium" }}</p>
+      <p>
+        <strong>Client:</strong> {{ reservation.User.name }}
+        {{ reservation.User.surname }}
+      </p>
+      <p><strong>Service:</strong> {{ reservation.service.description }}</p>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="viewDetail(reservation.id)">
+        View Details
+      </button>
     </div>
   </div>
-  
+</div> -->
+
+@if (!charging) {
+<div class="bg-white">
+  <div
+    class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8"
+  >
+    <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase">
+      reservations
+    </h2>
+
+    <div
+      class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8"
+    >
+      @for (reservation of reservations; track reservation.id) {
+      <div class="group relative">
+        <a
+          (click)="viewDetail(reservation.id)"
+          class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100"
+        >
+          <div class="flex flex-col justify-between p-4 leading-normal w-full">
+            <div class="flex justify-between border-b-2">
+              <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">
+                {{ reservation.service.name }}
+              </h5>
+              <span
+                class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
+                [ngStyle]="{ 'background-color': reservation.status.color }"
+                >{{ reservation.status.description }}</span
+              >
+            </div>
+            <p class="my-3 font-normal text-gray-700">
+              <span class="font-bold">Date: </span> {{ reservation.date | date : "medium" }}
+            </p>
+            <p class="my-3 font-normal text-gray-700">
+              <span class="font-bold">Client: </span>{{ reservation.User.name }}
+              {{ reservation.User.surname }}
+            </p>
+          </div>
+        </a>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}

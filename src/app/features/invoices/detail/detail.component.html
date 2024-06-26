@@ -1,4 +1,4 @@
-<div *ngIf="charging" class="spinner-container">
+<!-- <div *ngIf="charging" class="spinner-container">
   <div class="spinner"></div>
 </div>
 
@@ -34,4 +34,159 @@
       </tr>
     </tbody>
   </table>
+</div>
+ -->
+
+<div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
+  <div>
+    <h3
+      class="text-2xl font-semibold leading-7 text-gray-900 uppercase px-4 sm:px-0"
+    >
+      Invoice Details
+    </h3>
+    <div>
+      <dl>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Invoice number
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            #{{ invoice.id }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Date of invoice
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ invoice.date | date : "short" }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+  <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 border-b-2">
+    <dl>
+      <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Invoice to</h3>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Identification
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.User.id }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Full name</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.User.name + " " + invoice.User.surname }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Email address
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.User.email }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.User.phone }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.User.address }}
+        </dd>
+      </div>
+    </dl>
+    <dl>
+      <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Branch</h3>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Name</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.branch.name }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Email address
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.branch.email }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.branch.phone }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.branch.address }}
+        </dd>
+      </div>
+<!--       <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Administrator
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ invoice.branch.employee.name }}
+        </dd>
+      </div> -->
+    </dl>
+  </div>
+
+  <!-- Table details -->
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-8">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">Sequence</th>
+          <th scope="col" class="px-6 py-3">Item</th>
+          <th scope="col" class="px-6 py-3">QTY</th>
+          <th scope="col" class="px-6 py-3">Price</th>
+          <th scope="col" class="px-6 py-3">subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (detail of invoice.InvoiceDetail; track detail.id) {
+        <tr class="bg-white border-b hover:bg-gray-50">
+          <td class="px-6 py-4">
+            {{ detail.sequence }}
+          </td>
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            {{ detail.service ? "Service: " + detail.service?.name : "Product: " + detail.product?.name }}
+          </td>
+          <td class="px-6 py-4">
+            {{ detail.quantity }}
+          </td>
+          <td class="px-6 py-4">{{ detail.price | currency }}</td>
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            {{ detail.subtotal | currency }}
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <dl>
+      <div class="px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-base leading-6 text-gray-900 font-bold uppercase">Total</dt>
+        <dd class="mt-1 font-medium text-gray-900 whitespace-nowrap  sm:col-span-2 sm:mt-0 sm:text-end">
+          {{ invoice.total | currency }}
+        </dd>
+      </div>
+    </dl>
+  </div>
 </div>
