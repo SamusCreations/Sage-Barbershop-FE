@@ -1,30 +1,70 @@
-<div *ngIf="charging" class="spinner-container">
-  <div class="spinner"></div>
-</div>
+<div class="bg-white mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
+  <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase">
+    invoices
+  </h2>
 
-<div class="relative overflow-x-auto" *ngIf="!charging">
-  <table class="invoice-table">
-    <thead>
-      <tr>
-        <th scope="col">Date</th>
-        <th scope="col">Branch</th>
-        <th scope="col">Status</th>
-        <th scope="col">Total</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let invoice of invoices">
-        <td>{{ invoice.date | date: 'short' }}</td>
-        <td>{{ invoice.branch.name }}</td>
-        <td [class]="invoice.status ? 'status-paid' : 'status-pending'">
-          {{ invoice.status ? 'Paid' : 'Pending' }}
-        </td>
-        <td>{{ invoice.total | currency }}</td>
-        <td>
-          <button (click)="viewDetail(invoice.id)" class="view-detail-button">View Detail</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-8">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="p-4">
+            <div class="flex items-center">
+              <input
+                id="checkbox-all-search"
+                type="checkbox"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              />
+              <label for="checkbox-all-search" class="sr-only">checkbox</label>
+            </div>
+          </th>
+          <th scope="col" class="px-6 py-3">Date</th>
+          <th scope="col" class="px-6 py-3">Client</th>
+          <th scope="col" class="px-6 py-3">Status</th>
+          <th scope="col" class="px-6 py-3">Total</th>
+          <th scope="col" class="px-6 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (invoice of invoices; track invoice.id) {
+        <tr class="bg-white border-b hover:bg-gray-50">
+          <td class="w-4 p-4">
+            <div class="flex items-center">
+              <input
+                id="checkbox-table-search-1"
+                type="checkbox"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              />
+              <label for="checkbox-table-search-1" class="sr-only"
+                >checkbox</label
+              >
+            </div>
+          </td>
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+          >
+            {{ invoice.date | date : "short" }}
+          </th>
+          <td class="px-6 py-4">
+            {{ invoice.User.name + " " + invoice.User.surname }}
+          </td>
+          <td
+            class="px-6 py-4 font-medium"
+            [class]="invoice.status ? 'text-green-600' : 'text-red-600'"
+          >
+            {{ invoice.status ? "Paid" : "Pending" }}
+          </td>
+          <td class="px-6 py-4">{{ invoice.total | currency }}</td>
+          <td class="flex items-center px-6 py-4">
+            <a
+              (click)="viewDetail(invoice.id)"
+              class="font-medium text-blue-600 hover:underline"
+              >View more</a
+            >
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>

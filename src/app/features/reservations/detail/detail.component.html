@@ -1,4 +1,4 @@
-<div class="reservation-detail" *ngIf="!charging && reservation">
+<!-- <div class="reservation-detail" *ngIf="!charging && reservation">
     <div class="detail-header">
       <h2>{{ reservation.service.name }} - {{ reservation.branch.name }}</h2>
       <span class="status-badge" [ngStyle]="{'background-color': reservation.status.color}">{{ reservation.status.description }}</span>
@@ -37,4 +37,151 @@
 
   <div class="spinner-container" *ngIf="charging">
     <div class="spinner"></div>
+  </div> -->
+
+<div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
+  <div>
+    <div class="flex justify-between">
+      <h3
+        class="text-2xl font-semibold leading-7 text-gray-900 uppercase px-4 sm:px-0"
+      >
+        Reservation Details
+      </h3>
+      
+    </div>
+    <div>
+      <dl>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Reservation number
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            #{{ reservation.id }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Date of reservation
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ reservation.date | date : "short" }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Service</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ reservation.service.name }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Status</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+          <span
+          class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
+          [ngStyle]="{ 'background-color': reservation.status.color }"
+          >{{ reservation.status.description }}</span
+        >
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Is this your first time visiting our barbershop?</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ reservation.answer1 }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Do you have any allergies or skin conditions?</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ reservation.answer2 }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Do you have a specific barber preference?</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ reservation.answer3 }}
+          </dd>
+        </div>
+      </dl>
+    </div>
   </div>
+  <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 border-b-2">
+    <dl>
+      <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">reservation to</h3>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Identification
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.User.id }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Full name</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.User.name + " " + reservation.User.surname }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Email address
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.User.email }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.User.phone }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.User.address }}
+        </dd>
+      </div>
+    </dl>
+    <dl>
+      <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Branch</h3>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Name</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.branch.name }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          Email address
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.branch.email }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.branch.phone }}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          {{ reservation.branch.address }}
+        </dd>
+      </div>
+    </dl>
+  </div>
+  
+  <div class="shadow-md sm:rounded-b-lg h-5" [ngStyle]="{ 'background-color': reservation.status.color }">
+
+  </div>
+</div>
