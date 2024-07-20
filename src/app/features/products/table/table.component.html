@@ -1,4 +1,4 @@
-<section class=" dark:bg-gray-900 p-3 sm:p-5">
+<section class="dark:bg-gray-900 p-3 sm:p-5">
   <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase">
     products
   </h2>
@@ -49,7 +49,7 @@
         >
           <a
             type="button"
-            class="flex items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+            class="flex items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:cursor-pointer"
             (click)="create()"
           >
             <svg
@@ -240,7 +240,6 @@
       </div>
 
       <div class="overflow-x-auto">
-
         <!-- Table -->
         <table
           class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
@@ -266,14 +265,19 @@
                 scope="row"
                 class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {{product.id}}
+                {{ product.id }}
               </th>
-              <td class="px-4 py-3">{{product.name}}</td>
-              <td class="px-4 py-3">{{product.category.description}}</td>
-              <td class="px-4 py-3">{{product.quantity}}</td>
-              <td class="px-4 py-3">{{product.price | currency}}</td>
+              <td class="px-4 py-3">{{ product.name }}</td>
+              <td class="px-4 py-3">{{ product.category.description }}</td>
+              <td class="px-4 py-3">{{ product.quantity }}</td>
+              <td class="px-4 py-3">{{ product.price | currency }}</td>
               <td class="px-4 py-3 flex items-center justify-end">
-                <button
+               
+                <a
+                (click)="update(product.id)"
+                  class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Edit</a>
+                <!-- <button
                   id="apple-imac-27-dropdown-button"
                   data-dropdown-toggle="apple-imac-27-dropdown"
                   class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
@@ -290,8 +294,8 @@
                       d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
                     />
                   </svg>
-                </button>
-                <div
+                </button> -->
+                <!-- <div
                   id="apple-imac-27-dropdown"
                   class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
                 >
@@ -307,11 +311,7 @@
                       >
                     </li>
                     <li>
-                      <a
-                        href="#"
-                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        >Edit</a
-                      >
+                      
                     </li>
                   </ul>
                   <div class="py-1">
@@ -321,10 +321,10 @@
                       >Delete</a
                     >
                   </div>
-                </div>
+                </div> -->
               </td>
             </tr>
-        }
+            }
           </tbody>
         </table>
       </div>

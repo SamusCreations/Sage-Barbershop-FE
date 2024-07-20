@@ -20,7 +20,7 @@ export class CrudReservationsService {
 
   getByManager(id: number): Observable<any> {
     let urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('id', id.toString());
-    return this.httpService.get<any>(`reservation/manager`, urlSearchParams);
+    //urlSearchParams.append('id', id.toString());
+    return this.httpService.get<any>(`reservation/manager/` + id.toString(), urlSearchParams);
   }
 }

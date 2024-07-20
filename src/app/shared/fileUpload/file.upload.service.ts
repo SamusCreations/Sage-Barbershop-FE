@@ -17,13 +17,13 @@ export class FileUploadService {
 
     const req = new HttpRequest(
       'POST',
-      `${this.baseUrl}file/upload`,
+      `${this.baseUrl}files/upload`,
       formData,
       {
         responseType: 'json',
       }
     );
-    return this.http.post<any | any[]>(`${this.baseUrl}file/upload`, formData);
+    return this.http.post<any | any[]>(`${this.baseUrl}files/upload`, formData);
     // return this.http.request(req);
   }
 

@@ -51,7 +51,7 @@ export class FormComponent implements OnInit {
         this.isCreate = false;
         this.titleForm = 'Update';
         this.gService
-          .get('product', this.idObject)
+          .get('/product', this.idObject)
           .pipe(takeUntil(this.destroy$))
           .subscribe((data: any) => {
             this.toUpdateObject = data;
@@ -76,9 +76,15 @@ export class FormComponent implements OnInit {
       id: [null, null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      price: [null, [Validators.required, Validators.pattern(number2decimals)]],
+      price: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(number2decimals),
+        ]),
+      ],
       quantity: [null, Validators.required],
-      image: [null, null],
+      image: [this.nameImage, Validators.required],
       category: [null, Validators.required],
     });
   }
@@ -98,7 +104,10 @@ export class FormComponent implements OnInit {
     const control = this.form.get(controlName);
     if (control.errors) {
       for (const message of FormErrorMessage) {
-        if (control.errors[message.forValidator] && message.forControl == controlName) {
+        if (
+          control.errors[message.forValidator] &&
+          message.forControl == controlName
+        ) {
           messageError = message.text;
         }
       }
@@ -110,8 +119,8 @@ export class FormComponent implements OnInit {
 
   submit(): void {
     if (this.form.invalid) {
-      console.log("Invalid Form");
-      console.log(this.form.value);  // Ensure you are logging form values, not the form object
+      console.log('Invalid Form');
+      console.log(this.form.value); // Ensure you are logging form values, not the form object
       return;
     }
 
@@ -150,7 +159,7 @@ export class FormComponent implements OnInit {
         });
     } else {
       this.gService
-        .update('product', this.form.value)
+        .update('/product', this.form.value)
         .pipe(takeUntil(this.destroy$))
         .subscribe((data: any) => {
           this.createResponse = data;
@@ -187,6 +196,13 @@ export class FormComponent implements OnInit {
       if (file) {
         this.preview = '';
         this.currentFile = file;
+        // Rename the file
+        const productName = this.form.get('name')?.value;
+        const fileExtension = file.name.split('.').pop();
+        const newFileName = `${productName}.${fileExtension}`;
+        const renamedFile = new File([file], newFileName, { type: file.type });
+
+        this.currentFile = renamedFile;
         this.nameImage = this.currentFile.name;
         const reader = new FileReader();
         reader.onload = (e: any) => {
