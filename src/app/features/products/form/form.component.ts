@@ -1,22 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { GenericService } from '../../../shared/generic/generic.service';
-import { HttpResponse } from '@angular/common/http';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, Observable, takeUntil } from 'rxjs';
+import { CrudProductsService } from '../services/crud-products.service';
+import { ImageService } from '../../../shared/image/image.service';
 import {
   NotificacionService,
   messageType,
 } from '../../../shared/notification/notification.service';
-import { FileUploadService } from '../../../shared/fileUpload/file.upload.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.css',
+  styleUrls: ['./form.component.css'],
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   titleForm: string = 'Create';
   categoryList: any;
@@ -36,35 +35,37 @@ export class FormComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private gService: GenericService,
+    private crudService: CrudProductsService,
     private noti: NotificacionService,
-    private uploadService: FileUploadService
+    private imageService: ImageService
   ) {
     this.reactiveForm();
     this.Categories();
   }
 
   ngOnInit(): void {
-    this.activeRouter.params.subscribe((params: Params) => {
+    this.activeRouter.params.subscribe((params) => {
       this.idObject = params['id'];
       if (this.idObject != undefined) {
         this.isCreate = false;
         this.titleForm = 'Update';
-        this.gService
-          .get('/product', this.idObject)
+        this.crudService
+          .findById(this.idObject)
           .pipe(takeUntil(this.destroy$))
-          .subscribe((data: any) => {
+          .subscribe((data) => {
             this.toUpdateObject = data;
             this.form.patchValue({
               id: this.toUpdateObject.id,
               name: this.toUpdateObject.name,
               description: this.toUpdateObject.description,
-              image: this.toUpdateObject.image,
               price: this.toUpdateObject.price,
               quantity: this.toUpdateObject.quantity,
               category: this.toUpdateObject.category,
             });
             this.nameImage = this.toUpdateObject.image;
+            if (this.nameImage) {
+              this.loadImagePreview(this.nameImage);
+            }
           });
       }
     });
@@ -73,7 +74,7 @@ export class FormComponent implements OnInit {
   reactiveForm() {
     let number2decimals = /^[0-9]+[.,]{1,1}[0-9]{2,2}$/;
     this.form = this.fb.group({
-      id: [null, null],
+      id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
       price: [
@@ -84,17 +85,16 @@ export class FormComponent implements OnInit {
         ]),
       ],
       quantity: [null, Validators.required],
-      image: [this.nameImage, Validators.required],
+      image: [this.nameImage],
       category: [null, Validators.required],
     });
   }
 
   Categories() {
-    this.categoryList = null;
-    this.gService
-      .list('/category')
+    this.crudService
+      .getAllCategories()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
+      .subscribe((data) => {
         this.categoryList = data;
       });
   }
@@ -120,52 +120,53 @@ export class FormComponent implements OnInit {
   submit(): void {
     if (this.form.invalid) {
       console.log('Invalid Form');
-      console.log(this.form.value); // Ensure you are logging form values, not the form object
+      console.log(this.form.value);
       return;
     }
 
-    if (this.upload()) {
-      this.noti.message('Create product', 'Image saved', messageType.success);
+    const formData = new FormData();
+    formData.append('id', this.form.get('id')?.value);
+    formData.append('name', this.form.get('name')?.value);
+    formData.append('description', this.form.get('description')?.value);
+    formData.append(
+      'price',
+      parseFloat(this.form.get('price')?.value).toFixed(2)
+    );
+    formData.append('quantity', this.form.get('quantity')?.value);
+    formData.append('category', this.form.get('category')?.value);
+
+    if (this.currentFile) {
+      formData.append('file', this.currentFile);
     }
 
-    let categoryForm = this.form.get('category');
-    let varPrice = parseFloat(this.form.get('price').value).toFixed(2);
-
-    this.form.patchValue({
-      category: categoryForm.value,
-      price: varPrice,
-      image: this.nameImage,
+    // Imprimir FormData para verificar el contenido
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
     });
 
-    console.log(this.form.value);
-
-    this.saveObject();
-  }
-
-  saveObject() {
     if (this.isCreate) {
-      this.gService
-        .create('/product', this.form.value)
+      this.crudService
+        .create(formData)
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => {
+        .subscribe((data) => {
           this.createResponse = data;
           this.noti.messageRedirect(
-            'Crear product',
-            `product creado: ${data.name}`,
+            'Create product',
+            `Product created: ${data.name}`,
             messageType.success,
             '/products/table'
           );
           this.router.navigate(['/products/table']);
         });
     } else {
-      this.gService
-        .update('/product', this.form.value)
+      this.crudService
+        .update(formData)
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => {
+        .subscribe((data) => {
           this.createResponse = data;
           this.noti.messageRedirect(
-            'Actualizar product',
-            `product actualizado: ${data.nombre}`,
+            'Update product',
+            `Product updated: ${data.name}`,
             messageType.success,
             '/products/table'
           );
@@ -194,16 +195,7 @@ export class FormComponent implements OnInit {
     if (selectedFiles) {
       const file: File | null = selectedFiles.item(0);
       if (file) {
-        this.preview = '';
         this.currentFile = file;
-        // Rename the file
-        const productName = this.form.get('name')?.value;
-        const fileExtension = file.name.split('.').pop();
-        const newFileName = `${productName}.${fileExtension}`;
-        const renamedFile = new File([file], newFileName, { type: file.type });
-
-        this.currentFile = renamedFile;
-        this.nameImage = this.currentFile.name;
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.preview = e.target.result;
@@ -213,31 +205,15 @@ export class FormComponent implements OnInit {
     }
   }
 
-  upload(): boolean {
-    if (this.currentFile) {
-      this.uploadService.upload(this.currentFile).subscribe({
-        next: (event: any) => {
-          if (event instanceof HttpResponse) {
-            this.message = event.body.message;
-            this.imageInfos = this.uploadService.getFiles();
-          }
-          return true;
-        },
-        error: (err: any) => {
-          console.log(err);
-          if (err.error && err.error.message) {
-            this.message = err.error.message;
-          } else {
-            this.message = '¡No se pudo subir la imagen!';
-            this.noti.message('Foto', this.message, messageType.warning);
-          }
-          return false;
-        },
-        complete: () => {
-          this.currentFile = undefined;
-        },
-      });
-    }
-    return false;
+  loadImagePreview(imageName: string): void {
+    this.imageService.getImage(imageName, 300).subscribe(
+      (imageBlob: Blob) => {
+        const objectURL = URL.createObjectURL(imageBlob);
+        this.preview = objectURL;
+      },
+      (error) => {
+        console.error('Error fetching image:', error);
+      }
+    );
   }
 }

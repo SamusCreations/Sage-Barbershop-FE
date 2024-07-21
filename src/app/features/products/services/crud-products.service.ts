@@ -1,19 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpService } from '../../../shared/httpService/http.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CrudProductsService {
+  private endpoint = 'product'; 
+
   constructor(private httpService: HttpService) { }
 
   getAll(): Observable<any> {
-    return this.httpService.get<any>('product/');
+    return this.httpService.get<any>(this.endpoint);
   }
+
   findById(id: number): Observable<any> {
-    let urlSearchParams = new URLSearchParams()
-    urlSearchParams.append("id", id.toString())
-    return this.httpService.get<any>(`product`, urlSearchParams);
+    const params = new URLSearchParams();
+    params.append('id', id.toString());
+    return this.httpService.get<any>(`${this.endpoint}/getById`, params);
+  }
+
+  create(productData: FormData): Observable<any> {
+    return this.httpService.post<any>(this.endpoint, productData);
+  }
+
+  update(productData: FormData): Observable<any> {
+    return this.httpService.put<any>(this.endpoint, productData);
+  }
+
+  delete(id: number): Observable<any> {
+    return this.httpService.delete<any>(`${this.endpoint}/${id}`);
+  }
+
+  getAllCategories(): Observable<any> {
+    return this.httpService.get<any>(`category/`);
   }
 }

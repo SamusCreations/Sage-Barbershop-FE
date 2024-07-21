@@ -223,21 +223,24 @@
     </div>
 
     <div class="mb-4">
-      <span class="block text-sm font-medium text-gray-700">Imagen</span>
+      <span class="block text-sm font-medium text-gray-700">Image</span>
       <div class="mt-2">
         <input
-          *ngIf="isCreate"
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
           type="file"
-          accept="image/*"
+          id="image"
           (change)="selectFile($event)"
-          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
         />
-        <img
-          *ngIf="!isCreate"
-          [src]="'http://localhost:3000/assets/images/' + nameImage"
-          alt="Product image"
-          class="block w-full mt-2"
-        />
+        <div
+          class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+          id="user_avatar_help"
+        >
+          A profile picture is useful to confirm your are logged into your
+          account
+        </div>
+        <div *ngIf="preview" class="my-8 flex justify-center content-center">
+          <img [src]="preview" alt="Image preview" class="max-w-64" />
+        </div>
       </div>
     </div>
 
@@ -254,13 +257,13 @@
         (click)="onBack()"
         class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-gray-600"
       >
-        Regresar
+        Back
       </button>
       <button
         type="submit"
         class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
       >
-        Guardar
+        Save
       </button>
     </div>
   </div>
