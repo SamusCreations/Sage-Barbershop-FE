@@ -18,10 +18,9 @@ export class CrudReservationsService {
     return this.httpService.get<any>(`reservation`, urlSearchParams);
   }
 
-  getAllByBranch(): Observable<any> {
-    let id = 1;
+  getByManager(id: number): Observable<any> {
     let urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('id', id.toString());
-    return this.httpService.get<any>(`reservation/branch`, urlSearchParams);
+    //urlSearchParams.append('id', id.toString());
+    return this.httpService.get<any>(`reservation/manager/` + id.toString(), urlSearchParams);
   }
 }

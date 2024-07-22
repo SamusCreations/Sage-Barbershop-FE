@@ -6,14 +6,34 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CrudServicesService {
+  private endpoint = 'service'; 
+
   constructor(private httpService: HttpService) { }
 
   getAll(): Observable<any> {
-    return this.httpService.get<any>('service/');
+    return this.httpService.get<any>(this.endpoint);
   }
+
   findById(id: number): Observable<any> {
-    let urlSearchParams = new URLSearchParams()
-    urlSearchParams.append("id", id.toString())
-    return this.httpService.get<any>(`service`, urlSearchParams);
+    const params = new URLSearchParams();
+    params.append('id', id.toString());
+    return this.httpService.get<any>(`${this.endpoint}/getById`, params);
   }
+
+  create(productData: FormData): Observable<any> {
+    return this.httpService.post<any>(this.endpoint, productData);
+  }
+
+  update(productData: FormData): Observable<any> {
+    return this.httpService.put<any>(this.endpoint, productData);
+  }
+
+  delete(id: number): Observable<any> {
+    return this.httpService.delete<any>(`${this.endpoint}/${id}`);
+  }
+
+  getEmployees(): Observable<any> {
+    return this.httpService.get<any>(`user/employees`);
+  }
+
 }

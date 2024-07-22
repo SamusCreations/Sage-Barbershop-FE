@@ -1,0 +1,269 @@
+<!-- <form
+  [formGroup
+  ]="form"
+  (ngSubmit)="submit()"
+  novalidate
+  class="max-w-md mx-auto"
+>
+  <input type="hidden" formControlName="id" />
+  <div class="relative z-0 w-full mb-5 group">
+    <input
+      type="email"
+      name="floating_email"
+      id="floating_email"
+      class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+      placeholder=" "
+      required
+    />
+    <label
+      for="floating_email"
+      class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >Email address</label
+    >
+  </div>
+  <div class="relative z-0 w-full mb-5 group">
+    <input
+      type="password"
+      name="floating_password"
+      id="floating_password"
+      class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+      placeholder=" "
+      required
+    />
+    <label
+      for="floating_password"
+      class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >Password</label
+    >
+  </div>
+  <div class="relative z-0 w-full mb-5 group">
+    <input
+      type="password"
+      name="repeat_password"
+      id="floating_repeat_password"
+      class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+      placeholder=" "
+      required
+    />
+    <label
+      for="floating_repeat_password"
+      class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >Confirm password</label
+    >
+  </div>
+  <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="floating_name"
+        id="floating_name"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_first_name"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >First name</label
+      >
+    </div>
+    <div class="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="floating_last_name"
+        id="floating_last_name"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_last_name"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >Last name</label
+      >
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="relative z-0 w-full mb-5 group">
+      <input
+        type="tel"
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        name="floating_phone"
+        id="floating_phone"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_phone"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >Phone number (123-456-7890)</label
+      >
+    </div>
+    <div class="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="floating_company"
+        id="floating_company"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_company"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >Company (Ex. Google)</label
+      >
+    </div>
+  </div>
+  <button
+    type="submit"
+    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+  >
+    Submit
+  </button>
+</form>
+ -->
+
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="my-6">
+  <input type="hidden" formControlName="id" />
+  <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Product</h2>
+    </div>
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700"
+        >Name</label
+      >
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        maxlength="20"
+        placeholder="Name"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      />
+      <div *ngIf="errorHandling('name')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling("name") }}
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700"
+          >Description</label
+        >
+        <input
+          type="text"
+          id="description"
+          formControlName="description"
+          placeholder="Description"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div
+          *ngIf="errorHandling('description')"
+          class="text-red-600 text-sm mt-1"
+        >
+          {{ errorHandling("description") }}
+        </div>
+      </div>
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700"
+          >Price</label
+        >
+        <input
+          type="text"
+          id="price"
+          formControlName="price"
+          placeholder="Price"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div *ngIf="errorHandling('price')" class="text-red-600 text-sm mt-1">
+          {{ errorHandling("price") }}
+        </div>
+      </div>
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700"
+          >Quantity</label
+        >
+        <input
+          type="text"
+          id="quantity"
+          formControlName="quantity"
+          placeholder="Quantity"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div
+          *ngIf="errorHandling('quantity')"
+          class="text-red-600 text-sm mt-1"
+        >
+          {{ errorHandling("quantity") }}
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label for="category" class="block text-sm font-medium text-gray-700"
+        >Category</label
+      >
+      <select
+        id="category"
+        formControlName="category"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      >
+        <option
+          class="text-gray-700"
+          *ngFor="let item of categoryList"
+          [value]="item.id"
+        >
+          {{ item.description }}
+        </option>
+      </select>
+      <div *ngIf="errorHandling('category')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling("category") }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <span class="block text-sm font-medium text-gray-700">Image</span>
+      <div class="mt-2">
+        <input
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+          type="file"
+          id="image"
+          (change)="selectFile($event)"
+        />
+        <div
+          class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+          id="user_avatar_help"
+        >
+        An image is useful to ilustrate the product or service
+        </div>
+        <div *ngIf="preview" class="my-8 flex justify-center content-center">
+          <img [src]="preview" alt="Image preview" class="max-w-64" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex space-x-4">
+      <button
+        type="button"
+        (click)="onReset()"
+        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+      >
+        Reset
+      </button>
+      <button
+        type="button"
+        (click)="onBack()"
+        class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-gray-600"
+      >
+        Back
+      </button>
+      <button
+        type="submit"
+        class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</form>

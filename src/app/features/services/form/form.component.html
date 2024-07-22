@@ -1,0 +1,141 @@
+ <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="my-6">
+  <input type="hidden" formControlName="id" />
+  <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Service</h2>
+    </div>
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700"
+        >Name</label
+      >
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        maxlength="20"
+        placeholder="Name"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      />
+      <div *ngIf="errorHandling('name')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling("name") }}
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700"
+          >Description</label
+        >
+        <input
+          type="text"
+          id="description"
+          formControlName="description"
+          placeholder="Description"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div
+          *ngIf="errorHandling('description')"
+          class="text-red-600 text-sm mt-1"
+        >
+          {{ errorHandling("description") }}
+        </div>
+      </div>
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700"
+          >Price</label
+        >
+        <input
+          type="text"
+          id="price"
+          formControlName="price"
+          placeholder="Price"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div *ngIf="errorHandling('price')" class="text-red-600 text-sm mt-1">
+          {{ errorHandling("price") }}
+        </div>
+      </div>
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700"
+          >Duration (Minutes)</label
+        >
+        <input
+          type="text"
+          id="duration"
+          formControlName="duration"
+          placeholder="duration"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div
+          *ngIf="errorHandling('duration')"
+          class="text-red-600 text-sm mt-1"
+        >
+          {{ errorHandling("duration") }}
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label for="user" class="block text-sm font-medium text-gray-700"
+        >Employee</label
+      >
+      <select
+        id="user"
+        formControlName="user"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      >
+        <option
+          class="text-gray-700"
+          *ngFor="let item of userList"
+          [value]="item.id"
+        >
+          {{ item.name }} {{ item.surname }}
+        </option>
+      </select>
+      <div *ngIf="errorHandling('user')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling("user") }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <span class="block text-sm font-medium text-gray-700">Image</span>
+      <div class="mt-2">
+        <input
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+          type="file"
+          id="image"
+          (change)="selectFile($event)"
+        />
+        <div
+          class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+        >
+          An image is useful to ilustrate the product or service
+        </div>
+        <div *ngIf="preview" class="my-8 flex justify-center content-center">
+          <img [src]="preview" alt="Image preview" class="max-w-64" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex space-x-4">
+      <button
+        type="button"
+        (click)="onReset()"
+        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+      >
+        Reset
+      </button>
+      <button
+        type="button"
+        (click)="onBack()"
+        class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-gray-600"
+      >
+        Back
+      </button>
+      <button
+        type="submit"
+        class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</form>
