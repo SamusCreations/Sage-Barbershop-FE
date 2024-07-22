@@ -40,7 +40,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private imageService: ImageService
   ) {
     this.reactiveForm();
-    this.Categories();
+    this.getCategories();
   }
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class FormComponent implements OnInit, OnDestroy {
               description: this.toUpdateObject.description,
               price: this.toUpdateObject.price,
               quantity: this.toUpdateObject.quantity,
-              category: this.toUpdateObject.category,
+              category: this.toUpdateObject.categoryId,
             });
             this.nameImage = this.toUpdateObject.image;
             if (this.nameImage) {
@@ -77,20 +77,15 @@ export class FormComponent implements OnInit, OnDestroy {
       id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      price: [
-        null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(number2decimals),
-        ]),
-      ],
+      price: [null, Validators.required],
       quantity: [null, Validators.required],
       image: [this.nameImage],
       category: [null, Validators.required],
     });
   }
 
-  Categories() {
+  getCategories() {
+    this.categoryList = null;
     this.crudService
       .getAllCategories()
       .pipe(takeUntil(this.destroy$))

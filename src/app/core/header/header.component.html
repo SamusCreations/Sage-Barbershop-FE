@@ -1,12 +1,18 @@
-<header class="bg-white">
+<header
+  class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600"
+>
   <nav
-    class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+    class="mx-auto flex max-w-7xl items-center justify-between p-4"
     aria-label="Global"
   >
     <div class="flex lg:flex-1">
       <a href="#" class="-m-1.5 p-1.5">
         <span class="sr-only">Sage Barbershop</span>
-        <img class="h-14 w-auto object-cover object-center" src="https://i.imgur.com/ABokSIQ.png" alt="" />
+        <img
+          class="h-14 w-auto object-cover object-center"
+          src="https://i.imgur.com/ABokSIQ.png"
+          alt=""
+        />
       </a>
     </div>
     <div class="flex lg:hidden">
@@ -32,7 +38,24 @@
         </svg>
       </button>
     </div>
+
     <div class="hidden lg:flex lg:gap-x-12">
+      <a
+        (click)="navigateTo('/products/list')"
+        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        >Products</a
+      >
+      <a
+        (click)="navigateTo('/services/list')"
+        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        >Services</a
+      >
+      <a
+        (click)="navigateTo('/stores/list')"
+        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        >Stores</a
+      >
+
       <div class="relative">
         <button
           (click)="toggleDropdown()"
@@ -60,28 +83,26 @@
           <div class="p-4">
             <div
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
-              (click)="navigateTo('/products/list')"
+              (click)="navigateTo('/products/table')"
             >
               <div
                 class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
               >
                 <svg
-                  class="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                  class="w-6 h-6 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
                 >
                   <path
+                    stroke="currentColor"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
+                    stroke-width="2"
+                    d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"
                   />
                 </svg>
               </div>
@@ -91,7 +112,7 @@
             </div>
             <div
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
-              (click)="navigateTo('/services/list')"
+              (click)="navigateTo('/services/table')"
             >
               <div
                 class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
@@ -177,7 +198,6 @@
       >
     </div>
   </nav>
-  <!-- Mobile menu, show/hide based on menu open state. -->
   <div
     *ngIf="isMobileMenuOpen"
     class="lg:hidden"
@@ -191,7 +211,11 @@
       <div class="flex items-center justify-between">
         <a href="#" class="-m-1.5 p-1.5">
           <span class="sr-only">Sage Barbershop</span>
-          <img class="h-8 w-auto" src="https://i.imgur.com/ABokSIQ.png" alt="" />
+          <img
+            class="h-8 w-auto"
+            src="https://i.imgur.com/ABokSIQ.png"
+            alt=""
+          />
         </a>
         <button
           (click)="toggleMobileMenu()"
@@ -218,16 +242,85 @@
       <div class="mt-6 flow-root">
         <div class="-my-6 divide-y divide-gray-500/10">
           <div class="space-y-2 py-6">
+
             <a
-              href="#"
-              class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-400/10"
-              >Maintenance</a
-            >
+            (click)="navigateTo('/products/list')"
+            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+            >Products</a
+          >
+          <a
+          (click)="navigateTo('/services/list')"
+            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+            >Services</a
+          >
+          <a
+          (click)="navigateTo('/stores/list')"
+            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+            >Stores</a
+          >
+
+            <div class="-mx-3">
+              <button
+                type="button"
+                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                aria-controls="disclosure-1"
+                aria-expanded="false"
+              >
+                Maintenance
+                <!--
+                  Expand/collapse icon, toggle classes based on menu open state.
+
+                  Open: "rotate-180", Closed: ""
+                -->
+                <svg
+                  class="h-5 w-5 flex-none"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <!-- 'Product' sub-menu, show/hide based on menu state. -->
+              <div class="mt-2 space-y-2" id="disclosure-1">
+                <a
+                (click)="navigateTo('/products/table')"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >Products</a
+                >
+              </div>
+              <div class="mt-2 space-y-2" id="disclosure-1">
+                <a
+                (click)="navigateTo('/services/table')"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >Services</a
+                >
+              </div>
+              <div class="mt-2 space-y-2" id="disclosure-1">
+                <a
+                (click)="navigateTo('/reservations/list')"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >Reservations</a
+                >
+              </div>
+              <div class="mt-2 space-y-2" id="disclosure-1">
+                <a
+                (click)="navigateTo('/invoices/list')"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >Invoices</a
+                >
+              </div>
+            </div>
+            
           </div>
           <div class="py-6">
             <a
               href="#"
-              class="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-400/10"
+              class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >Log in</a
             >
           </div>

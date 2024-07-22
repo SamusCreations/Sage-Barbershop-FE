@@ -1,5 +1,4 @@
 <section class="dark:bg-gray-900 p-3 sm:p-5">
-
   <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
     <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase py-4">
       products
@@ -272,11 +271,11 @@
               <td class="px-4 py-3">{{ product.quantity }}</td>
               <td class="px-4 py-3">{{ product.price | currency }}</td>
               <td class="px-4 py-3 flex items-center justify-end">
-               
                 <a
-                (click)="update(product.id)"
+                  (click)="update(product.id)"
                   class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >Edit</a>
+                  >Edit</a
+                >
                 <!-- <button
                   id="apple-imac-27-dropdown-button"
                   data-dropdown-toggle="apple-imac-27-dropdown"
