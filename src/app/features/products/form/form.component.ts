@@ -123,12 +123,12 @@ export class FormComponent implements OnInit, OnDestroy {
     formData.append('id', this.form.get('id')?.value);
     formData.append('name', this.form.get('name')?.value);
     formData.append('description', this.form.get('description')?.value);
-    formData.append(
-      'price',
-      parseFloat(this.form.get('price')?.value).toFixed(2)
-    );
-    formData.append('quantity', this.form.get('quantity')?.value);
-    formData.append('category', this.form.get('category')?.value);
+    // formData.append(
+    //   'price',
+    //   parseFloat(this.form.get('price')?.value).toFixed(2)
+    // );
+    // formData.append('quantity', this.form.get('quantity')?.value);
+    // formData.append('category', this.form.get('category')?.value);
 
     if (this.currentFile) {
       formData.append('file', this.currentFile);
