@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
-import { CrudProductsService } from '../services/crud-products.service';
+import { CrudBranchesService } from '../services/crud-branches.service';
 import { ImageService } from '../../../shared/image/image.service';
 import {
   NotificacionService,
@@ -18,29 +18,25 @@ import { FormErrorMessage } from '../../../form-error-message';
 export class FormComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   titleForm: string = 'Create';
-  categoryList: any;
+  userList: any;
   toUpdateObject: any;
   createResponse: any;
   form: FormGroup;
   idObject: number = 0;
   isCreate: boolean = true;
-  number4digits = /^\d{4}$/;
-  currentFile?: File;
   message = '';
-  preview = '';
-  nameImage = 'image-not-found.jpg';
   imageInfos?: Observable<any>;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private crudService: CrudProductsService,
+    private crudService: CrudBranchesService,
     private noti: NotificacionService,
     private imageService: ImageService
   ) {
     this.reactiveForm();
-    this.getCategories();
+    this.getEmployeesWhithoutBranch();
   }
 
   ngOnInit(): void {
@@ -49,6 +45,8 @@ export class FormComponent implements OnInit, OnDestroy {
       if (this.idObject != undefined) {
         this.isCreate = false;
         this.titleForm = 'Update';
+  
+        // Obtener la branch y su lista de usuarios relacionados
         this.crudService
           .findById(this.idObject)
           .pipe(takeUntil(this.destroy$))
@@ -58,39 +56,59 @@ export class FormComponent implements OnInit, OnDestroy {
               id: this.toUpdateObject.id,
               name: this.toUpdateObject.name,
               description: this.toUpdateObject.description,
-              price: this.toUpdateObject.price,
-              quantity: this.toUpdateObject.quantity,
-              category: this.toUpdateObject.categoryId,
+              phone: this.toUpdateObject.phone,
+              address: this.toUpdateObject.address,
+              email: this.toUpdateObject.email,
+              users: this.toUpdateObject.user.map(({ id }) => id),
             });
-            this.nameImage = this.toUpdateObject.image;
-            if (this.nameImage) {
-              this.loadImagePreview(this.nameImage);
-            }
+  
+            // Obtener la lista de usuarios sin una branch relacionada
+            this.crudService
+              .getEmployeesWhithoutBranch()
+              .pipe(takeUntil(this.destroy$))
+              .subscribe((usersWithoutBranch) => {
+                // Combinar ambas listas
+                this.userList = [
+                  ...usersWithoutBranch,
+                  ...this.toUpdateObject.user,
+                ];
+  
+                // Eliminar duplicados (en caso de que haya usuarios con y sin branch)
+                this.userList = this.userList.filter(
+                  (value, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.id === value.id)
+                );
+  
+                console.log(this.userList);
+              });
           });
+      } else {
+        // Obtener la lista de usuarios sin una branch relacionada si es creación
+        this.getEmployeesWhithoutBranch();
       }
     });
   }
-
+  
   reactiveForm() {
-    let number2decimals = /^[0-9]+[.,]{1,1}[0-9]{2,2}$/;
     this.form = this.fb.group({
       id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      price: [null, Validators.required],
-      quantity: [null, Validators.required],
-      image: [this.nameImage],
-      category: [null, Validators.required],
+      phone: [null, Validators.required],
+      address: [null, Validators.required],
+      email: [null, [Validators.required, Validators.email]],
+      users: [null, Validators.required],
     });
   }
 
-  getCategories() {
-    this.categoryList = null;
+  getEmployeesWhithoutBranch() {
+    this.userList = null;
     this.crudService
-      .getAllCategories()
+      .getEmployeesWhithoutBranch()
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        this.categoryList = data;
+        this.userList = data;
       });
   }
 
@@ -123,18 +141,16 @@ export class FormComponent implements OnInit, OnDestroy {
     formData.append('id', this.form.get('id')?.value);
     formData.append('name', this.form.get('name')?.value);
     formData.append('description', this.form.get('description')?.value);
-    formData.append(
-      'price',
-      parseFloat(this.form.get('price')?.value).toFixed(2)
-    );
-    formData.append('quantity', this.form.get('quantity')?.value);
-    formData.append('category', this.form.get('category')?.value);
-
-    if (this.currentFile) {
-      formData.append('file', this.currentFile);
-    }
+    formData.append('phone', this.form.get('phone')?.value);
+    formData.append('address', this.form.get('address')?.value);
+    formData.append('email', this.form.get('email')?.value);
+    const users = this.form.get('users')?.value;
+    users.forEach((userId: number) => {
+      formData.append('users', userId.toString());
+    });
 
     // Imprimir FormData para verificar el contenido
+    console.log(formData)
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
@@ -146,12 +162,12 @@ export class FormComponent implements OnInit, OnDestroy {
         .subscribe((data) => {
           this.createResponse = data;
           this.noti.messageRedirect(
-            'Create product',
-            `Product created: ${data.name}`,
+            'Create branch',
+            `Branch created: ${data.name}`,
             messageType.success,
-            '/products/table'
+            '/branches/table'
           );
-          this.router.navigate(['/products/table']);
+          this.router.navigate(['/branches/table']);
         });
     } else {
       this.crudService
@@ -160,12 +176,12 @@ export class FormComponent implements OnInit, OnDestroy {
         .subscribe((data) => {
           this.createResponse = data;
           this.noti.messageRedirect(
-            'Update product',
-            `Product updated: ${data.name}`,
+            'Update branch',
+            `Branch updated: ${data.name}`,
             messageType.success,
-            '/products/table'
+            '/branches/table'
           );
-          this.router.navigate(['/products/table']);
+          this.router.navigate(['/branches/table']);
         });
     }
   }
@@ -175,40 +191,11 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   onBack() {
-    this.router.navigate(['/products/table']);
+    this.router.navigate(['/branches/table']);
   }
 
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-  }
-
-  selectFile(event: any): void {
-    this.message = '';
-    this.preview = '';
-    const selectedFiles = event.target.files;
-    if (selectedFiles) {
-      const file: File | null = selectedFiles.item(0);
-      if (file) {
-        this.currentFile = file;
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.preview = e.target.result;
-        };
-        reader.readAsDataURL(this.currentFile);
-      }
-    }
-  }
-
-  loadImagePreview(imageName: string): void {
-    this.imageService.getImage(imageName, 300).subscribe(
-      (imageBlob: Blob) => {
-        const objectURL = URL.createObjectURL(imageBlob);
-        this.preview = objectURL;
-      },
-      (error) => {
-        console.error('Error fetching image:', error);
-      }
-    );
   }
 }

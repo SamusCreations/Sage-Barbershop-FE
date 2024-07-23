@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { ProductsModule } from './products/products.module';
 import { ServicesModule } from './services/services.module';
+import { BranchesModule } from './branches/branches.module';
 import { ReservationsModule } from './reservations/reservations.module';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     InvoicesModule,
     ProductsModule,
     ServicesModule,
+    BranchesModule,
     ReservationsModule
   ],
 })
