@@ -1,9 +1,11 @@
 <!--Selector del encabezado Header definido en el modulo Core-->
 <app-header></app-header>
-<div class="body-container pt-20">
-  <!-- router-outlet: marcador de posición que Angular se llena dinámicamente según
+<div class="flex flex-col min-h-screen justify-center">
+  <div class="flex-1 pt-20">
+    <!-- router-outlet: marcador de posición que Angular se llena dinámicamente según
 el estado actual del enrutador -->
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
+  </div>
 </div>
 <!-- Selector Footer definido en el módulo Core -->
 <app-footer></app-footer>

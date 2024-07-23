@@ -41,6 +41,11 @@
 
     <div class="hidden lg:flex lg:gap-x-12">
       <a
+        (click)="navigateTo('/home')"
+        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        >Home</a
+      >
+      <a
         (click)="navigateTo('/products/list')"
         class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
         >Products</a

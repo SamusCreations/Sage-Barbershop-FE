@@ -1,1 +1,144 @@
-<p>detail works!</p>
+<div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
+  @if (branch) {
+  <div>
+    <h3
+      class="text-2xl font-semibold leading-7 text-gray-900 uppercase px-4 sm:px-0"
+    >
+      Branch Details
+    </h3>
+    <div>
+      <dl>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Branch Id</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.id }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Branch Name
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.name }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Description
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.description }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.phone }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.address }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Email</dt>
+          <dd
+            class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+          >
+            {{ branch.email }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Employees</h3>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3">Identification</th>
+            <th scope="col" class="px-6 py-3">Full name</th>
+            <th scope="col" class="px-6 py-3">email</th>
+            <th scope="col" class="px-6 py-3">phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of branch.user; track item.id) {
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4">
+              {{ item.id }}
+            </td>
+            <td class="px-6 py-4">{{ item.name }} {{ item.surname }}</td>
+            <td class="px-6 py-4">
+              {{ item.email }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.phone }}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Schedule</h3>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3">Start date</th>
+            <th scope="col" class="px-6 py-3">Start Time</th>
+            <th scope="col" class="px-6 py-3">End date</th>
+            <th scope="col" class="px-6 py-3">End Time</th>
+            <th scope="col" class="px-6 py-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of branch.Schedule; track item.id) {
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4">
+              {{ item.startDate | date : "fullDate" }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.startDate | date : "shortTime" }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.endDate | date : "fullDate" }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.endDate | date : "shortTime" }}
+            </td>
+            <td class="px-6 py-4">
+                <span
+                class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
+                [ngStyle]="{ 'background-color': item.status? '#4CAF50' : '#F44336' }"
+                >{{ item.status? "Active": "Blocked" }}</span
+              >
+              
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  } @else {
+    <app-spinner></app-spinner>
+  }
+</div>
