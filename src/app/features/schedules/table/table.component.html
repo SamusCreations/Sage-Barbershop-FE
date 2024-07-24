@@ -1,7 +1,7 @@
 <section class="dark:bg-gray-900 p-3 sm:p-5">
   <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
     <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase py-4">
-      branches
+      schedules
     </h2>
     <!-- Start coding here -->
     <div
@@ -11,33 +11,23 @@
         class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
       >
         <div class="w-full md:w-1/2">
-          <form class="flex items-center">
-            <label for="simple-search" class="sr-only">Search</label>
+          <form class="flex items-center justify-between">
+            <label for="branch-select" class="sr-only">Branch</label>
             <div class="relative w-full">
-              <div
-                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              <select
+                id="branch-select"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                (change)="onBranchChange($event)"
               >
-                <svg
-                  aria-hidden="true"
-                  class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                  fill="currentColor"
-                  viewbox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
+                <option value="all">All Branches</option>
+                <option
+                  class="text-gray-700"
+                  *ngFor="let item of branchList"
+                  [value]="item.id"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-              <input
-                type="text"
-                id="simple-search"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Search"
-                required=""
-              />
+                  {{ item.name }}
+                </option>
+              </select>
             </div>
           </form>
         </div>
@@ -61,64 +51,14 @@
               viewBox="0 0 24 24"
             >
               <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 12h14m-7 7V5"
+                fill="currentColor"
+                d="M4 9.05H3v2h1v-2Zm16 2h1v-2h-1v2ZM10 14a1 1 0 1 0 0 2v-2Zm4 2a1 1 0 1 0 0-2v2Zm-3 1a1 1 0 1 0 2 0h-2Zm2-4a1 1 0 1 0-2 0h2Zm-2-5.95a1 1 0 1 0 2 0h-2Zm2-3a1 1 0 1 0-2 0h2Zm-7 3a1 1 0 0 0 2 0H6Zm2-3a1 1 0 1 0-2 0h2Zm8 3a1 1 0 1 0 2 0h-2Zm2-3a1 1 0 1 0-2 0h2Zm-13 3h14v-2H5v2Zm14 0v12h2v-12h-2Zm0 12H5v2h14v-2Zm-14 0v-12H3v12h2Zm0 0H3a2 2 0 0 0 2 2v-2Zm14 0v2a2 2 0 0 0 2-2h-2Zm0-12h2a2 2 0 0 0-2-2v2Zm-14-2a2 2 0 0 0-2 2h2v-2Zm-1 6h16v-2H4v2ZM10 16h4v-2h-4v2Zm3 1v-4h-2v4h2Zm0-9.95v-3h-2v3h2Zm-5 0v-3H6v3h2Zm10 0v-3h-2v3h2Z"
               />
             </svg>
-            Add branch
+            Add schedule
           </a>
 
           <div class="flex items-center space-x-3 w-full md:w-auto">
-            <!-- Actions Button -->
-            <button
-              id="actionsDropdownButton"
-              data-dropdown-toggle="actionsDropdown"
-              class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              type="button"
-            >
-              <svg
-                class="-ml-1 mr-1.5 w-5 h-5"
-                fill="currentColor"
-                viewbox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                />
-              </svg>
-              Actions
-            </button>
-            <div
-              id="actionsDropdown"
-              class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-            >
-              <ul
-                class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                aria-labelledby="actionsDropdownButton"
-              >
-                <li>
-                  <a
-                    href="#"
-                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >Mass Edit</a
-                  >
-                </li>
-              </ul>
-              <div class="py-1">
-                <a
-                  href="#"
-                  class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >Delete all</a
-                >
-              </div>
-            </div>
-
             <!-- Filter Button -->
             <button
               id="filterDropdownButton"
@@ -247,32 +187,55 @@
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
           >
             <tr>
-              <th scope="col" class="px-4 py-3">ID</th>
-              <th scope="col" class="px-4 py-3">Name</th>
-              <th scope="col" class="px-4 py-3">Phone</th>
-              <th scope="col" class="px-4 py-3">Email</th>
-              <th scope="col" class="px-4 py-3">Address</th>
+              <th scope="col" class="px-6 py-3">Branch</th>
+              <th scope="col" class="px-6 py-3">Start date</th>
+              <th scope="col" class="px-6 py-3">Start Time</th>
+              <th scope="col" class="px-6 py-3">End date</th>
+              <th scope="col" class="px-6 py-3">End Time</th>
+              <th scope="col" class="px-6 py-3">Status</th>
               <th scope="col" class="px-4 py-3 text-center">
-                <span >Actions</span>
+                <span>Actions</span>
               </th>
             </tr>
           </thead>
           <tbody>
-            @for (branch of branches; track branch.id) {
+            <tr *ngIf="!schedules.length">
+              <td
+                colspan="7"
+                class="px-6 py-3 text-center bg-red-100 text-red-500"
+              >
+                No information available
+              </td>
+            </tr>
+            @for (item of schedules; track item.id) {
             <tr class="border-b dark:border-gray-700">
               <th
                 scope="row"
                 class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {{ branch.id }}
+                {{ item.branch.name }}
               </th>
-              <td class="px-4 py-3">{{ branch.name }}</td>
-              <td class="px-4 py-3">{{ branch.phone }}</td>
-              <td class="px-4 py-3">{{ branch.email }}</td>
-              <td class="px-4 py-3">{{ branch.address }}</td>
+              <td class="px-4 py-3">
+                {{ item.startDate | date : "fullDate" }}
+              </td>
+              <td class="px-4 py-3">
+                {{ item.startDate | date : "shortTime" }}
+              </td>
+              <td class="px-4 py-3">{{ item.endDate | date : "fullDate" }}</td>
+              <td class="px-4 py-3">{{ item.endDate | date : "shortTime" }}</td>
+              <td class="px-4 py-3">
+                <span
+                  class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
+                  [ngStyle]="{
+                    'background-color': item.status ? '#def7ec' : '#fde8e8',
+                    'color': item.status ? '#4CAF50' : '#e02424',
+                  }"
+                  >{{ item.status ? "Active" : "Blocked" }}</span
+                >
+              </td>
               <td class="px-4 py-3 flex items-center justify-center">
                 <a
-                  (click)="detail(branch.id)"
+                  (click)="detail(item.id)"
                   class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer rounded-lg"
                   ><svg
                     class="w-6 h-6 text-gray-400 dark:text-white"
@@ -296,7 +259,7 @@
                   </svg>
                 </a>
                 <a
-                  (click)="update(branch.id)"
+                  (click)="update(item.id)"
                   class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer rounded-lg"
                   ><svg
                     class="w-6 h-6 text-gray-400 dark:text-white"
@@ -312,12 +275,12 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                      d="m11.5 11.5 2.071 1.994M4 10h5m11 0h-1.5M12 7V4M7 7V4m10 3V4m-7 13H8v-2l5.227-5.292a1.46 1.46 0 0 1 2.065 2.065L10 17Zm-5 3h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
                     />
                   </svg>
                 </a>
                 <a
-                  (click)="delete(branch.id)"
+                  (click)="delete(item.id)"
                   class="block py-2 px-4 hover:bg-red-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer rounded-lg"
                   ><svg
                     class="w-6 h-6 text-red-600 dark:text-white"

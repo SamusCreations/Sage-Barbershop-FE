@@ -1,0 +1,87 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="my-6">
+    <input type="hidden" formControlName="id" />
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Schedule</h2>
+      </div>
+      <div class="mb-4">
+        <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+        <input
+          type="datetime-local"
+          id="startDate"
+          formControlName="startDate"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div *ngIf="errorHandling('startDate')" class="text-red-600 text-sm mt-1">
+          {{ errorHandling('startDate') }}
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
+        <input
+          type="datetime-local"
+          id="endDate"
+          formControlName="endDate"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        />
+        <div *ngIf="errorHandling('endDate')" class="text-red-600 text-sm mt-1">
+          {{ errorHandling('endDate') }}
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="branchId" class="block text-sm font-medium text-gray-700">Branch</label>
+        <select
+          id="branchId"
+          formControlName="branchId"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        >
+          <option
+            class="text-gray-700"
+            *ngFor="let branch of branchList"
+            [value]="branch.id"
+          >
+            {{ branch.name }}
+          </option>
+        </select>
+        <div *ngIf="errorHandling('branchId')" class="text-red-600 text-sm mt-1">
+          {{ errorHandling('branchId') }}
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+        <button
+          type="button"
+          (click)="toggleStatus()"
+          [class.bg-green-500]="form.get('status')?.value"
+          [class.bg-red-500]="!form.get('status')?.value"
+          class="text-white py-2 px-4 rounded-md shadow-md"
+        >
+          {{ form.get('status')?.value ? 'Active' : 'Blocked' }}
+        </button>
+        <input type="hidden" formControlName="status" />
+      </div>
+      <div class="flex space-x-4">
+        <button
+          type="button"
+          (click)="onReset()"
+          class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          (click)="onBack()"
+          class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-gray-600"
+        >
+          Back
+        </button>
+        <button
+          type="submit"
+          class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+  

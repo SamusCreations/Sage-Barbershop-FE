@@ -1,13 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudServicesService } from '../services/crud-services.service';
 import { ImageService } from '../../../shared/image/image.service';
-import {
-  NotificacionService,
-  messageType,
-} from '../../../shared/notification/notification.service';
+import { NotificacionService, messageType } from '../../../shared/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
@@ -24,7 +21,6 @@ export class FormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   idObject: number = 0;
   isCreate: boolean = true;
-  number4digits = /^\d{4}$/;
   currentFile?: File;
   message = '';
   preview = '';
@@ -72,13 +68,12 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   reactiveForm() {
-    let number2decimals = /^[0-9]+[.,]{1,1}[0-9]{2,2}$/;
     this.form = this.fb.group({
       id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      price: [null, Validators.required],
-      duration: [null, Validators.required],
+      price: [null, [Validators.required, Validators.pattern(/^[0-9]+[.,]{1,1}[0-9]{2,2}$/)]],
+      duration: [null, [Validators.required, this.integerRangeValidator(5, 480)]],
       image: [this.nameImage],
       user: [null, Validators.required],
     });
@@ -92,6 +87,15 @@ export class FormComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.userList = data;
       });
+  }
+
+  integerRangeValidator(min: number, max: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const value = parseInt(control.value);
+      return Number.isInteger(value) && value >= min && value <= max
+        ? null
+        : { 'integerRange': { value: control.value } };
+    };
   }
 
   public errorHandling = (controlName: string) => {
@@ -116,8 +120,10 @@ export class FormComponent implements OnInit, OnDestroy {
     if (this.form.invalid) {
       console.log('Invalid Form');
       console.log(this.form.value);
+      this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
       return;
     }
+    
 
     const formData = new FormData();
     formData.append('id', this.form.get('id')?.value);
@@ -134,7 +140,7 @@ export class FormComponent implements OnInit, OnDestroy {
       formData.append('file', this.currentFile);
     }
 
-    // Imprimir FormData para verificar el contenido
+    // Print FormData to verify its content
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
@@ -147,7 +153,7 @@ export class FormComponent implements OnInit, OnDestroy {
           this.createResponse = data;
           this.noti.messageRedirect(
             'Create service',
-            `service created: ${data.name}`,
+            `Service created: ${data.name}`,
             messageType.success,
             '/services/table'
           );
@@ -161,7 +167,7 @@ export class FormComponent implements OnInit, OnDestroy {
           this.createResponse = data;
           this.noti.messageRedirect(
             'Update service',
-            `service updated: ${data.name}`,
+            `Service updated: ${data.name}`,
             messageType.success,
             '/services/table'
           );

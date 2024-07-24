@@ -1,0 +1,112 @@
+<div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
+    <div>
+      <div class="flex justify-between">
+        <h3
+          class="text-2xl font-semibold leading-7 text-gray-900 uppercase px-4 sm:px-0"
+        >
+          Schedule Details
+        </h3>
+        
+      </div>
+      <div>
+        <dl>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">
+              Schedule number
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+            >
+              #{{ schedule.id }}
+            </dd>
+          </div>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">Status</dt>
+            <dd
+              class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
+            >
+            <span
+            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
+            [ngStyle]="{
+              'background-color': schedule.status ? '#def7ec' : '#fde8e8',
+              'color': schedule.status ? '#4CAF50' : '#e02424',
+            }"
+            >{{ schedule.status ? "Active" : "Blocked" }}</span
+          >
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2">
+        <dl>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">
+              Start date
+            </dt>
+            <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {{ schedule.startDate | date : "fullDate" }}
+            </dd>
+          </div>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">End date</dt>
+            <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {{ schedule.endDate | date : "fullDate" }}
+            </dd>
+          </div>
+        </dl>
+        <dl>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">Start time</dt>
+            <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {{ schedule.startDate | date : "shortTime" }}
+            </dd>
+          </div>
+          <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm font-medium leading-6 text-gray-900">
+              End time
+            </dt>
+            <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {{ schedule.endDate | date : "shortTime" }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="pt-2">
+        <h3 class="px-4 sm:px-0 py-2 font-bold uppercase">Branch</h3>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Name</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ schedule.branch.name }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            Email address
+          </dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ schedule.branch.email }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Phone</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ schedule.branch.phone }}
+          </dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {{ schedule.branch.address }}
+          </dd>
+        </div>
+      </div>
+
+    
+    <div class="shadow-md sm:rounded-b-lg h-5" [ngStyle]="{ 'background-color': schedule.status ? '#def7ec' : '#fde8e8'}">
+  
+    </div>
+  </div>
+  

@@ -1,13 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudBranchesService } from '../services/crud-branches.service';
-import { ImageService } from '../../../shared/image/image.service';
-import {
-  NotificacionService,
-  messageType,
-} from '../../../shared/notification/notification.service';
+import { NotificacionService, messageType } from '../../../shared/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
@@ -33,7 +29,6 @@ export class FormComponent implements OnInit, OnDestroy {
     private activeRouter: ActivatedRoute,
     private crudService: CrudBranchesService,
     private noti: NotificacionService,
-    private imageService: ImageService
   ) {
     this.reactiveForm();
     this.getEmployeesWhithoutBranch();
@@ -45,7 +40,7 @@ export class FormComponent implements OnInit, OnDestroy {
       if (this.idObject != undefined) {
         this.isCreate = false;
         this.titleForm = 'Update';
-  
+
         // Obtener la branch y su lista de usuarios relacionados
         this.crudService
           .findById(this.idObject)
@@ -61,7 +56,7 @@ export class FormComponent implements OnInit, OnDestroy {
               email: this.toUpdateObject.email,
               users: this.toUpdateObject.user.map(({ id }) => id),
             });
-  
+
             // Obtener la lista de usuarios sin una branch relacionada
             this.crudService
               .getEmployeesWhithoutBranch()
@@ -72,14 +67,14 @@ export class FormComponent implements OnInit, OnDestroy {
                   ...usersWithoutBranch,
                   ...this.toUpdateObject.user,
                 ];
-  
+
                 // Eliminar duplicados (en caso de que haya usuarios con y sin branch)
                 this.userList = this.userList.filter(
                   (value, index, self) =>
                     index ===
                     self.findIndex((t) => t.id === value.id)
                 );
-  
+
                 console.log(this.userList);
               });
           });
@@ -89,17 +84,32 @@ export class FormComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   reactiveForm() {
     this.form = this.fb.group({
       id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      phone: [null, Validators.required],
+      phone: [null, [Validators.required, Validators.pattern(/^\d{8,}$/)]],
       address: [null, Validators.required],
-      email: [null, [Validators.required, Validators.email]],
-      users: [null, Validators.required],
+      email: [null, [Validators.required, Validators.email, this.emailDomainValidator('com')]],
+      users: [null, [Validators.required, this.minSelectionValidator(1)]],
     });
+  }
+
+  emailDomainValidator(domain: string): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const email = control.value;
+      const regex = new RegExp(`^[^@]+@[^@]+\\.${domain}$`);
+      return regex.test(email) ? null : { 'emailDomain': { value: control.value } };
+    };
+  }
+
+  minSelectionValidator(min: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const value = control.value;
+      return value && value.length >= min ? null : { 'minSelection': { value: control.value } };
+    };
   }
 
   getEmployeesWhithoutBranch() {
@@ -134,8 +144,10 @@ export class FormComponent implements OnInit, OnDestroy {
     if (this.form.invalid) {
       console.log('Invalid Form');
       console.log(this.form.value);
+      this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
       return;
     }
+    
 
     const formData = new FormData();
     formData.append('id', this.form.get('id')?.value);
@@ -149,7 +161,7 @@ export class FormComponent implements OnInit, OnDestroy {
       formData.append('users', userId.toString());
     });
 
-    // Imprimir FormData para verificar el contenido
+    // Print FormData to verify its content
     console.log(formData)
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);

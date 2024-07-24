@@ -30,4 +30,12 @@ export class CrudSchedulesService {
     return this.httpService.post<any>(this.endpoint, scheduleData);
   }
 
+  update(scheduleData: FormData): Observable<any> {
+    return this.httpService.put<any>(this.endpoint, scheduleData);
+  }
+
+  getBranches(): Observable<any> {
+    return this.httpService.get<any>(`branch`);
+  }
+
 }
