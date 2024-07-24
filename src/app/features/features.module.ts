@@ -9,6 +9,8 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { ProductsModule } from './products/products.module';
 import { ServicesModule } from './services/services.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { BranchesModule } from './branches/branches.module';
 
 @NgModule({
   declarations: [],
@@ -20,6 +22,8 @@ import { ReservationsModule } from './reservations/reservations.module';
     InvoicesModule,
     ProductsModule,
     ServicesModule,
+    BranchesModule,
+    ScheduleModule,
     ReservationsModule
   ],
 })
