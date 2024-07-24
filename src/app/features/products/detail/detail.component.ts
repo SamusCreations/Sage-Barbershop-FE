@@ -1,37 +1,57 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CrudProductsService } from '../services/crud-products.service';
+import { Subject, takeUntil } from 'rxjs';
+import {
+  NotificacionService,
+  messageType,
+} from '../../../shared/notification/notification.service';
 
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.scss'
+  styleUrl: './detail.component.scss',
 })
-export class DetailComponent {
+export class DetailComponent implements OnInit, OnDestroy {
+  destroy$: Subject<boolean> = new Subject<boolean>();
   product: any = null;
   charging: boolean = true;
+  idObject: number = 0;
 
   constructor(
-    private route: ActivatedRoute,
-    private productService: CrudProductsService
-  ) { }
+    private activeRouter: ActivatedRoute,
+    private crudService: CrudProductsService,
+    private noti: NotificacionService
+  ) {}
 
   ngOnInit(): void {
-    const id = +this.route.snapshot.paramMap.get('id');
-    this.fetchInvoiceDetail(id);
-  }
-
-  fetchInvoiceDetail(id: number): void {
-    this.charging = true;
-    this.productService.findById(id).subscribe({
-      next: (data) => {
-        this.product = data.shift();
-        this.charging = false;
-      },
-      error: (error) => {
-        console.error('Error fetching invoice detail:', error);
-        this.charging = false;
+    this.activeRouter.params.subscribe((params) => {
+      this.idObject = params['id'];
+      if (this.idObject != undefined) {
+        this.crudService
+          .findById(this.idObject)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(
+            (data) => {
+              this.product = data;
+              this.charging = false;
+            },
+            (error) => {
+              console.error('Error fetching product details:', error);
+              this.noti.message(
+                'Error',
+                `An error occurred: ${error.message}`,
+                messageType.error
+              );
+              this.charging = false;
+            }
+          );
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

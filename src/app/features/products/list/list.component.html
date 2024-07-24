@@ -39,6 +39,5 @@
     </div>
   </div>
 </div>
-} @else {
-<app-spinner></app-spinner>
-}
+<app-spinner *ngIf="charging"></app-spinner>
+

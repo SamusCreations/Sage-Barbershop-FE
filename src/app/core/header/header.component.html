@@ -41,6 +41,11 @@
 
     <div class="hidden lg:flex lg:gap-x-12">
       <a
+        (click)="navigateTo('/home')"
+        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        >Home</a
+      >
+      <a
         (click)="navigateTo('/products/list')"
         class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
         >Products</a
@@ -300,22 +305,21 @@
       <div class="mt-6 flow-root">
         <div class="-my-6 divide-y divide-gray-500/10">
           <div class="space-y-2 py-6">
-
             <a
-            (click)="navigateTo('/products/list')"
-            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-            >Products</a
-          >
-          <a
-          (click)="navigateTo('/services/list')"
-            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-            >Services</a
-          >
-          <a
-          (click)="navigateTo('/stores/list')"
-            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-            >Stores</a
-          >
+              (click)="navigateTo('/products/list')"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              >Products</a
+            >
+            <a
+              (click)="navigateTo('/services/list')"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              >Services</a
+            >
+            <a
+              (click)="navigateTo('/stores/list')"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              >Stores</a
+            >
 
             <div class="-mx-3">
               <button
@@ -346,34 +350,33 @@
               <!-- 'Product' sub-menu, show/hide based on menu state. -->
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
-                (click)="navigateTo('/products/table')"
+                  (click)="navigateTo('/products/table')"
                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >Products</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
-                (click)="navigateTo('/services/table')"
+                  (click)="navigateTo('/services/table')"
                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >Services</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
-                (click)="navigateTo('/reservations/list')"
+                  (click)="navigateTo('/reservations/list')"
                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >Reservations</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
-                (click)="navigateTo('/invoices/list')"
+                  (click)="navigateTo('/invoices/list')"
                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >Invoices</a
                 >
               </div>
             </div>
-            
           </div>
           <div class="py-6">
             <a

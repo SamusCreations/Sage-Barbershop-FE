@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CrudServicesService } from '../services/crud-services.service';
+import { CrudBranchesService } from '../services/crud-branches.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
   NotificacionService,
@@ -14,13 +14,13 @@ import {
 })
 export class DetailComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
-  service: any = null;
+  branch: any = null;
   charging: boolean = true;
   idObject: number = 0;
 
   constructor(
     private activeRouter: ActivatedRoute,
-    private crudService: CrudServicesService,
+    private crudService: CrudBranchesService,
     private noti: NotificacionService
   ) {}
 
@@ -33,11 +33,11 @@ export class DetailComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe(
             (data) => {
-              this.service = data;
+              this.branch = data;
               this.charging = false;
             },
             (error) => {
-              console.error('Error fetching service details:', error);
+              console.error('Error fetching branch details:', error);
               this.noti.message(
                 'Error',
                 `An error occurred: ${error.message}`,
