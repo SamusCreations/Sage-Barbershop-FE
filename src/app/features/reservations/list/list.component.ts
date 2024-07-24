@@ -35,7 +35,7 @@ export class ListComponent implements OnInit {
       }
     };
 
-    this.reservationsService.getByManager(2).subscribe(observer);
+    this.reservationsService.getByManager(3).subscribe(observer);
   }
 
   viewDetail(id: number): void {

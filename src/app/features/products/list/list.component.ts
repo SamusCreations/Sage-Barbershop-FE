@@ -3,6 +3,7 @@ import { CrudProductsService } from '../services/crud-products.service';
 import { Router } from '@angular/router';
 import { Observer } from 'rxjs';
 import { ImageService } from '../../../shared/image/image.service';
+import { NotificacionService, messageType } from '../../../shared/notification/notification.service';
 
 @Component({
   selector: 'app-list',
@@ -17,7 +18,8 @@ export class ListComponent implements OnInit {
   constructor(
     private productService: CrudProductsService,
     private router: Router,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private noti: NotificacionService,
   ) {}
 
   ngOnInit(): void {
@@ -51,18 +53,34 @@ export class ListComponent implements OnInit {
   }
 
   loadImagePreview(product: any): void {
+    const defaultImageName = 'image-not-found';
+  
+    const handleImageError = (error: any, fallbackImage: string) => {
+      console.error('Error fetching image:', error);
+  
+      if (fallbackImage) {
+        this.imageService.getImage(fallbackImage, 300).subscribe(
+          (fallbackBlob: Blob) => {
+            const fallbackURL = URL.createObjectURL(fallbackBlob);
+            product.image = fallbackURL;
+          },
+          (fallbackError) => {
+            console.error('Error fetching fallback image:', fallbackError);
+            product.image = defaultImageName; // Use default image path if fallback also fails
+          }
+        );
+      }
+    };
+  
     if (product.image) {
       this.imageService.getImage(product.image, 300).subscribe(
         (imageBlob: Blob) => {
           const objectURL = URL.createObjectURL(imageBlob);
-          product.image = objectURL; // Añadir la URL de la imagen al producto
+          product.image = objectURL;
         },
-        (error) => {
-          console.error('Error fetching image:', error);
-        }
+        (error) => handleImageError(error, defaultImageName) // Call handleImageError with fallback image
       );
-    } else {
-      product.image = 'path/to/default/image.jpg'; // Imagen por defecto
     }
   }
+  
 }

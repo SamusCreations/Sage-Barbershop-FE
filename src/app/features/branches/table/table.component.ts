@@ -60,6 +60,14 @@ export class TableComponent implements OnInit {
     this.router.navigate(['/branches/update', id]);
   }
 
+  detail(id: number): void {
+    this.router.navigate(['/branches/detail', id]);
+  }
+
+  delete(id: number): void {
+    this.router.navigate(['/branches/delete', id]);
+  }
+
   create(): void {
     this.router.navigate(['/branches/create']);
   }

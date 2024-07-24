@@ -1,38 +1,3 @@
-<!-- <div *ngIf="charging" class="spinner-container">
-  <div class="spinner"></div>
-</div>
-<div class="reservation-list" *ngIf="!charging">
-  <div
-    *ngFor="let reservation of reservations"
-    class="reservation-card"
-    [ngStyle]="{ 'border-color': reservation.status.color }"
-  >
-    <div class="card-header">
-      <h3 class="card-title">
-        {{ reservation.service.name }} - {{ reservation.branch.name }}
-      </h3>
-      <span
-        class="status-badge"
-        [ngStyle]="{ 'background-color': reservation.status.color }"
-        >{{ reservation.status.description }}</span
-      >
-    </div>
-    <div class="card-body">
-      <p><strong>Date:</strong> {{ reservation.date | date : "medium" }}</p>
-      <p>
-        <strong>Client:</strong> {{ reservation.User.name }}
-        {{ reservation.User.surname }}
-      </p>
-      <p><strong>Service:</strong> {{ reservation.service.description }}</p>
-    </div>
-    <div class="card-footer">
-      <button class="btn btn-primary" (click)="viewDetail(reservation.id)">
-        View Details
-      </button>
-    </div>
-  </div>
-</div> -->
-
 @if (!charging) {
 <div class="bg-white">
   <div
