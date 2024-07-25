@@ -6,7 +6,7 @@ import {
   NotificacionService,
   messageType,
 } from '../../../shared/notification/notification.service';
-
+import { ImageService } from '../../../shared/image/image.service';
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
@@ -21,7 +21,8 @@ export class DetailComponent implements OnInit, OnDestroy {
   constructor(
     private activeRouter: ActivatedRoute,
     private crudService: CrudProductsService,
-    private noti: NotificacionService
+    private noti: NotificacionService,
+    private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +35,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           .subscribe(
             (data) => {
               this.product = data;
+              this.loadImagePreview(this.product)
               this.charging = false;
             },
             (error) => {
@@ -53,5 +55,36 @@ export class DetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  loadImagePreview(product: any): void {
+    const defaultImageName = 'image-not-found';
+  
+    const handleImageError = (error: any, fallbackImage: string) => {
+      console.error('Error fetching image:', error);
+  
+      if (fallbackImage) {
+        this.imageService.getImage(fallbackImage, 1024).subscribe(
+          (fallbackBlob: Blob) => {
+            const fallbackURL = URL.createObjectURL(fallbackBlob);
+            product.image = fallbackURL;
+          },
+          (fallbackError) => {
+            console.error('Error fetching fallback image:', fallbackError);
+            product.image = defaultImageName; // Use default image path if fallback also fails
+          }
+        );
+      }
+    };
+  
+    if (product.image) {
+      this.imageService.getImage(product.image, 1024).subscribe(
+        (imageBlob: Blob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          product.image = objectURL;
+        },
+        (error) => handleImageError(error, defaultImageName) // Call handleImageError with fallback image
+      );
+    }
   }
 }
