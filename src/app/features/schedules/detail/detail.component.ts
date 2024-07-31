@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import {
   NotificacionService,
   messageType,
-} from '../../../shared/notification/notification.service';
+} from '../../../shared/services/notification/notification.service';
 
 @Component({
   selector: 'app-detail',

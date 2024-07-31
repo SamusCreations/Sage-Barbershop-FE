@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CrudProductsService } from '../services/crud-products.service';
 import { Router } from '@angular/router';
 import { Observer } from 'rxjs';
-import { ImageService } from '../../../shared/image/image.service';
-import { NotificacionService, messageType } from '../../../shared/notification/notification.service';
+import { ImageService } from '../../../shared/services/imageService/image.service';
+import { NotificacionService, messageType } from '../../../shared/services/notification/notification.service';
 
 @Component({
   selector: 'app-list',

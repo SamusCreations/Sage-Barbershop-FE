@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../../shared/httpService/http.service';
+import { HttpService } from '../../../shared/services/httpService/http.service';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({

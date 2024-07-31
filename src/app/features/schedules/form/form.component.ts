@@ -12,7 +12,7 @@ import { CrudSchedulesService } from '../services/crud-schedules.service';
 import {
   NotificacionService,
   messageType,
-} from '../../../shared/notification/notification.service';
+} from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({

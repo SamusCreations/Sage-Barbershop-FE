@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudServicesService } from '../services/crud-services.service';
-import { ImageService } from '../../../shared/image/image.service';
-import { NotificacionService, messageType } from '../../../shared/notification/notification.service';
+import { ImageService } from '../../../shared/services/imageService/image.service';
+import { NotificacionService, messageType } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({

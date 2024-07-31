@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 //npm install jwt-decode
 //npm audit fix --force
 
