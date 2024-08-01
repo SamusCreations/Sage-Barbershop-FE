@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CrudServicesService } from '../services/crud-services.service';
 import { Router } from '@angular/router';
 import { Observer } from 'rxjs';
+import { ImageService } from '../../../shared/image/image.service';
 
 @Component({
   selector: 'app-list',
@@ -12,8 +13,11 @@ export class ListComponent {
   services: any[] = [];
   charging: boolean = true
   chargingSuccesfully: boolean = false
+  
 
-  constructor(private servicesService: CrudServicesService, private router: Router) { }
+  constructor(private servicesService: CrudServicesService, private router: Router, private imageService: ImageService) { 
+    
+  }
 
   ngOnInit(): void {
     this.fetchServices();
@@ -24,6 +28,9 @@ export class ListComponent {
       next: (data) => {
         this.services = data;
         this.chargingSuccesfully = true
+        this.services.forEach((product) => {
+          this.loadImagePreview(product);
+        });
       },
       error: (error) => {
         this.chargingSuccesfully = false
@@ -40,5 +47,36 @@ export class ListComponent {
 
   viewDetail(id: number): void {
     this.router.navigate(['/services/detail', id]);
+  }
+
+  loadImagePreview(product: any): void {
+    const defaultImageName = 'image-not-found';
+  
+    const handleImageError = (error: any, fallbackImage: string) => {
+      console.error('Error fetching image:', error);
+  
+      if (fallbackImage) {
+        this.imageService.getImage(fallbackImage, 300).subscribe(
+          (fallbackBlob: Blob) => {
+            const fallbackURL = URL.createObjectURL(fallbackBlob);
+            product.image = fallbackURL;
+          },
+          (fallbackError) => {
+            console.error('Error fetching fallback image:', fallbackError);
+            product.image = defaultImageName; // Use default image path if fallback also fails
+          }
+        );
+      }
+    };
+  
+    if (product.image) {
+      this.imageService.getImage(product.image, 300).subscribe(
+        (imageBlob: Blob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          product.image = objectURL;
+        },
+        (error) => handleImageError(error, defaultImageName) // Call handleImageError with fallback image
+      );
+    }
   }
 }

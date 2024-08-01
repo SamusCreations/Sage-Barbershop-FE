@@ -12,10 +12,12 @@ export class ImageService {
   constructor(private http: HttpClient) {}
 
   getImage(imageName: string, imageSize: number): Observable<Blob> {
+    console.log(imageSize)
     const params = new HttpParams()
       .set('imageName', imageName)
       .set('imageSize', imageSize.toString());
 
+    console.log(`${this.baseUrl}/image`)
     return this.http.get(`${this.baseUrl}/image`, { params, responseType: 'blob' });
   }
 }
