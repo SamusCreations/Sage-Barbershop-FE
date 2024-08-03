@@ -35,7 +35,7 @@ export class ListComponent implements OnInit{
       }
     };
 
-    this.invoiceService.getAll().subscribe(observer);
+    this.invoiceService.findByEmployee(2).subscribe(observer);
   }
 
   viewDetail(id: number): void {

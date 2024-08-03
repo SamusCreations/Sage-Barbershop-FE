@@ -12,6 +12,11 @@ export class CrudInvoicesService {
   getAll(): Observable<any> {
     return this.httpService.get<any>('invoice-header/');
   }
+  findByEmployee(id: number) : Observable<any> {
+    let urlSearchParams = new URLSearchParams()
+    urlSearchParams.append("administratorId", id.toString())
+    return this.httpService.get<any>('invoice-header', urlSearchParams);
+  }
   findById(id: number): Observable<any> {
     let urlSearchParams = new URLSearchParams()
     urlSearchParams.append("id", id.toString())
