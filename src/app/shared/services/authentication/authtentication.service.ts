@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment.development';
+import { jwtDecode } from 'jwt-decode';
 //npm install jwt-decode
 //npm audit fix --force
 
@@ -84,7 +85,7 @@ export class AuthenticationService {
       //Eliminarlo del observable del boleano si esta autenticado
       this.authenticated.next(false);
       //Eliminar carrito
-      this.cartService.deleteCart();
+      //this.cartService.deleteCart();
       return true;
     }
     return false;
