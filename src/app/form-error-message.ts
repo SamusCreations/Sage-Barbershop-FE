@@ -43,4 +43,16 @@ export const FormErrorMessage = [
   new ErrorMessage('endDate', 'dateMismatch', 'End date cannot be before start date'),
   new ErrorMessage('endDate', 'minDuration', 'End date must be at least 1 hour after start date'),
   new ErrorMessage('branchId', 'required', 'Branch is required'),
+
+  // Login form validation messages
+  new ErrorMessage('email', 'required', 'The email address is required'),
+  new ErrorMessage('email', 'email', 'The email format is invalid'),
+  new ErrorMessage('password', 'required', 'The password is required'),
+  new ErrorMessage('password', 'minlength', 'The password must have at least 8 characters'),
+  new ErrorMessage('confirmPassword', 'required', 'The confirm password is required'),
+  new ErrorMessage('confirmPassword', 'minlength', 'The password must have at least 8 characters'),
+  new ErrorMessage('confirmPassword', 'mustMatch', 'Both passwords must match'),
+  new ErrorMessage('surname', 'required', 'The last name is required'),
+  new ErrorMessage('birthdate', 'required', 'The birthdate is required'),
+
 ];

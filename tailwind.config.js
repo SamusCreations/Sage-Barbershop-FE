@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#0d1f1f", 
+          DEFAULT: "#0d1f1f",
         },
       },
       gridTemplateRows: {
@@ -14,5 +14,9 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/aspect-ratio"), require("flowbite/plugin")],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("flowbite/plugin"),
+    require("@tailwindcss/forms"),
+  ],
 };

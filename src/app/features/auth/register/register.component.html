@@ -1,0 +1,235 @@
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <img
+      class="mx-auto h-32 w-auto"
+      src="https://i.imgur.com/ABokSIQ.png"
+      alt="Your Company"
+    />
+    <h2
+      class="mt-5 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
+    >
+      Create your account
+    </h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-2xl">
+    <!-- Form with formGroup binding -->
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2">
+        <div>
+          <div class="relative z-0 w-full group">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              formControlName="name"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="name"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >First Name</label
+            >
+          </div>
+          <div *ngIf="errorHandling('name')" class="text-red-600 text-sm mt-1">
+            {{ errorHandling("name") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="text"
+              name="surname"
+              id="surname"
+              formControlName="surname"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="surname"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Last Name</label
+            >
+          </div>
+          <div
+            *ngIf="errorHandling('surname')"
+            class="text-red-600 text-sm mt-1"
+          >
+            {{ errorHandling("surname") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="text"
+              name="birthdate"
+              id="birthdate"
+              formControlName="birthdate"
+              datepicker
+              datepicker-autohide
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=""
+              readonly
+              required
+              (changeDate)="onDateChange($event)"
+              [attr.datepicker-max-date]="maxDate"
+            />
+            <label
+              for="birthdate"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Birthdate</label
+            >
+          </div>
+          <div
+            *ngIf="errorHandling('birthdate')"
+            class="text-red-600 text-sm mt-1"
+          >
+            {{ errorHandling("birthdate") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="email"
+              name="email"
+              id="email"
+              formControlName="email"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="email"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Email address</label
+            >
+          </div>
+          <div *ngIf="errorHandling('email')" class="text-red-600 text-sm mt-1">
+            {{ errorHandling("email") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              formControlName="password"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="password"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Password</label
+            >
+          </div>
+          <div
+            *ngIf="errorHandling('password')"
+            class="text-red-600 text-sm mt-1"
+          >
+            {{ errorHandling("password") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="confirmPassword"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Confirm Password</label
+            >
+          </div>
+          <div
+            *ngIf="errorHandling('confirmPassword')"
+            class="text-red-600 text-sm mt-1"
+          >
+            {{ errorHandling("confirmPassword") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              formControlName="phone"
+              required
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+            />
+            <label
+              for="phone"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Phone number</label
+            >
+          </div>
+          <div *ngIf="errorHandling('phone')" class="text-red-600 text-sm mt-1">
+            {{ errorHandling("phone") }}
+          </div>
+        </div>
+
+        <div>
+          <div class="relative z-0 w-full mb-2 group">
+            <input
+              type="text"
+              name="address"
+              id="address"
+              formControlName="address"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              for="address"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-8 scale-100 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-8"
+              >Address</label
+            >
+          </div>
+          <div
+            *ngIf="errorHandling('address')"
+            class="text-red-600 text-sm mt-1"
+          >
+            {{ errorHandling("address") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <button
+          type="submit"
+          class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-5 text-center text-sm text-gray-500">
+      Already have an account?
+      <a
+        (click)="navigateTo('/auth/login')"
+        class="font-semibold leading-6 text-blue-600 hover:text-blue-500 hover:cursor-pointer"
+        >Sign in</a
+      >
+    </p>
+  </div>
+</div>

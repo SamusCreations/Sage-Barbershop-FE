@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CrudBranchesService } from '../services/crud-branches.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../../../shared/services/notification/notification.service';
 
@@ -21,7 +21,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   constructor(
     private activeRouter: ActivatedRoute,
     private crudService: CrudBranchesService,
-    private noti: NotificacionService
+    private noti: NotificationService
   ) {}
 
   ngOnInit(): void {

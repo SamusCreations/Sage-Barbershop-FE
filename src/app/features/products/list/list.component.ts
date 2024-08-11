@@ -3,7 +3,7 @@ import { CrudProductsService } from '../services/crud-products.service';
 import { Router } from '@angular/router';
 import { Observer } from 'rxjs';
 import { ImageService } from '../../../shared/services/imageService/image.service';
-import { NotificacionService, messageType } from '../../../shared/services/notification/notification.service';
+import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
 
 @Component({
   selector: 'app-list',
@@ -19,7 +19,7 @@ export class ListComponent implements OnInit {
     private productService: CrudProductsService,
     private router: Router,
     private imageService: ImageService,
-    private noti: NotificacionService,
+    private noti: NotificationService,
   ) {}
 
   ngOnInit(): void {

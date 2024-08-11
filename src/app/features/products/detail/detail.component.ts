@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CrudProductsService } from '../services/crud-products.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../../../shared/services/notification/notification.service';
 import { ImageService } from '../../../shared/services/imageService/image.service';
@@ -23,7 +23,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   constructor(
     private activeRouter: ActivatedRoute,
     private crudService: CrudProductsService,
-    private noti: NotificacionService,
+    private noti: NotificationService,
     private imageService: ImageService
   ) {}
 

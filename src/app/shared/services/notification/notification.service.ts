@@ -11,7 +11,7 @@ export enum messageType {
   providedIn: 'root',
 })
 //https://www.npmjs.com/package/ngx-toastr
-export class NotificacionService {
+export class NotificationService {
   options: IndividualConfig;
   constructor(private toastr: ToastrService, private router: Router) {
     this.options = this.toastr.toastrConfig;

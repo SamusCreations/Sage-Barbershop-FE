@@ -5,6 +5,7 @@ import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
 import { TableComponent } from './table/table.component';
 import { FormComponent } from './form/form.component';
+import { authGuard } from '../../shared/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -12,16 +13,23 @@ const routes: Routes = [
     component: IndexComponent,
     children: [
       { path: 'list', component: ListComponent },
-      { path: 'table', component: TableComponent },
+      {
+        path: 'table',
+        component: TableComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
       { path: 'create', component: FormComponent },
       { path: 'detail/:id', component: DetailComponent },
       { path: 'update/:id', component: FormComponent },
-    ]
+    ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ServicesRoutingModule { }
+export class ServicesRoutingModule {}

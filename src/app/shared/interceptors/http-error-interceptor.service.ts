@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../services/notification/notification.service';
 
@@ -19,7 +19,7 @@ import {
 })
 export class HttpErrorInterceptorService implements HttpInterceptor {
   // Remember to provide this service in AppModule
-  constructor(private noti: NotificacionService) {}
+  constructor(private noti: NotificationService) {}
   
   intercept(
     request: HttpRequest<any>,

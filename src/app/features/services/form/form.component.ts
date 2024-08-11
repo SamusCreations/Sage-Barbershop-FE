@@ -1,10 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidatorFn,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudServicesService } from '../services/crud-services.service';
 import { ImageService } from '../../../shared/services/imageService/image.service';
-import { NotificacionService, messageType } from '../../../shared/services/notification/notification.service';
+import {
+  NotificationService,
+  messageType,
+} from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
@@ -32,7 +41,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudServicesService,
-    private noti: NotificacionService,
+    private noti: NotificationService,
     private imageService: ImageService
   ) {
     this.reactiveForm();
@@ -72,8 +81,17 @@ export class FormComponent implements OnInit, OnDestroy {
       id: [null],
       name: [null, Validators.required],
       description: [null, [Validators.required, Validators.minLength(5)]],
-      price: [null, [Validators.required, Validators.pattern(/^[0-9]+[.,]{1,1}[0-9]{2,2}$/)]],
-      duration: [null, [Validators.required, this.integerRangeValidator(5, 480)]],
+      price: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9]+[.,]{1,1}[0-9]{2,2}$/),
+        ],
+      ],
+      duration: [
+        null,
+        [Validators.required, this.integerRangeValidator(5, 480)],
+      ],
       image: [this.nameImage],
       user: [null, Validators.required],
     });
@@ -94,7 +112,7 @@ export class FormComponent implements OnInit, OnDestroy {
       const value = parseInt(control.value);
       return Number.isInteger(value) && value >= min && value <= max
         ? null
-        : { 'integerRange': { value: control.value } };
+        : { integerRange: { value: control.value } };
     };
   }
 
@@ -120,10 +138,13 @@ export class FormComponent implements OnInit, OnDestroy {
     if (this.form.invalid) {
       console.log('Invalid Form');
       console.log(this.form.value);
-      this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
+      this.noti.message(
+        'Form Error',
+        'Please correct the form errors.',
+        messageType.error
+      );
       return;
     }
-    
 
     const formData = new FormData();
     formData.append('id', this.form.get('id')?.value);

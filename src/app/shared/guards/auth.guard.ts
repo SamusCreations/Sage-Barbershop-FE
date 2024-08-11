@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
-import { AuthenticationService } from '../services/authentication/authtentication.service';
+import { AuthenticationService } from '../services/authentication/authentication.service';
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../services/notification/notification.service';
 import { inject } from '@angular/core';
@@ -9,42 +9,45 @@ import { inject } from '@angular/core';
 export class UserGuard {
   authService: AuthenticationService = inject(AuthenticationService);
   router: Router = inject(Router);
-  noti: NotificacionService = inject(NotificacionService);
-  auth: boolean = false;
+  notification: NotificationService = inject(NotificationService);
+  isAuthenticated: boolean = false;
   currentUser: any;
+
   constructor() {
-    //Subscripción a la información del usuario actual
+    // Subscription to the current user's information
     this.authService.decodeToken.subscribe((user) => (this.currentUser = user));
-    //Subscripción al boolean que indica si esta autenticado
-    this.authService.isAuthenticated.subscribe((valor) => (this.auth = valor));
+    // Subscription to the boolean indicating if the user is authenticated
+    this.authService.isAuthenticated.subscribe(
+      (value) => (this.isAuthenticated = value)
+    );
   }
-  
+
   checkUserLogin(route: ActivatedRouteSnapshot): boolean {
-    if (this.auth) {
+    if (this.isAuthenticated) {
       const userRole = this.currentUser.role;
       if (
         route.data['roles'].length &&
         !route.data['roles'].includes(userRole)
       ) {
-        this.noti.messageRedirect(
-          'Usuario',
-          `Usuario Sin permisos para acceder`,
+        this.notification.messageRedirect(
+          'User',
+          `User does not have permission to access`,
           messageType.warning,
-          '/usuario/login'
+          '/auth/login'
         );
-        this.router.navigate(['/usuario/login']);
+        this.router.navigate(['/auth/login']);
         return false;
       }
       return true;
     }
 
-    this.noti.messageRedirect(
-      'Usuario',
-      `Usuario No autenticado`,
+    this.notification.messageRedirect(
+      'User',
+      `User not authenticated`,
       messageType.warning,
-      '/usuario/login'
+      '/auth/login'
     );
-    this.router.navigate(['/usuario/login']);
+    this.router.navigate(['/auth/login']);
     return false;
   }
 }

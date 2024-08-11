@@ -5,7 +5,7 @@ import {
   HttpInterceptor,
 } from '@angular/common/http';
 
-import { AuthenticationService } from '../services/authentication/authtentication.service';
+import { AuthenticationService } from '../services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',

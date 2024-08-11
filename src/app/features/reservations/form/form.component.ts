@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudReservationsService } from '../services/crud-reservations.service';
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
@@ -37,7 +37,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudReservationsService,
-    private noti: NotificacionService
+    private noti: NotificationService
   ) {
     this.reactiveForm();
   }

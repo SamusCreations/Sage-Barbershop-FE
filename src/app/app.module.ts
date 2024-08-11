@@ -8,8 +8,10 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { FeaturesModule } from './features/features.module';
 import { ToastrModule } from 'ngx-toastr';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorInterceptorService } from './shared/interceptors/http-error-interceptor.service';
+import { HttpAuthInterceptorService } from './shared/interceptors/http-auth-interceptor.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +23,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     HttpClientModule,
     ToastrModule.forRoot(),
     ReactiveFormsModule,
-    
 
     // importar los módulos creados propios en orden
     CoreModule,
@@ -31,7 +32,19 @@ import { ReactiveFormsModule } from '@angular/forms';
     // al final el gestor de las rutas principal
     AppRoutingModule,
   ],
-  providers: [provideAnimationsAsync()],
+  providers: [
+    provideAnimationsAsync(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptorService,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpAuthInterceptorService,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -14,7 +14,7 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthenticationService {
   //Header para afirmar el tipo de contenido JSON
   //URL del API
-  ServerUrl = environment.apiURL;
+  ServerUrl = environment.apiURL + "/oauth";
   //Variable observable para gestionar la información del token del usuario, con características especiales
   private tokenUserSubject: BehaviorSubject<any>;
   //Variable observable para gestionar la información del token
@@ -46,8 +46,8 @@ export class AuthenticationService {
     return this.authenticated.asObservable();
   }
   //Crear usuario
-  createUser(user: any): Observable<any> {
-    return this.http.post<any>(this.ServerUrl + 'user/registrar', user);
+  register(user: any): Observable<any> {
+    return this.http.post<any>(this.ServerUrl + '/register', user);
   }
   //Decodificar la información del token y obtener la información del usuario
   get decodeToken(): any {
@@ -60,8 +60,8 @@ export class AuthenticationService {
   }
 
   //Login
-  loginUser(user: any): Observable<any> {
-    return this.http.post<any>(this.ServerUrl + 'user/login', user).pipe(
+  login(user: any): Observable<any> {
+    return this.http.post<any>(this.ServerUrl + '/login', user).pipe(
       map((response) => {
         // almacene los detalles del usuario y el token jwt
         // en el almacenamiento local para mantener al usuario conectado entre las actualizaciones de la página

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudBranchesService } from '../services/crud-branches.service';
-import { NotificacionService, messageType } from '../../../shared/services/notification/notification.service';
+import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
@@ -28,7 +28,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudBranchesService,
-    private noti: NotificacionService,
+    private noti: NotificationService,
   ) {
     this.reactiveForm();
     this.getEmployeesWhithoutBranch();

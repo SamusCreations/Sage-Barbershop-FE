@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudSchedulesService } from '../services/crud-schedules.service';
 import {
-  NotificacionService,
+  NotificationService,
   messageType,
 } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
@@ -37,7 +37,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudSchedulesService,
-    private noti: NotificacionService
+    private noti: NotificationService
   ) {
     this.reactiveForm();
     this.getBranches();
