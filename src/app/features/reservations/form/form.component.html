@@ -1,1 +1,297 @@
-<p>form works!</p>
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+    <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+      {{ titleForm }} Reservation
+    </h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+        <!-- Branch Input -->
+        <div class="sm:col-span-2">
+          <label
+            for="branchId"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Branch</label
+          >
+          <input
+            type="text"
+            id="branchId"
+            [value]="currentUser?.Branch?.name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            readonly
+          />
+        </div>
+
+        <div>
+          <label
+            for="date"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Date</label
+          >
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+            >
+              <svg
+                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                />
+              </svg>
+            </div>
+            <input
+              id="date"
+              formControlName="date"
+              datepicker
+              datepicker-buttons
+              datepicker-autoselect-today
+              type="text"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Select date"
+              readonly
+              required
+              (changeDate)="onDateChange($event)"
+              [attr.datepicker-min-date]="minDate"
+            />
+          </div>
+
+          <div *ngIf="errorHandling('date')" class="text-red-500 text-xs mt-2">
+            {{ errorHandling("date") }}
+          </div>
+        </div>
+
+        <div>
+          <label
+            for="branchId"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Time</label
+          >
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none"
+            >
+              <svg
+                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              type="time"
+              id="time"
+              formControlName="time"
+              class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              min="09:00"
+              max="18:00"
+              value="00:00"
+              required
+            />
+          </div>
+          <div *ngIf="errorHandling('time')" class="text-red-500 text-xs mt-2">
+            {{ errorHandling("time") }}
+          </div>
+        </div>
+
+        <!-- Service Input -->
+        <div>
+          <label
+            for="serviceId"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Service</label
+          >
+          <select
+            id="serviceId"
+            formControlName="serviceId"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            required
+          >
+            <option value="" disabled>Select service</option>
+            <option *ngFor="let service of serviceList" [value]="service.id">
+              {{ service.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="errorHandling('serviceId')"
+            class="text-red-500 text-xs mt-2"
+          >
+            {{ errorHandling("serviceId") }}
+          </div>
+        </div>
+
+        <!-- User Input -->
+        <div>
+          <label
+            for="userId"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >User</label
+          >
+          <select
+            id="userId"
+            formControlName="userId"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            required
+          >
+            <option value="" disabled>Select user</option>
+            <option *ngFor="let user of userList" [value]="user.id">
+              {{ user.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="errorHandling('userId')"
+            class="text-red-500 text-xs mt-2"
+          >
+            {{ errorHandling("userId") }}
+          </div>
+        </div>
+
+        <!-- Answer 1 -->
+        <div class="sm:col-span-2">
+          <label
+            for="answer1"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Is this your first time visiting our barbershop?</label
+          >
+          <div class="flex items-center mb-4">
+            <input
+              id="answer1-yes"
+              type="radio"
+              formControlName="answer1"
+              value="yes"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer1-yes"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Yes</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="answer1-no"
+              type="radio"
+              formControlName="answer1"
+              value="no"
+              checked
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer1-no"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >No</label
+            >
+          </div>
+        </div>
+
+        <!-- Answer 2 -->
+        <div class="sm:col-span-2">
+          <label
+            for="answer2"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Do you have any allergies or skin conditions?</label
+          >
+          <div class="flex items-center mb-4">
+            <input
+              id="answer2-yes"
+              type="radio"
+              formControlName="answer2"
+              value="yes"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer2-yes"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Yes</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="answer2-no"
+              type="radio"
+              formControlName="answer2"
+              value="no"
+              checked
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer2-no"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >No</label
+            >
+          </div>
+        </div>
+
+        <!-- Answer 3 -->
+        <div class="sm:col-span-2">
+          <label
+            for="answer3"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Do you have a specific barber preference?</label
+          >
+          <div class="flex items-center mb-4">
+            <input
+              id="answer3-yes"
+              type="radio"
+              formControlName="answer3"
+              value="yes"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer3-yes"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Yes</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="answer3-no"
+              type="radio"
+              formControlName="answer3"
+              value="no"
+              checked
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              for="answer3-no"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >No</label
+            >
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between">
+        <button
+          type="button"
+          (click)="onBack()"
+          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-primary-800"
+        >
+          Back
+        </button>
+        <button
+          type="submit"
+          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+        >
+          {{ isCreate ? "Add Reservation" : "Update Reservation" }}
+        </button>
+        <button
+          type="button"
+          (click)="onReset()"
+          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-red-500 bg-red-100 rounded-lg focus:ring-4 focus:ring-red-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

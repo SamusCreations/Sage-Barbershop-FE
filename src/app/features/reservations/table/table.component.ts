@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CrudReservationsService } from '../services/crud-reservations.service';
 import { Router } from '@angular/router';
 import { Observer, Subject, takeUntil } from 'rxjs';
+import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-table',
@@ -13,13 +14,21 @@ export class TableComponent implements OnInit, OnDestroy {
   dataList: any[] = [];
   charging: boolean = true;
   chargingSuccesfully: boolean = false;
+  currentUser: any;
 
   constructor(
     private CrudService: CrudReservationsService,
-    private router: Router
+    private router: Router,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit(): void {
+    this.authService.decodeToken.subscribe(
+      (user: any) => (this.currentUser = user)
+    );
+
+    console.log(this.currentUser);
+
     this.getAllSchedules();
   }
 
@@ -39,7 +48,7 @@ export class TableComponent implements OnInit, OnDestroy {
       },
     };
 
-    this.CrudService.findByManager(2).subscribe(observer);
+    this.CrudService.findByManager(this.currentUser.id).subscribe(observer);
   }
 
   ngOnDestroy() {
@@ -67,7 +76,7 @@ export class TableComponent implements OnInit, OnDestroy {
   onSearch(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const searchValue = inputElement.value;
-    this.filterByClient(searchValue, 2);
+    this.filterByClient(searchValue, this.currentUser.id);
   }
 
   filterByClient(name: string, id: number): void {
