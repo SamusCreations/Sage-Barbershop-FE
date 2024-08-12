@@ -1,0 +1,194 @@
+<form (ngSubmit)="submit()" novalidate class="my-6" [formGroup]="form">
+  <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Invoice</h2>
+    </div>
+
+    <div class="mb-4">
+      <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+      <input
+        type="date"
+        id="date"
+        formControlName="date"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      />
+      <div *ngIf="errorHandling('date')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling('date') }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label for="branch" class="block text-sm font-medium text-gray-700">Branch</label>
+      <select
+        id="branch"
+        formControlName="branchId"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      >
+        <option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</option>
+      </select>
+      <div *ngIf="errorHandling('branchId')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling('branchId') }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label for="user" class="block text-sm font-medium text-gray-700">User</label>
+      <select
+        id="user"
+        formControlName="userId"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+      >
+        <option *ngFor="let user of userList" [value]="user.id">{{ user.name }}</option>
+      </select>
+      <div *ngIf="errorHandling('userId')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling('userId') }}
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label for="total" class="block text-sm font-medium text-gray-700">Total</label>
+      <input
+        type="text"
+        id="total"
+        formControlName="total"
+        placeholder="Total"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+        readonly
+      />
+      <div *ngIf="errorHandling('total')" class="text-red-600 text-sm mt-1">
+        {{ errorHandling('total') }}
+      </div>
+    </div>
+
+    <div formArrayName="invoiceDetails">
+      <div *ngFor="let detail of invoiceDetails.controls; let i = index" [formGroupName]="i" class="mb-4 p-4 border border-gray-300 rounded-md">
+        
+        <!-- Service Selection -->
+        <div class="mb-4">
+          <label for="serviceId-{{i}}" class="block text-sm font-medium text-gray-700">Service</label>
+          <select
+            id="serviceId-{{i}}"
+            formControlName="serviceId"
+            (change)="onServiceOrProductChange(i)"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          >
+            <option value="">Select a service</option>
+            <option *ngFor="let service of serviceList" [value]="service.id">{{ service.name }}</option>
+          </select>
+          <div *ngIf="errorHandlingDetail(i, 'serviceId')" class="text-red-600 text-sm mt-1">
+            {{ errorHandlingDetail(i, 'serviceId') }}
+          </div>
+        </div>
+    
+        <!-- Product Selection -->
+        <div class="mb-4">
+          <label for="productId-{{i}}" class="block text-sm font-medium text-gray-700">Product</label>
+          <select
+            id="productId-{{i}}"
+            formControlName="productId"
+            (change)="onServiceOrProductChange(i)"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          >
+            <option value="">Select a product</option>
+            <option *ngFor="let product of productList" [value]="product.id">{{ product.name }}</option>
+          </select>
+          <div *ngIf="errorHandlingDetail(i, 'productId')" class="text-red-600 text-sm mt-1">
+            {{ errorHandlingDetail(i, 'productId') }}
+          </div>
+        </div>
+    
+        <!-- Validation Error for Service/Product Selection -->
+        <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail?.errors?.['serviceOrProductRequired']" class="text-red-600 text-sm mt-1">
+          Either a Service or a Product must be selected.
+        </div>
+        
+        
+    
+        <!-- Quantity Input -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="quantity-{{i}}" class="block text-sm font-medium text-gray-700">Quantity</label>
+            <input
+              type="number"
+              id="quantity-{{i}}"
+              formControlName="quantity"
+              placeholder="Quantity"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              [attr.max]="getMaxQuantity(i)"
+              (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
+            />
+            <div *ngIf="errorHandlingDetail(i, 'quantity')" class="text-red-600 text-sm mt-1">
+              {{ errorHandlingDetail(i, 'quantity') }}
+            </div>
+          </div>
+    
+          <!-- Price Input -->
+          <div>
+            <label for="price-{{i}}" class="block text-sm font-medium text-gray-700">Price</label>
+            <input
+              type="text"
+              id="price-{{i}}"
+              formControlName="price"
+              placeholder="Price"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              readonly
+            />
+            <div *ngIf="errorHandlingDetail(i, 'price')" class="text-red-600 text-sm mt-1">
+              {{ errorHandlingDetail(i, 'price') }}
+            </div>
+          </div>
+        </div>
+    
+        <!-- Subtotal Input -->
+        <div class="mb-4">
+          <label for="subtotal-{{i}}" class="block text-sm font-medium text-gray-700">Subtotal</label>
+          <input
+            type="text"
+            id="subtotal-{{i}}"
+            formControlName="subtotal"
+            placeholder="Subtotal"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            readonly
+          />
+          <div *ngIf="errorHandlingDetail(i, 'subtotal')" class="text-red-600 text-sm mt-1">
+            {{ errorHandlingDetail(i, 'subtotal') }}
+          </div>
+        </div>
+    
+        <!-- Remove Detail Button -->
+        <button
+          type="button"
+          (click)="removeDetail(i)"
+          class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+        >
+          Remove Detail
+        </button>
+      </div>
+    </div>
+    
+
+    <button
+      type="button"
+      (click)="addDetail()"
+      class="mb-4 bg-green-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600"
+    >
+      Add Detail
+    </button>
+
+    <div class="flex space-x-4">
+      <button
+        type="button"
+        (click)="onReset()"
+        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+      >
+        Reset
+      </button>
+      <button
+        type="submit"
+        class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</form>

@@ -22,4 +22,8 @@ export class CrudInvoicesService {
     urlSearchParams.append("id", id.toString())
     return this.httpService.get<any>(`invoice-header`, urlSearchParams);
   }
+
+  getUsers(): Observable<any> {
+    return this.httpService.get<any>(`user/`);
+  }
 }

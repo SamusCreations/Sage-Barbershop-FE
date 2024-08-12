@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './index/index.component';
 import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
+import { FormComponent } from './form/form.component';
 
 const routes: Routes = [
   {
@@ -10,6 +11,7 @@ const routes: Routes = [
     component: IndexComponent,
     children: [
       { path: 'list', component: ListComponent },
+      { path: 'create', component: FormComponent },
       { path: 'detail/:id', component: DetailComponent }
     ]
   }
