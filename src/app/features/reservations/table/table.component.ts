@@ -70,6 +70,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   filterByDate(): void {
+    
     if (this.startDate && this.endDate) {
       this.dataList = this.dataList.filter((reservation) => {
         const reservationDate = new Date(reservation.date);
@@ -78,7 +79,7 @@ export class TableComponent implements OnInit, OnDestroy {
         );
       });
     } else {
-      this.dataList = this.dataList; // Si no hay fechas, mostrar todos los datos
+      this.getAllReservations(); // Si no hay fechas, mostrar todos los datos
     }
   }
 
