@@ -26,15 +26,23 @@ export class DetailComponent {
     this.invoiceService.findById(id).subscribe({
       next: (data) => {
         this.invoice = data.shift();
-        console.log(
-          '🚀 ~ DetailComponent ~ this.invoiceService.findById ~ this.invoice:',
-          this.invoice
-        );
         this.charging = false;
       },
       error: (error) => {
         console.error('Error fetching invoice detail:', error);
         this.charging = false;
+      },
+    });
+  }
+
+  markAsInvoice(id: number): void {
+    this.invoiceService.setAsInvoice(id).subscribe({
+      next: (response) => {
+        this.invoice.status = true;
+        console.log('Invoice status updated successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error updating invoice status:', error);
       },
     });
   }

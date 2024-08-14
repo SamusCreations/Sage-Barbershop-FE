@@ -21,6 +21,11 @@ export class CrudInvoicesService {
     urlSearchParams.append("administratorId", id.toString())
     return this.httpService.get<any>('invoice-header', urlSearchParams);
   }
+  setAsInvoice(id: number) : Observable<any> {
+    let formData = new FormData()
+    formData.append("id", id.toString())
+    return this.httpService.put<any>('invoice-header/status', formData);
+  }
   findById(id: number): Observable<any> {
     let urlSearchParams = new URLSearchParams()
     urlSearchParams.append("id", id.toString())

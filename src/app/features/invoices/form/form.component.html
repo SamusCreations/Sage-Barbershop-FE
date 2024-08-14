@@ -1,9 +1,11 @@
 <form (ngSubmit)="submit()" novalidate class="my-6" [formGroup]="form">
-  <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+  <div class="max-w-7xl mx-auto bg-white p-8 rounded-md shadow-md">
     <div class="mb-4">
       <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Invoice</h2>
     </div>
-
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">{{this.user.name + " " + this.user.surname}}</h2>
+    </div>
     <div class="mb-4">
       <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
       <input
@@ -57,107 +59,97 @@
       />
     </div>
 
-    <div formArrayName="invoiceDetails">
-      <div *ngFor="let detail of invoiceDetails.controls; let i = index" [formGroupName]="i" class="mb-4 p-4 border border-gray-300 rounded-md">
-        
-        <!-- Service Selection -->
-        <div class="mb-4">
-          <label for="serviceId-{{i}}" class="block text-sm font-medium text-gray-700">Service</label>
-          <select
-            id="serviceId-{{i}}"
-            formControlName="serviceId"
-            (change)="onServiceOrProductChange(i)"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          >
-            <option value="">Select a service</option>
-            <option *ngFor="let service of serviceList" [value]="service.id">{{ service.name }}</option>
-          </select>
-          <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('serviceId').invalid" class="text-red-600 text-sm mt-1">
-            {{ errorHandlingDetail(i, 'serviceId') }}
-          </div>
-        </div>
-    
-        <!-- Product Selection -->
-        <div class="mb-4">
-          <label for="productId-{{i}}" class="block text-sm font-medium text-gray-700">Product</label>
-          <select
-            id="productId-{{i}}"
-            formControlName="productId"
-            (change)="onServiceOrProductChange(i)"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          >
-            <option value="">Select a product</option>
-            <option *ngFor="let product of productList" [value]="product.id">{{ product.name }}</option>
-          </select>
-          <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('productId').invalid" class="text-red-600 text-sm mt-1">
-            {{ errorHandlingDetail(i, 'productId') }}
-          </div>
-        </div>
-    
-        <!-- Validation Error for Service/Product Selection -->
-        <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail?.errors?.['serviceOrProductRequired']" class="text-red-600 text-sm mt-1">
-          Either a Service or a Product must be selected.
-        </div>
-
-        <!-- Quantity Input -->
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="quantity-{{i}}" class="block text-sm font-medium text-gray-700">Quantity</label>
-            <input
-              type="number"
-              id="quantity-{{i}}"
-              formControlName="quantity"
-              placeholder="Quantity"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              [attr.max]="getMaxQuantity(i)"
-              (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
-            />
-            <div *ngIf="detail.get('quantity').touched && detail.get('quantity').invalid" class="text-red-600 text-sm mt-1">
-              {{ errorHandlingDetail(i, 'quantity') }}
-            </div>
-          </div>
-    
-          <!-- Price Input -->
-          <div>
-            <label for="price-{{i}}" class="block text-sm font-medium text-gray-700">Price</label>
-            <input
-              type="text"
-              id="price-{{i}}"
-              formControlName="price"
-              placeholder="Price"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              readonly
-            />
-            <div *ngIf="detail.get('price').touched && detail.get('price').invalid" class="text-red-600 text-sm mt-1">
-              {{ errorHandlingDetail(i, 'price') }}
-            </div>
-          </div>
-        </div>
-    
-        <!-- Subtotal Input -->
-        <div class="mb-4">
-          <label for="subtotal-{{i}}" class="block text-sm font-medium text-gray-700">Subtotal</label>
-          <input
-            type="text"
-            id="subtotal-{{i}}"
-            formControlName="subtotal"
-            placeholder="Subtotal"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            readonly
-          />
-        </div>
-    
-        <!-- Remove Detail Button -->
-        <button
-          type="button"
-          (click)="removeDetail(i)"
-          class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
-        >
-          Remove Detail
-        </button>
-      </div>
+    <div formArrayName="invoiceDetails" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let detail of invoiceDetails.controls; let i = index" [formGroupName]="i">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <select
+                formControlName="serviceId"
+                (change)="onServiceOrProductChange(i)"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              >
+                <option value="">Select a service</option>
+                <option *ngFor="let service of serviceList" [value]="service.id">{{ service.name }}</option>
+              </select>
+              <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('serviceId').invalid" class="text-red-600 text-sm mt-1">
+                {{ errorHandlingDetail(i, 'serviceId') }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <select
+                formControlName="productId"
+                (change)="onServiceOrProductChange(i)"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              >
+                <option value="">Select a product</option>
+                <option *ngFor="let product of productList" [value]="product.id">{{ product.name }}</option>
+              </select>
+              <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('productId').invalid" class="text-red-600 text-sm mt-1">
+                {{ errorHandlingDetail(i, 'productId') }}
+              </div>
+              <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail?.errors?.['serviceOrProductRequired']" class="text-red-600 text-sm mt-1">
+                Either a Service or a Product must be selected.
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <input
+                type="number"
+                formControlName="quantity"
+                placeholder="Quantity"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                [attr.max]="getMaxQuantity(i)"
+                (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
+              />
+              <div *ngIf="detail.get('quantity').touched && detail.get('quantity').invalid" class="text-red-600 text-sm mt-1">
+                {{ errorHandlingDetail(i, 'quantity') }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <input
+                type="text"
+                formControlName="price"
+                placeholder="Price"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                readonly
+              />
+              <div *ngIf="detail.get('price').touched && detail.get('price').invalid" class="text-red-600 text-sm mt-1">
+                {{ errorHandlingDetail(i, 'price') }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <input
+                type="text"
+                formControlName="subtotal"
+                placeholder="Subtotal"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                readonly
+              />
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button
+                type="button"
+                (click)="removeDetail(i)"
+                class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    
+
     <button
       type="button"
       (click)="addDetail()"

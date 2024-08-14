@@ -42,11 +42,16 @@ export class ListComponent implements OnInit {
   }
 
   openDetailDialog(invoiceId: number): void {
-    this.dialog.open(DetailComponent, {
+    const dialogRef = this.dialog.open(DetailComponent, {
       width: '90vw',  // 90% del ancho de la pantalla
-      height: '100vh', // 90% del alto de la pantalla
+      height: '90vh', // 90% del alto de la pantalla
       data: { id: invoiceId }
-    })
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Recargar facturas después de cerrar el modal
+      this.fetchInvoices();
+    });
   }
 
   create(): void {

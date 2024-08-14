@@ -8,6 +8,7 @@ import { CrudProductsService } from '../../products/services/crud-products.servi
 import { CrudBranchesService } from '../../branches/services/crud-branches.service';
 import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
+import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-form',
@@ -23,6 +24,14 @@ export class FormComponent implements OnInit, OnDestroy {
   userList: any = [];
   titleForm = 'Create';
 
+  user: {
+    Branch: {
+      id: null
+    }
+    name: "",
+    surname: ""
+  }
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -30,11 +39,12 @@ export class FormComponent implements OnInit, OnDestroy {
     private invoicesCrud: CrudInvoicesService,
     private productsCrud: CrudProductsService,
     private branchesCrud: CrudBranchesService,
-    private noti: NotificationService
+    private noti: NotificationService,
+    private authService: AuthenticationService
   ) {
     this.form = this.fb.group({
       date: ['', [Validators.required]],
-      branchId: ['', Validators.required],
+      branchId: [{ value: '', disabled: true }, Validators.required],
       userId: ['', Validators.required],
       total: [{ value: '', disabled: true }],
       invoiceDetails: this.fb.array([this.createDetail()])
@@ -42,6 +52,15 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.authService.decodeToken.subscribe((user:any) => (
+      this.user = user
+      
+    ));
+    this.form.patchValue({
+      branchId: this.user?.Branch?.id || null,
+    });
+    console.log("🚀 ~ FormComponent ~ ngOnInit ~ this.user:", this.user)
+
     this.servicesCrud.getAll().subscribe((services) => {
       this.serviceList = services;
     });
@@ -100,8 +119,6 @@ export class FormComponent implements OnInit, OnDestroy {
     if (serviceId) {
       detail.get('productId').setValue('');
       detail.get('productId').disable();
-      detail.get('quantity').setValue(1);
-      detail.get('quantity').disable();
     } else if (productId) {
       detail.get('serviceId').setValue('');
       detail.get('serviceId').disable();
@@ -208,9 +225,8 @@ export class FormComponent implements OnInit, OnDestroy {
         'Create Invoice',
         `Invoice created successfully.`,
         messageType.success,
-        '/invoices/table'
+        '/invoices/list'
       );
-      this.router.navigate(['/invoices/table']);
     });
   }
 
