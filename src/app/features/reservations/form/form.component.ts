@@ -4,7 +4,6 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
-  ValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
@@ -14,6 +13,7 @@ import {
   messageType,
 } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
+import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-form',
@@ -23,33 +23,46 @@ import { FormErrorMessage } from '../../../form-error-message';
 export class FormComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   titleForm: string = 'Create';
-  branchList: any;
+  serviceList: any;
+  userList: any;
   toUpdateObject: any;
   createResponse: any;
   form: FormGroup;
   idObject: number = 0;
   isCreate: boolean = true;
-  message = '';
-  imageInfos?: Observable<any>;
+  minDate: string;
+  currentUser: any;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudReservationsService,
-    private noti: NotificationService
+    private noti: NotificationService,
+    private authService: AuthenticationService
   ) {
     this.reactiveForm();
+    this.setMinDate();
   }
 
   ngOnInit(): void {
+    // Subscripción a la información del usuario actual
+    this.authService.decodeToken.subscribe((user: any) => {
+      this.currentUser = user;
+
+      // Set default branch from currentUser after user is loaded
+      this.form.patchValue({
+        branchId: this.currentUser?.Branch?.id || null,
+      });
+    });
+
     this.activeRouter.params.subscribe((params) => {
       this.idObject = params['id'];
-      if (this.idObject != undefined) {
+      if (this.idObject !== undefined) {
         this.isCreate = false;
         this.titleForm = 'Update';
 
-        // Obtener la branch y su lista de usuarios relacionados
+        // Obtener la reserva para actualizar
         this.crudService
           .findById(this.idObject)
           .pipe(takeUntil(this.destroy$))
@@ -57,71 +70,37 @@ export class FormComponent implements OnInit, OnDestroy {
             this.toUpdateObject = data;
             this.form.patchValue({
               id: this.toUpdateObject.id,
-              startDate: this.toUpdateObject.startDate,
-              endDate: this.toUpdateObject.endDate,
-              branchId: this.toUpdateObject.branchId,
-              status: this.toUpdateObject.status,
+              date: this.toUpdateObject.date,
+              time: this.toUpdateObject.time,
+              answer1: this.toUpdateObject.answer1,
+              answer2: this.toUpdateObject.answer2,
+              answer3: this.toUpdateObject.answer3,
+              statusId: this.toUpdateObject.status.id,
+              branchId: this.toUpdateObject.branch.id,
+              serviceId: this.toUpdateObject.service.id,
+              userId: this.toUpdateObject.user.id,
             });
           });
       }
+
+      // Cargar listas de opciones
+      this.loadOptions();
     });
   }
 
   reactiveForm() {
     this.form = this.fb.group({
       id: [null],
-      startDate: [null, [Validators.required, this.futureDateValidator()]],
-      endDate: [
-        null,
-        [
-          Validators.required,
-          this.futureDateValidator(),
-          this.dateRangeValidator(),
-        ],
-      ],
-      branchId: [null, Validators.required],
-      status: [true, Validators.required],
+      date: [null, [Validators.required]],
+      time: [null, [Validators.required]], // Nuevo campo requerido
+      answer1: ['no'], // Valor por defecto
+      answer2: ['no'], // Valor por defecto
+      answer3: ['no'], // Valor por defecto
+      statusId: [1], // Estatus predeterminado en 1
+      branchId: [null], // Campo no requerido
+      serviceId: [null, Validators.required],
+      userId: [null, Validators.required],
     });
-  }
-
-  futureDateValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const currentDate = new Date();
-      const controlDate = new Date(control.value);
-      return controlDate < currentDate
-        ? { invalidDate: { value: control.value } }
-        : null;
-    };
-  }
-
-  dateRangeValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const startDateControl = this.form?.get('startDate');
-      const endDateControl = control;
-
-      if (startDateControl && endDateControl) {
-        const startDate = new Date(startDateControl.value);
-        const endDate = new Date(endDateControl.value);
-
-        if (!startDateControl.value || !endDateControl.value) {
-          // If either date is not set, no validation error
-          return null;
-        }
-
-        const minimumDifference = 1 * 60 * 60 * 1000; // 1 hour in milliseconds
-        const isEndDateBeforeStartDate = endDate < startDate;
-        const isLessThanMinimumDifference =
-          endDate.getTime() - startDate.getTime() < minimumDifference;
-
-        if (isEndDateBeforeStartDate) {
-          return { dateMismatch: { value: control.value } };
-        } else if (isLessThanMinimumDifference) {
-          return { minDuration: { value: control.value } };
-        }
-      }
-
-      return null;
-    };
   }
 
   public errorHandling = (controlName: string) => {
@@ -154,18 +133,13 @@ export class FormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('id', this.form.get('id')?.value);
-    formData.append('startDate', this.form.get('startDate')?.value);
-    formData.append('endDate', this.form.get('endDate')?.value);
-    formData.append('branchId', this.form.get('branchId')?.value);
-    formData.append('status', this.form.get('status')?.value);
+    const formData = this.form.value;
+
+    // Combina date y time en un solo campo datetime
+    formData.datetime = `${formData.date}T${formData.time}:00`;
 
     // Print FormData to verify its content
     console.log(formData);
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
 
     if (this.isCreate) {
       this.crudService
@@ -175,12 +149,12 @@ export class FormComponent implements OnInit, OnDestroy {
           (data) => {
             this.createResponse = data;
             this.noti.messageRedirect(
-              'Create schedule',
-              `Schedule created: ${data.name}`,
+              'Create Reservation',
+              `Reservation created: ${data.id}`,
               messageType.success,
-              '/schedules/table'
+              '/reservations/table'
             );
-            this.router.navigate(['/schedules/table']);
+            this.router.navigate(['/reservations/table']);
           },
           (error) => {
             this.noti.message('Create Error', error.message, messageType.error);
@@ -194,12 +168,12 @@ export class FormComponent implements OnInit, OnDestroy {
           (data) => {
             this.createResponse = data;
             this.noti.messageRedirect(
-              'Update schedule',
-              `Schedule updated: ${data.name}`,
+              'Update Reservation',
+              `Reservation updated: ${data.id}`,
               messageType.success,
-              '/schedules/table'
+              '/reservations/table'
             );
-            this.router.navigate(['/schedules/table']);
+            this.router.navigate(['/reservations/table']);
           },
           (error) => {
             this.noti.message('Update Error', error.message, messageType.error);
@@ -208,17 +182,43 @@ export class FormComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleStatus() {
-    const currentStatus = this.form.get('status')?.value;
-    this.form.patchValue({ status: !currentStatus });
+  setMinDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+    const year = today.getFullYear();
+
+    this.minDate = `${year}-${month}-${day}`;
+  }
+
+  onDateChange(event: any): void {
+    const selectedDate = event.target.value;
+    this.form.get('date')?.setValue(selectedDate);
   }
 
   onReset() {
-    this.form.reset();
+    this.form.reset({
+      statusId: 1, // Reset al valor predeterminado
+      answer1: 'no', // Reset al valor predeterminado
+      answer2: 'no', // Reset al valor predeterminado
+      answer3: 'no', // Reset al valor predeterminado
+    });
   }
 
   onBack() {
-    this.router.navigate(['/schedules/table']);
+    this.router.navigate(['/reservations/table']);
+  }
+
+  loadOptions() {
+    // Load branch, service, and user lists for form selection
+    this.crudService
+      .getServices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => (this.serviceList = data));
+    this.crudService
+      .getUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => (this.userList = data));
   }
 
   ngOnDestroy() {

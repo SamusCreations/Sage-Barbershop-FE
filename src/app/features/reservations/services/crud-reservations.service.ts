@@ -53,7 +53,11 @@ export class CrudReservationsService {
     return this.httpService.put<any>(this.endpoint, data);
   }
 
-  getSchedules(): Observable<any> {
-    return this.httpService.get<any>(`schedule`);
+  getUsers(): Observable<any> {
+    return this.httpService.get<any>(`user`);
+  }
+
+  getServices(): Observable<any> {
+    return this.httpService.get<any>(`service`);
   }
 }

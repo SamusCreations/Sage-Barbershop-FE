@@ -16,7 +16,9 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/aspect-ratio"),
-    require("flowbite/plugin"),
     require("@tailwindcss/forms"),
+    require("flowbite/plugin")({
+      datatables: true,
+    }),
   ],
 };

@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication/authentication.service';
+import { initFlowbite, Dropdown } from 'flowbite';
+import type { DropdownOptions, DropdownInterface } from 'flowbite';
+import type { InstanceOptions } from 'flowbite';
+
 
 @Component({
   selector: 'app-header',
@@ -20,7 +24,15 @@ export class HeaderComponent {
     this.authService.decodeToken.subscribe(
       (user: any) => (this.currentUser = user)
     );
+
+    // Detecta cambios de ruta y reinicia Flowbite
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        initFlowbite(); // Re-inicializa Flowbite después de cada cambio de ruta
+      }
+    });
   }
+
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
@@ -42,6 +54,10 @@ export class HeaderComponent {
   logout() {
     this.authService.logout();
     this.currentUser = null;
-    this.router.navigate(['/auth/login']); 
+    this.router.navigate(['/auth/login']);
+  }
+
+  ngAfterViewInit() {
+    initFlowbite();
   }
 }
