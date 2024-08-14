@@ -55,4 +55,10 @@ export const FormErrorMessage = [
   new ErrorMessage('surname', 'required', 'The last name is required'),
   new ErrorMessage('birthdate', 'required', 'The birthdate is required'),
 
+    // Reservations form validation messages
+    new ErrorMessage('date', 'required', 'Start Date is required'),
+    new ErrorMessage('date', 'invalidDate', 'The Date cannot be in the past'),
+    new ErrorMessage('time', 'required', 'The time is required'),
+    new ErrorMessage('serviceId', 'required', 'Service is required'),
+    new ErrorMessage('userId', 'required', 'User is required'),
 ];

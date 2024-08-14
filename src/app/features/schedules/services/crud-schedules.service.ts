@@ -26,6 +26,13 @@ export class CrudSchedulesService {
     return this.httpService.get<any>(`${this.endpoint}/getByBranch`, params);
   }
 
+  findByBranchAndDate(id: number, date: string): Observable<any> {
+    const params = new URLSearchParams();
+    params.append('branchId', id.toString());
+    params.append('date', date);
+    return this.httpService.get<any>(`${this.endpoint}/getByBranchAndDate`, params);
+  }
+
   create(scheduleData: FormData): Observable<any> {
     return this.httpService.post<any>(this.endpoint, scheduleData);
   }

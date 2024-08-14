@@ -33,16 +33,16 @@ export class CrudReservationsService {
     return this.httpService.get<any>(`${this.endpoint}/getByClient`, params);
   }
 
-  findByMonthYear(
-    month: number,
-    year: number,
+  findByDateRange(
+    startDate: string,
+    endDate: string,
     idManager?: number
   ): Observable<any> {
     const params = new URLSearchParams();
-    params.append('month', month.toString());
-    params.append('year', year.toString());
+    params.append('startDate', startDate.toString());
+    params.append('endDate', endDate.toString());
     params.append('idManager', idManager.toString());
-    return this.httpService.get<any>(`${this.endpoint}/getByMonthYear`, params);
+    return this.httpService.get<any>(`${this.endpoint}/getByDateRange`, params);
   }
 
   create(data: FormData): Observable<any> {
@@ -53,11 +53,9 @@ export class CrudReservationsService {
     return this.httpService.put<any>(this.endpoint, data);
   }
 
-  getUsers(): Observable<any> {
-    return this.httpService.get<any>(`user`);
-  }
-
-  getServices(): Observable<any> {
-    return this.httpService.get<any>(`service`);
+  findStatusById(id: number): Observable<any> {
+    const params = new URLSearchParams();
+    params.append('id', id.toString());
+    return this.httpService.get<any>(`status/getById`, params);
   }
 }

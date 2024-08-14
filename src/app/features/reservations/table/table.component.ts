@@ -16,6 +16,9 @@ export class TableComponent implements OnInit, OnDestroy {
   chargingSuccesfully: boolean = false;
   currentUser: any;
 
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+
   constructor(
     private CrudService: CrudReservationsService,
     private router: Router,
@@ -29,10 +32,10 @@ export class TableComponent implements OnInit, OnDestroy {
 
     console.log(this.currentUser);
 
-    this.getAllSchedules();
+    this.getAllReservations();
   }
 
-  async getAllSchedules(): Promise<void> {
+  async getAllReservations(): Promise<void> {
     const observer: Observer<any> = {
       next: (data) => {
         this.dataList = data;
@@ -47,8 +50,36 @@ export class TableComponent implements OnInit, OnDestroy {
         console.log('Fetch complete');
       },
     };
+    // Si no hay fechas seleccionadas, obtener todas las reservaciones
+    this.CrudService.findByManager(this.currentUser.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(observer);
+  }
 
-    this.CrudService.findByManager(this.currentUser.id).subscribe(observer);
+  onStartDateChange(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.startDate = new Date(inputElement.value);
+    this.filterByDate();
+  }
+
+  onEndDateChange(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.endDate = new Date(inputElement.value);
+    console.log(this.endDate);
+    this.filterByDate();
+  }
+
+  filterByDate(): void {
+    if (this.startDate && this.endDate) {
+      this.dataList = this.dataList.filter((reservation) => {
+        const reservationDate = new Date(reservation.date);
+        return (
+          reservationDate >= this.startDate && reservationDate <= this.endDate
+        );
+      });
+    } else {
+      this.dataList = this.dataList; // Si no hay fechas, mostrar todos los datos
+    }
   }
 
   ngOnDestroy() {
@@ -81,24 +112,15 @@ export class TableComponent implements OnInit, OnDestroy {
 
   filterByClient(name: string, id: number): void {
     if (name) {
-      const observer: Observer<any> = {
-        next: (data) => {
-          this.dataList = data;
-          this.chargingSuccesfully = true;
-        },
-        error: (error) => {
-          this.chargingSuccesfully = false;
-          console.error('Error al obtener datos de clientes', error);
-        },
-        complete: () => {
-          this.charging = false;
-          console.log('Fetch client reservations complete');
-        },
-      };
-
-      this.CrudService.findByClient(name, id).subscribe(observer);
+      this.dataList = this.dataList.filter((item) =>
+        (
+          item.User.name.toLowerCase() +
+          ' ' +
+          item.User.surname.toLowerCase()
+        ).includes(name.toLowerCase())
+      );
     } else {
-      this.getAllSchedules(); // Si no hay valor de búsqueda, se obtienen todas las reservas
+      this.getAllReservations(); // Fetch all reservations again if the search field is cleared
     }
   }
 }
