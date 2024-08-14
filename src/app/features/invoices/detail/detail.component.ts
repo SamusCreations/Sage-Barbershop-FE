@@ -1,24 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CrudInvoicesService } from '../services/crud-invoices.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.scss',
+  styleUrls: ['./detail.component.scss']
 })
 export class DetailComponent {
   invoice: any = null;
   charging: boolean = true;
 
   constructor(
-    private route: ActivatedRoute,
+    private dialogRef: MatDialogRef<DetailComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private invoiceService: CrudInvoicesService
   ) {}
 
   ngOnInit(): void {
-    const id = +this.route.snapshot.paramMap.get('id');
-    this.fetchInvoiceDetail(id);
+    this.fetchInvoiceDetail(this.data.id);
   }
 
   fetchInvoiceDetail(id: number): void {
@@ -39,5 +39,7 @@ export class DetailComponent {
     });
   }
 
-  
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 }

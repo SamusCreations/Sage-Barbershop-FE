@@ -1,85 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { CrudServicesService } from '../../services/services/crud-services.service';
 import { CrudInvoicesService } from '../services/crud-invoices.service';
 import { CrudProductsService } from '../../products/services/crud-products.service';
 import { CrudBranchesService } from '../../branches/services/crud-branches.service';
+import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
+import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.css']
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, OnDestroy {
+  destroy$: Subject<boolean> = new Subject<boolean>();
   form: FormGroup;
-  serviceList: any = [
-    { id: '1', name: 'Service 1', price: 100 },
-    { id: '2', name: 'Service 2', price: 200 }
-  ];
-  productList = [
-    { id: '1', name: 'Product 1', quantity: 10, price: 50 },
-    { id: '2', name: 'Product 2', quantity: 5, price: 75 }
-  ];
-  branchList = [
-    { id: '1', name: 'Branch 1' },
-    { id: '2', name: 'Branch 2' }
-  ];
-  userList = [
-    { id: '1', name: 'User 1' },
-    { id: '2', name: 'User 2' }
-  ];
+  serviceList: any = [];
+  productList: any = [];
+  branchList: any = [];
+  userList: any = [];
   titleForm = 'Create';
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private servicesCrud: CrudServicesService,
     private invoicesCrud: CrudInvoicesService,
     private productsCrud: CrudProductsService,
-    private branchesCrud: CrudBranchesService
+    private branchesCrud: CrudBranchesService,
+    private noti: NotificationService
   ) {
     this.form = this.fb.group({
-      date: ['', Validators.required],
+      date: ['', [Validators.required]],
       branchId: ['', Validators.required],
       userId: ['', Validators.required],
-      total: [''],
+      total: [{ value: '', disabled: true }],
       invoiceDetails: this.fb.array([this.createDetail()])
     });
-
-    
   }
 
-
-
-  async ngOnInit() {
-    console.log(await this.servicesCrud.getAll())
-
-    this.servicesCrud
-    .getAll()
-    .subscribe((services) => {
-      this.serviceList = services
-      console.log(services);
+  ngOnInit(): void {
+    this.servicesCrud.getAll().subscribe((services) => {
+      this.serviceList = services;
     });
 
-    this.productsCrud
-    .getAll()
-    .subscribe((products) => {
-      this.productList = products
-      console.log(products);
+    this.productsCrud.getAll().subscribe((products) => {
+      this.productList = products;
     });
 
-    this.invoicesCrud
-    .getUsers()
-    .subscribe((users) => {
-      this.userList = users
-      console.log(users);
+    this.invoicesCrud.getUsers().subscribe((users) => {
+      this.userList = users;
     });
 
-
-    this.branchesCrud
-    .getAll()
-    .subscribe((branches) => {
-      this.branchList = branches
-      console.log(branches);
+    this.branchesCrud.getAll().subscribe((branches) => {
+      this.branchList = branches;
     });
   }
 
@@ -96,11 +72,11 @@ export class FormComponent implements OnInit {
       subtotal: [{ value: '', disabled: true }, Validators.required]
     }, { validators: this.serviceOrProductValidator });
   }
-  
+
   serviceOrProductValidator(group: FormGroup): { [key: string]: any } | null {
     const serviceId = group.get('serviceId').value;
     const productId = group.get('productId').value;
-  
+
     if ((serviceId && productId) || (!serviceId && !productId)) {
       return { serviceOrProductRequired: true };
     }
@@ -121,20 +97,15 @@ export class FormComponent implements OnInit {
     const serviceId = detail.get('serviceId').value;
     const productId = detail.get('productId').value;
 
-
     if (serviceId) {
       detail.get('productId').setValue('');
       detail.get('productId').disable();
       detail.get('quantity').setValue(1);
       detail.get('quantity').disable();
-
-      
     } else if (productId) {
       detail.get('serviceId').setValue('');
       detail.get('serviceId').disable();
       detail.get('quantity').enable();
-
-      
     } else {
       detail.get('quantity').enable();
     }
@@ -142,26 +113,26 @@ export class FormComponent implements OnInit {
     this.updateSubtotal(index);
   }
 
-  onProductOrServiceQuantityChange(index: number){
+  onProductOrServiceQuantityChange(index: number): void {
     const detail = this.invoiceDetails.at(index);
     const productId = detail.get('productId').value;
-    const quantity = detail.get("quantity")
-    console.log("🚀 ~ FormComponent ~ onProductOrServiceQuantityChange ~ quantity:", quantity.value)
-    if(quantity.value && quantity.value < 1){
-      quantity.setValue(1)
+    const quantity = detail.get('quantity');
+
+    if (quantity.value && quantity.value < 1) {
+      quantity.setValue(1);
     }
-    if(productId && quantity.value) {
+
+    if (productId && quantity.value) {
       const product = this.productList.find(s => s.id.toString() === productId);
-      if(quantity.value > product.quantity) {
-        quantity.setValue(product.quantity)
+      if (quantity.value > product.quantity) {
+        quantity.setValue(product.quantity);
       }
     }
 
-    this.updateSubtotal(index)
+    this.updateSubtotal(index);
   }
 
   updateSubtotal(index: number): void {
-    console.log("l163")
     const detail = this.invoiceDetails.at(index);
     const serviceId = detail.get('serviceId').value;
     const productId = detail.get('productId').value;
@@ -176,12 +147,8 @@ export class FormComponent implements OnInit {
         detail.get('price').setValue(service.price);
       }
     } else if (productId) {
-      console.log("🚀 ~ FormComponent ~ updateSubtotal ~ productId:", productId)
       const product = this.productList.find(p => p.id.toString() === productId);
-      console.log("🚀 ~ FormComponent ~ updateSubtotal ~ productList:", this.productList)
-      console.log("🚀 ~ FormComponent ~ updateSubtotal ~ product:", product)
       if (product) {
-        console.log("entra a producto")
         subtotal = quantity * product.price;
         detail.get('price').setValue(product.price);
         if (quantity >= product.quantity) {
@@ -190,7 +157,7 @@ export class FormComponent implements OnInit {
         }
       }
     }
-    
+
     detail.get('subtotal').setValue(subtotal.toFixed(2));
     this.updateTotal();
   }
@@ -203,27 +170,85 @@ export class FormComponent implements OnInit {
 
     this.form.get('total').setValue(total.toFixed(2));
   }
+
   getMaxQuantity(index: number): number {
-    const productId = this.invoiceDetails.at(index).get('productId')?.value;
-    const product = this.productList.find(p => p.id.toString() === productId);
-    return product ? product.quantity : 0;
+    const detail = this.invoiceDetails.at(index);
+    const productId = detail.get('productId').value;
+    if (productId) {
+      const product = this.productList.find(p => p.id.toString() === productId);
+      return product ? product.quantity : 0;
+    }
+    return 0;
   }
 
-  errorHandling(controlName: string): string {
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.invoiceDetails.controls.forEach(detail => detail.markAllAsTouched());
+      this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('date', this.form.get('date')?.value);
+    formData.append('branchId', this.form.get('branchId')?.value);
+    formData.append('userId', this.form.get('userId')?.value);
+    formData.append('total', this.form.get('total')?.value);
+
+    this.invoiceDetails.controls.forEach((detail, index) => {
+      formData.append(`invoiceDetails[${index}][serviceId]`, detail.get('serviceId')?.value);
+      formData.append(`invoiceDetails[${index}][productId]`, detail.get('productId')?.value);
+      formData.append(`invoiceDetails[${index}][quantity]`, detail.get('quantity')?.value);
+      formData.append(`invoiceDetails[${index}][price]`, detail.get('price')?.value);
+      formData.append(`invoiceDetails[${index}][subtotal]`, detail.get('subtotal')?.value);
+    });
+
+    this.invoicesCrud.create(formData).subscribe((data) => {
+      this.noti.messageRedirect(
+        'Create Invoice',
+        `Invoice created successfully.`,
+        messageType.success,
+        '/invoices/table'
+      );
+      this.router.navigate(['/invoices/table']);
+    });
+  }
+
+  public errorHandling = (controlName: string) => {
+    let messageError = '';
     const control = this.form.get(controlName);
-    if (control.hasError('required') && control.touched) {
-      return 'This field is required';
+    if (control.errors) {
+      for (const message of FormErrorMessage) {
+        if (
+          control.errors[message.forValidator] &&
+          message.forControl == controlName
+        ) {
+          messageError = message.text;
+        }
+      }
+      return messageError;
+    } else {
+      return false;
     }
-    return '';
-  }
+  };
 
-  errorHandlingDetail(index: number, controlName: string): string {
+  public errorHandlingDetail = (index: number, controlName: string) => {
+    let messageError = '';
     const control = this.invoiceDetails.at(index).get(controlName);
-    if (control.hasError('required') && control.touched) {
-      return 'This field is required';
+    if (control.errors) {
+      for (const message of FormErrorMessage) {
+        if (
+          control.errors[message.forValidator] &&
+          message.forControl == controlName
+        ) {
+          messageError = message.text;
+        }
+      }
+      return messageError;
+    } else {
+      return false;
     }
-    return '';
-  }
+  };
 
   onReset(): void {
     this.form.reset();
@@ -231,18 +256,12 @@ export class FormComponent implements OnInit {
     this.invoiceDetails.push(this.createDetail());
   }
 
+  onBack(): void {
+    this.router.navigate(['/invoices/table']);
+  }
 
-
-  submit(): void {
-    if(this.form.valid) {
-      console.log(this.form.value);
-    }
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      
-      this.invoiceDetails.controls.forEach(detail => detail.markAllAsTouched());
-      
-      return;
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

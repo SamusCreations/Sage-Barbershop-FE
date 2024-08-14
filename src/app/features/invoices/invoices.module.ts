@@ -10,6 +10,9 @@ import { DetailComponent } from './detail/detail.component';
 import { FormComponent } from './form/form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon'; 
 
 @NgModule({
   declarations: [
@@ -23,6 +26,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     InvoicesRoutingModule,
     SharedModule,
     ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class InvoicesModule { }

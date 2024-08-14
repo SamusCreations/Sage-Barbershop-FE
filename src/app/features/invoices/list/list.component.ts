@@ -1,47 +1,55 @@
 import { Component, OnInit } from '@angular/core';
 import { CrudInvoicesService } from '../services/crud-invoices.service';
-import { Observer } from 'rxjs';
+import { DetailComponent } from '../detail/detail.component';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrl: './list.component.scss'
+  styleUrls: ['./list.component.scss']
 })
-export class ListComponent implements OnInit{
+export class ListComponent implements OnInit {
   invoices: any[] = [];
-  charging: boolean = true
-  chargingSuccesfully: boolean = false
+  charging: boolean = true;
+  chargingSuccessfully: boolean = false;
 
-  constructor(private invoiceService: CrudInvoicesService, private router: Router) { }
+  constructor(
+    private invoiceService: CrudInvoicesService,
+    public dialog: MatDialog,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchInvoices();
   }
 
   async fetchInvoices(): Promise<void> {
-    const observer: Observer<any> = {
+    this.invoiceService.getAll().subscribe({
       next: (data) => {
         this.invoices = data;
-        this.chargingSuccesfully = true
+        this.chargingSuccessfully = true;
       },
       error: (error) => {
-        this.chargingSuccesfully = false
+        this.chargingSuccessfully = false;
         console.error('Error al obtener datos de facturas', error);
       },
       complete: () => {
-        this.charging = false
+        this.charging = false;
         console.log('Fetch invoices complete');
       }
-    };
-
-    this.invoiceService.findByEmployee(2).subscribe(observer);
+    });
   }
 
-  viewDetail(id: number): void {
-    this.router.navigate(['/invoices/detail', id]);
+  openDetailDialog(invoiceId: number): void {
+    this.dialog.open(DetailComponent, {
+      width: '90vw',  // 90% del ancho de la pantalla
+      height: '100vh', // 90% del alto de la pantalla
+      data: { id: invoiceId }
+    })
   }
 
+  create(): void {
+    this.router.navigate(['/invoices/create']);
+  }
 }
-
-

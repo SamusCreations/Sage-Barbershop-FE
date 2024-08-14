@@ -1,8 +1,37 @@
 <div class="bg-white mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
   <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase">
-    invoices
+    Invoices
   </h2>
+  <div
+  class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
+>
+  <a
+    type="button"
+    class="flex items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:cursor-pointer"
+    (click)="create()"
+  >
+    <svg
+      class="w-6 h-6 text-gray-800 dark:text-white"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M5 12h14m-7 7V5"
+      />
+    </svg>
+    Add Invoice
+  </a>
 
+  
+</div>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-8">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -25,45 +54,33 @@
         </tr>
       </thead>
       <tbody>
-        @for (invoice of invoices; track invoice.id) {
-        <tr class="bg-white border-b hover:bg-gray-50">
+        <tr *ngFor="let invoice of invoices" class="bg-white border-b hover:bg-gray-50">
           <td class="w-4 p-4">
             <div class="flex items-center">
               <input
-                id="checkbox-table-search-1"
+                id="checkbox-table-search-{{invoice.id}}"
                 type="checkbox"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
               />
-              <label for="checkbox-table-search-1" class="sr-only"
-                >checkbox</label
-              >
+              <label for="checkbox-table-search-{{invoice.id}}" class="sr-only">checkbox</label>
             </div>
           </td>
-          <th
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-          >
-            {{ invoice.date | date : "short" }}
-          </th>
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            {{ invoice.date | date : 'shortDate' }}
+          </td>
           <td class="px-6 py-4">
             {{ invoice.User.name + " " + invoice.User.surname }}
           </td>
-          <td
-            class="px-6 py-4 font-medium"
-            [class]="invoice.status ? 'text-green-600' : 'text-red-600'"
-          >
-            {{ invoice.status ? "Paid" : "Pending" }}
+          <td class="px-6 py-4 font-medium" [ngClass]="invoice.status ? 'text-green-600' : 'text-red-600'">
+            {{ invoice.status ? 'Paid' : 'Pending' }}
           </td>
           <td class="px-6 py-4">{{ invoice.total | currency }}</td>
           <td class="flex items-center px-6 py-4">
-            <a
-              (click)="viewDetail(invoice.id)"
-              class="font-medium text-blue-600 hover:underline"
-              >View more</a
-            >
+            <button mat-button (click)="openDetailDialog(invoice.id)" class="font-medium text-blue-600 hover:underline">
+              View more
+            </button>
           </td>
         </tr>
-        }
       </tbody>
     </table>
   </div>

@@ -12,7 +12,7 @@
         formControlName="date"
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
       />
-      <div *ngIf="errorHandling('date')" class="text-red-600 text-sm mt-1">
+      <div *ngIf="form.get('date').touched && form.get('date').invalid" class="text-red-600 text-sm mt-1">
         {{ errorHandling('date') }}
       </div>
     </div>
@@ -26,7 +26,7 @@
       >
         <option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</option>
       </select>
-      <div *ngIf="errorHandling('branchId')" class="text-red-600 text-sm mt-1">
+      <div *ngIf="form.get('branchId').touched && form.get('branchId').invalid" class="text-red-600 text-sm mt-1">
         {{ errorHandling('branchId') }}
       </div>
     </div>
@@ -40,7 +40,7 @@
       >
         <option *ngFor="let user of userList" [value]="user.id">{{ user.name }}</option>
       </select>
-      <div *ngIf="errorHandling('userId')" class="text-red-600 text-sm mt-1">
+      <div *ngIf="form.get('userId').touched && form.get('userId').invalid" class="text-red-600 text-sm mt-1">
         {{ errorHandling('userId') }}
       </div>
     </div>
@@ -55,9 +55,6 @@
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
         readonly
       />
-      <div *ngIf="errorHandling('total')" class="text-red-600 text-sm mt-1">
-        {{ errorHandling('total') }}
-      </div>
     </div>
 
     <div formArrayName="invoiceDetails">
@@ -75,7 +72,7 @@
             <option value="">Select a service</option>
             <option *ngFor="let service of serviceList" [value]="service.id">{{ service.name }}</option>
           </select>
-          <div *ngIf="errorHandlingDetail(i, 'serviceId')" class="text-red-600 text-sm mt-1">
+          <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('serviceId').invalid" class="text-red-600 text-sm mt-1">
             {{ errorHandlingDetail(i, 'serviceId') }}
           </div>
         </div>
@@ -92,7 +89,7 @@
             <option value="">Select a product</option>
             <option *ngFor="let product of productList" [value]="product.id">{{ product.name }}</option>
           </select>
-          <div *ngIf="errorHandlingDetail(i, 'productId')" class="text-red-600 text-sm mt-1">
+          <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail.get('productId').invalid" class="text-red-600 text-sm mt-1">
             {{ errorHandlingDetail(i, 'productId') }}
           </div>
         </div>
@@ -101,9 +98,7 @@
         <div *ngIf="(detail.get('serviceId').touched || detail.get('productId').touched) && detail?.errors?.['serviceOrProductRequired']" class="text-red-600 text-sm mt-1">
           Either a Service or a Product must be selected.
         </div>
-        
-        
-    
+
         <!-- Quantity Input -->
         <div class="grid grid-cols-2 gap-4">
           <div>
@@ -117,7 +112,7 @@
               [attr.max]="getMaxQuantity(i)"
               (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
             />
-            <div *ngIf="errorHandlingDetail(i, 'quantity')" class="text-red-600 text-sm mt-1">
+            <div *ngIf="detail.get('quantity').touched && detail.get('quantity').invalid" class="text-red-600 text-sm mt-1">
               {{ errorHandlingDetail(i, 'quantity') }}
             </div>
           </div>
@@ -133,7 +128,7 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               readonly
             />
-            <div *ngIf="errorHandlingDetail(i, 'price')" class="text-red-600 text-sm mt-1">
+            <div *ngIf="detail.get('price').touched && detail.get('price').invalid" class="text-red-600 text-sm mt-1">
               {{ errorHandlingDetail(i, 'price') }}
             </div>
           </div>
@@ -150,9 +145,6 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             readonly
           />
-          <div *ngIf="errorHandlingDetail(i, 'subtotal')" class="text-red-600 text-sm mt-1">
-            {{ errorHandlingDetail(i, 'subtotal') }}
-          </div>
         </div>
     
         <!-- Remove Detail Button -->
@@ -166,7 +158,6 @@
       </div>
     </div>
     
-
     <button
       type="button"
       (click)="addDetail()"
