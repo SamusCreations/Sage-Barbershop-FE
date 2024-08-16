@@ -9,6 +9,8 @@ import { CrudBranchesService } from '../../branches/services/crud-branches.servi
 import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
+import { SearchModalComponent } from '../../../shared/components/search-modal/search-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-form',
@@ -23,6 +25,7 @@ export class FormComponent implements OnInit, OnDestroy {
   branchList: any = [];
   userList: any = [];
   titleForm = 'Create';
+  selectedProduct: any;
 
   user: {
     Branch: {
@@ -40,7 +43,8 @@ export class FormComponent implements OnInit, OnDestroy {
     private productsCrud: CrudProductsService,
     private branchesCrud: CrudBranchesService,
     private noti: NotificationService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private dialog: MatDialog
   ) {
     this.form = this.fb.group({
       date: ['', [Validators.required]],
@@ -280,4 +284,30 @@ export class FormComponent implements OnInit, OnDestroy {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
+
+  openProductModal() {
+    const dialogRef = this.dialog.open(SearchModalComponent, {
+      width: '600px',
+      data: {
+        items: this.productList, // Pasa la lista de productos al modal
+        searchProps: ['name', 'price'], // Propiedades por las que quieres buscar
+        displayProps: ['name', 'price'], // Propiedades que se mostrarán en el modal
+        returnProp: 'id', // La propiedad que se devolverá al seleccionar un producto
+        title: 'Products',
+        multipleChoices: true // Cambia esto a true si quieres selección múltiple
+      }
+    });
+  
+    dialogRef.componentInstance.itemsSelected.subscribe(result => {
+      console.log("🚀 ~ FormComponent ~ openProductModal ~ result:", result)
+      if (result) {
+          // Cuando se selecciona un solo ítem
+          
+        
+        // Lógica adicional si es necesario
+      }
+    });
+    
+  }
+  
 }

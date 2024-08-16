@@ -1,0 +1,29 @@
+<div class="modal-overlay" (click)="closeModal()"></div>
+<div class="modal-content">
+  <div class="modal-header">
+    <h3>{{ title }}</h3>
+    <button (click)="closeModal()" class="close-btn">&times;</button>
+  </div>
+  <div class="modal-body">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filterItems()"
+      placeholder="Search..."
+      class="search-input"
+    />
+    <ul class="item-list">
+      <li
+        *ngFor="let item of filteredItems"
+        (click)="selectItem(item)"
+        [class.selected]="isSelected(item)"
+        class="item"
+      >
+        <span *ngFor="let prop of displayProps; let i = index">
+          {{ item[prop] }}<span *ngIf="i < displayProps.length - 1"> - </span>
+        </span>
+      </li>
+    </ul>
+    <button *ngIf="multipleChoices" (click)="closeModal()" class="confirm-btn">Confirm Selection</button>
+  </div>
+</div>

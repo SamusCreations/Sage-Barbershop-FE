@@ -18,7 +18,7 @@
         {{ errorHandling('date') }}
       </div>
     </div>
-
+    
     <div class="mb-4">
       <label for="branch" class="block text-sm font-medium text-gray-700">Branch</label>
       <select
@@ -175,3 +175,5 @@
     </div>
   </div>
 </form>
+<button mat-button (click)="openProductModal()">Seleccionar Producto</button>
+<input matInput [value]="selectedProduct?.name" placeholder="Producto Seleccionado" readonly>
