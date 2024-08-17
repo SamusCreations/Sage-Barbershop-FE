@@ -7,10 +7,10 @@ import { CrudInvoicesService } from '../services/crud-invoices.service';
 import { CrudProductsService } from '../../products/services/crud-products.service';
 import { CrudBranchesService } from '../../branches/services/crud-branches.service';
 import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
-import { FormErrorMessage } from '../../../form-error-message';
 import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
-import { SearchModalComponent } from '../../../shared/components/search-modal/search-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SearchModalComponent } from '../../../shared/components/search-modal/search-modal.component';
+import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({
   selector: 'app-form',
@@ -25,15 +25,13 @@ export class FormComponent implements OnInit, OnDestroy {
   branchList: any = [];
   userList: any = [];
   titleForm = 'Create';
-  selectedProduct: any;
+  invalidFormSubmitted: boolean = false
 
   user: {
-    Branch: {
-      id: null
-    }
-    name: "",
-    surname: ""
-  }
+    Branch: { id: null };
+    name: string;
+    surname: string;
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -46,64 +44,52 @@ export class FormComponent implements OnInit, OnDestroy {
     private authService: AuthenticationService,
     private dialog: MatDialog
   ) {
+    const today = new Date().toISOString().split('T')[0];
+
     this.form = this.fb.group({
-      date: ['', [Validators.required]],
+      date: [today, [Validators.required]],
       branchId: [{ value: '', disabled: true }, Validators.required],
       userId: ['', Validators.required],
-      total: [{ value: '', disabled: true }],
-      invoiceDetails: this.fb.array([this.createDetail()])
+      total: [{ value: 0.00, disabled: true }],
+      invoiceDetails: this.fb.array([], this.minItemsValidator(1))
     });
   }
 
   ngOnInit(): void {
-    this.authService.decodeToken.subscribe((user:any) => (
-      this.user = user
-      
-    ));
+    this.authService.decodeToken.subscribe((user: any) => (this.user = user));
     this.form.patchValue({
-      branchId: this.user?.Branch?.id || null,
-    });
-    console.log("🚀 ~ FormComponent ~ ngOnInit ~ this.user:", this.user)
-
-    this.servicesCrud.getAll().subscribe((services) => {
-      this.serviceList = services;
+      branchId: this.user?.Branch?.id || null
     });
 
-    this.productsCrud.getAll().subscribe((products) => {
-      this.productList = products;
-    });
-
-    this.invoicesCrud.getUsers().subscribe((users) => {
-      this.userList = users;
-    });
-
-    this.branchesCrud.getAll().subscribe((branches) => {
-      this.branchList = branches;
-    });
+    this.servicesCrud.getAll().subscribe((services) => (this.serviceList = services));
+    this.productsCrud.getAll().subscribe((products) => (this.productList = products));
+    this.invoicesCrud.getUsers().subscribe((users) => (this.userList = users));
+    this.branchesCrud.getAll().subscribe((branches) => (this.branchList = branches));
   }
 
-  get invoiceDetails(): FormArray {
-    return this.form.get('invoiceDetails') as FormArray;
-  }
 
-  createDetail(): FormGroup {
-    return this.fb.group({
-      serviceId: [''],
-      productId: [''],
-      quantity: ['', Validators.required],
-      price: ['', Validators.required],
-      subtotal: [{ value: '', disabled: true }, Validators.required]
-    }, { validators: this.serviceOrProductValidator });
-  }
+  //Form actions
 
-  serviceOrProductValidator(group: FormGroup): { [key: string]: any } | null {
-    const serviceId = group.get('serviceId').value;
-    const productId = group.get('productId').value;
-
-    if ((serviceId && productId) || (!serviceId && !productId)) {
-      return { serviceOrProductRequired: true };
+  createDetail(serviceId?: string, productId?: string): FormGroup {
+    let price = 0
+    if (serviceId) {
+      const service = this.serviceList.find((s) => s.id === serviceId);
+      price = service.price
+    } else if (productId) {
+      const product = this.productList.find((s) => s.id === productId);
+      price = product.price
     }
-    return null;
+
+    return this.fb.group(
+      {
+        serviceId: [serviceId || ''],
+        productId: [productId || ''],
+        quantity: ['', Validators.required],
+        price: [price, Validators.required],
+        subtotal: [{ value: '', disabled: true }, Validators.required]
+      },
+      { validators: this.serviceOrProductValidator }
+    );
   }
 
   addDetail(): void {
@@ -115,38 +101,101 @@ export class FormComponent implements OnInit, OnDestroy {
     this.updateTotal();
   }
 
-  onServiceOrProductChange(index: number): void {
-    const detail = this.invoiceDetails.at(index);
-    const serviceId = detail.get('serviceId').value;
-    const productId = detail.get('productId').value;
+  openLineModal(index?: number): void {
+    const dialogRef = this.dialog.open(SearchModalComponent, {
+      width: '600px',
+      data: {
+        lists: [
+          { list: this.productList, name: 'Products' },
+          { list: this.serviceList, name: 'Services' }
+        ],
+        searchProps: ['name', 'price'],
+        displayProps: ['name', 'price'],
+        returnProp: 'id',
+        title: 'Select a Product or Service',
+        multipleChoices: false,
+        multipleLists: true
+      }
+    });
 
-    if (serviceId) {
-      detail.get('productId').setValue('');
-      detail.get('productId').disable();
-    } else if (productId) {
-      detail.get('serviceId').setValue('');
-      detail.get('serviceId').disable();
-      detail.get('quantity').enable();
-    } else {
-      detail.get('quantity').enable();
-    }
+    dialogRef.componentInstance.itemSelected.subscribe((result) => {
+      if (result) {
+        const detail = index !== undefined ? this.invoiceDetails.at(index) : this.createDetail();
+        let price = 0
 
-    this.updateSubtotal(index);
+        if (result.listFrom === 'Products') {
+
+          const product = this.serviceList.find((s) => s.id === result.id);
+          price = product.price
+
+          detail.get('productId').setValue(result.id);
+          detail.get('serviceId').setValue('');
+          detail.get('serviceId').disable();
+        } else if (result.listFrom === 'Services') {
+
+          const service = this.serviceList.find((s) => s.id === result.id);
+          price = service.price
+
+          detail.get('serviceId').setValue(result.id);
+          detail.get('productId').setValue('');
+          detail.get('productId').disable();
+        }
+
+        detail.get('price').setValue(price);
+
+        if (index === undefined) {
+          this.invoiceDetails.push(detail);
+        }
+
+        this.updateSubtotal(index || this.invoiceDetails.length - 1);
+      }
+    });
+  }
+
+  openUserModal(): void {
+    const dialogRef = this.dialog.open(SearchModalComponent, {
+      width: '600px',
+      data: {
+        lists: [{ list: this.userList, name: 'Users' }],
+        searchProps: ['name', 'surname'],
+        displayProps: ['name', 'surname'],
+        returnProp: 'id',
+        title: 'Select a User',
+        multipleChoices: false,
+        multipleLists: false
+      }
+    });
+
+    dialogRef.componentInstance.itemSelected.subscribe((result) => {
+      if (result) {
+        this.form.get('userId')?.setValue(result.id);
+        this.form.get('userId')?.markAsTouched();
+      }
+    });
   }
 
   onProductOrServiceQuantityChange(index: number): void {
     const detail = this.invoiceDetails.at(index);
     const productId = detail.get('productId').value;
-    const quantity = detail.get('quantity');
+    const serviceId = detail.get('serviceId').value;
+    const quantity = detail.get('quantity').value;
 
-    if (quantity.value && quantity.value < 1) {
-      quantity.setValue(1);
+    if (quantity && quantity < 1) {
+      detail.get('quantity').setValue(1);
     }
 
-    if (productId && quantity.value) {
-      const product = this.productList.find(s => s.id.toString() === productId);
-      if (quantity.value > product.quantity) {
-        quantity.setValue(product.quantity);
+    if ((productId || serviceId) && quantity) {
+      let itemQuantity = 0
+      if (productId) {
+        const product = this.productList.find((p) => p.id === productId);
+        itemQuantity = product.quantity
+      } else if (serviceId) {
+        const service = this.serviceList.find((p) => p.id === serviceId);
+        itemQuantity = service.quantity
+      }
+
+      if (quantity > itemQuantity) {
+        detail.get('quantity').setValue(itemQuantity);
       }
     }
 
@@ -156,19 +205,21 @@ export class FormComponent implements OnInit, OnDestroy {
   updateSubtotal(index: number): void {
     const detail = this.invoiceDetails.at(index);
     const serviceId = detail.get('serviceId').value;
+    console.log("🚀 ~ FormComponent ~ updateSubtotal ~ serviceId:", serviceId)
     const productId = detail.get('productId').value;
+    console.log("🚀 ~ FormComponent ~ updateSubtotal ~ productId:", productId)
     const quantity = detail.get('quantity').value;
     const price = detail.get('price').value;
 
     let subtotal = 0;
     if (serviceId) {
-      const service = this.serviceList.find(s => s.id.toString() === serviceId);
+      const service = this.serviceList.find((s) => s.id === serviceId);
       if (service) {
         subtotal = quantity * service.price;
         detail.get('price').setValue(service.price);
       }
     } else if (productId) {
-      const product = this.productList.find(p => p.id.toString() === productId);
+      const product = this.productList.find((p) => p.id === productId);
       if (product) {
         subtotal = quantity * product.price;
         detail.get('price').setValue(product.price);
@@ -192,20 +243,12 @@ export class FormComponent implements OnInit, OnDestroy {
     this.form.get('total').setValue(total.toFixed(2));
   }
 
-  getMaxQuantity(index: number): number {
-    const detail = this.invoiceDetails.at(index);
-    const productId = detail.get('productId').value;
-    if (productId) {
-      const product = this.productList.find(p => p.id.toString() === productId);
-      return product ? product.quantity : 0;
-    }
-    return 0;
-  }
 
   submit(): void {
     if (this.form.invalid) {
+      this.invalidFormSubmitted = true
       this.form.markAllAsTouched();
-      this.invoiceDetails.controls.forEach(detail => detail.markAllAsTouched());
+      this.invoiceDetails.controls.forEach((detail) => detail.markAllAsTouched());
       this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
       return;
     }
@@ -225,59 +268,13 @@ export class FormComponent implements OnInit, OnDestroy {
     });
 
     this.invoicesCrud.create(formData).subscribe((data) => {
-      this.noti.messageRedirect(
-        'Create Invoice',
-        `Invoice created successfully.`,
-        messageType.success,
-        '/invoices/list'
-      );
+      this.noti.messageRedirect('Create Invoice', `Invoice created successfully.`, messageType.success, '/invoices/list');
     });
   }
-
-  public errorHandling = (controlName: string) => {
-    let messageError = '';
-    const control = this.form.get(controlName);
-    if (control.errors) {
-      for (const message of FormErrorMessage) {
-        if (
-          control.errors[message.forValidator] &&
-          message.forControl == controlName
-        ) {
-          messageError = message.text;
-        }
-      }
-      return messageError;
-    } else {
-      return false;
-    }
-  };
-
-  public errorHandlingDetail = (index: number, controlName: string) => {
-    let messageError = '';
-    const control = this.invoiceDetails.at(index).get(controlName);
-    if (control.errors) {
-      for (const message of FormErrorMessage) {
-        if (
-          control.errors[message.forValidator] &&
-          message.forControl == controlName
-        ) {
-          messageError = message.text;
-        }
-      }
-      return messageError;
-    } else {
-      return false;
-    }
-  };
 
   onReset(): void {
     this.form.reset();
     this.invoiceDetails.clear();
-    this.invoiceDetails.push(this.createDetail());
-  }
-
-  onBack(): void {
-    this.router.navigate(['/invoices/table']);
   }
 
   ngOnDestroy(): void {
@@ -285,29 +282,92 @@ export class FormComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  openProductModal() {
-    const dialogRef = this.dialog.open(SearchModalComponent, {
-      width: '600px',
-      data: {
-        items: this.productList, // Pasa la lista de productos al modal
-        searchProps: ['name', 'price'], // Propiedades por las que quieres buscar
-        displayProps: ['name', 'price'], // Propiedades que se mostrarán en el modal
-        returnProp: 'id', // La propiedad que se devolverá al seleccionar un producto
-        title: 'Products',
-        multipleChoices: true // Cambia esto a true si quieres selección múltiple
-      }
-    });
-  
-    dialogRef.componentInstance.itemsSelected.subscribe(result => {
-      console.log("🚀 ~ FormComponent ~ openProductModal ~ result:", result)
-      if (result) {
-          // Cuando se selecciona un solo ítem
-          
-        
-        // Lógica adicional si es necesario
-      }
-    });
-    
+
+  //Validators
+
+  private minItemsValidator(minItems: number) {
+    return (formArray: FormArray): { [key: string]: any } | null => {
+      return formArray.length >= minItems ? null : { minItems: { minItems, actual: formArray.length } };
+    };
   }
-  
+  private serviceOrProductValidator(group: FormGroup): { [key: string]: any } | null {
+    const serviceId = group.get('serviceId').value;
+    const productId = group.get('productId').value;
+
+    if ((serviceId && productId) || (!serviceId && !productId)) {
+      return { serviceOrProductRequired: true };
+    }
+    return null;
+  }
+  areInvoiceDetailsValid(): boolean {
+    return this.invoiceDetails.controls.every((detail) => detail.valid);
+  }
+
+
+  //Gets
+
+  get invoiceDetails(): FormArray {
+    return this.form.get('invoiceDetails') as FormArray;
+  }
+
+  getUserName(userId: string): string {
+    const user = this.userList.find((u) => u.id === userId);
+    return user ? `${user.name} ${user.surname}` : 'Select a user';
+  }
+
+  getServiceName(serviceId: string): string {
+    const service = this.serviceList.find((s) => s.id === serviceId);
+    return service ? service.name : '';
+  }
+
+  getProductName(productId: string): string {
+    const product = this.productList.find((p) => p.id === productId);
+    return product ? product.name : '';
+  }
+
+  getMaxQuantity(index: number): number {
+    const detail = this.invoiceDetails.at(index);
+    const productId = detail.get('productId').value;
+    if (productId) {
+      const product = this.productList.find((p) => p.id.toString() === productId);
+      return product ? product.quantity : 0;
+    }
+    return 0;
+  }
+
+
+  //Error Handlings
+
+  public errorHandling(controlName: string): string {
+    const control = this.form.get(controlName);
+    let messageError = '';
+
+    if (control && control.errors) {
+      for (const message of FormErrorMessage) {
+        if (control.errors[message.forValidator] && message.forControl === controlName) {
+          messageError = message.text;
+        }
+      }
+    }
+
+    return messageError;
+  }
+
+  public errorHandlingDetail(index: number, controlName: string): string {
+    const control = this.invoiceDetails.at(index).get(controlName);
+    let messageError = '';
+
+    if (control && control.errors) {
+      for (const message of FormErrorMessage) {
+        if (control.errors[message.forValidator] && message.forControl === controlName) {
+          messageError = message.text;
+        }
+      }
+    }
+
+    return messageError;
+  }
+
 }
+
+

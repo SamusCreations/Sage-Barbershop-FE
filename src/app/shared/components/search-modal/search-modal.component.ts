@@ -8,14 +8,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class SearchModalComponent implements OnInit {
   title: string = 'Seleccionar elemento';
-  items: any[] = [];
+  lists: { list: any[], name: string }[] = [];
   searchProps: string[] = [];
   displayProps: string[] = [];
   returnProp: string = '';
   searchTerm: string = '';
-  filteredItems: any[] = [];
-  selectedItems: any[] = [];
+  filteredLists: { list: any[], name: string }[] = [];
+  selectedItems: { [key: string]: any }[] = [];
   multipleChoices: boolean = false;
+  multipleLists: boolean = false;
 
   @Output() itemSelected = new EventEmitter<any>();
   @Output() itemsSelected = new EventEmitter<any>();
@@ -28,53 +29,74 @@ export class SearchModalComponent implements OnInit {
       displayProps: string[],
       returnProp: string,
       title?: string,
-      items: any[],
-      multipleChoices?: boolean
+      lists: { list: any[], name: string }[],
+      multipleChoices?: boolean,
+      multipleLists?: boolean
     }
   ) {
-    this.items = this.data.items;
+    this.lists = this.data.lists || [];
     this.searchProps = this.data.searchProps;
     this.displayProps = this.data.displayProps;
     this.returnProp = this.data.returnProp;
     this.multipleChoices = this.data.multipleChoices || false;
+    this.multipleLists = this.data.multipleLists || false;
+
     if (this.data.title) {
       this.title = this.data.title;
     }
   }
 
   ngOnInit() {
-    this.filteredItems = [...this.items];
+    this.filteredLists = this.lists.map(list => ({
+      name: list.name,
+      list: [...list.list]
+    }));
   }
 
   filterItems() {
     if (this.searchTerm.trim() === '') {
-      this.filteredItems = [...this.items];
+      this.filteredLists = this.lists.map(list => ({
+        name: list.name,
+        list: [...list.list]
+      }));
     } else {
-      this.filteredItems = this.items.filter(item =>
-        this.searchProps.some(prop =>
-          item[prop].toString().toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.filteredLists = this.lists.map(list => ({
+        name: list.name,
+        list: list.list.filter(item =>
+          this.searchProps.some(prop =>
+            item[prop].toString().toLowerCase().includes(this.searchTerm.toLowerCase())
+          )
         )
-      );
+      }));
     }
   }
 
-  selectItem(item: any) {
-    const itemId = item[this.returnProp];
+  selectItem(item: any, listName: string) {
+    const itemData: { [key: string]: any } = {
+      [this.returnProp]: item[this.returnProp],
+      listFrom: listName
+    };
 
     if (this.multipleChoices) {
-      if (this.selectedItems.includes(itemId)) {
-        this.selectedItems = this.selectedItems.filter(id => id !== itemId);
+      const existingIndex = this.selectedItems.findIndex(
+        selectedItem => selectedItem[this.returnProp] === itemData[this.returnProp] && selectedItem['listFrom'] === listName
+      );
+
+      if (existingIndex > -1) {
+        this.selectedItems.splice(existingIndex, 1);
       } else {
-        this.selectedItems.push(itemId);
+        this.selectedItems.push(itemData);
       }
     } else {
-      this.itemSelected.emit(itemId);
+      this.itemSelected.emit(itemData);
       this.closeModal();
     }
   }
 
-  isSelected(item: any): boolean {
-    return this.selectedItems.includes(item[this.returnProp]);
+  isSelected(item: any, listName: string): boolean {
+    return this.selectedItems.some(
+      selectedItem => selectedItem[this.returnProp] === item[this.returnProp] && selectedItem['listFrom'] === listName
+    );
   }
 
   closeModal() {
@@ -83,9 +105,9 @@ export class SearchModalComponent implements OnInit {
       this.dialogRef.close(this.selectedItems);
     } else {
       if (this.selectedItems.length > 0) {
-        this.dialogRef.close(this.selectedItems[0]); // Solo el primer ítem si es selección única
+        this.dialogRef.close(this.selectedItems[0]);
       } else {
-        this.dialogRef.close(); // Cierra el modal sin emitir nada si no se seleccionó ningún ítem
+        this.dialogRef.close();
       }
     }
     this.modalClosed.emit();
