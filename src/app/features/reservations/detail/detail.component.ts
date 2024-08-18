@@ -5,7 +5,7 @@ import { Location } from '@angular/common';
 import {
   messageType,
   NotificationService,
-} from '../../../shared/services/notification/notification.service';
+} from '../../../shared/services/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({

@@ -1,9 +1,9 @@
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
-import { AuthenticationService } from '../services/authentication/authentication.service';
+import { AuthenticationService } from '../services/authentication.service';
 import {
   NotificationService,
   messageType,
-} from '../services/notification/notification.service';
+} from '../services/notification.service';
 import { inject } from '@angular/core';
 
 export class UserGuard {

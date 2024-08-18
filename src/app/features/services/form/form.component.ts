@@ -9,11 +9,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable, takeUntil } from 'rxjs';
 import { CrudServicesService } from '../services/crud-services.service';
-import { ImageService } from '../../../shared/services/imageService/image.service';
+import { ImageService } from '../../../shared/services/image.service';
 import {
   NotificationService,
   messageType,
-} from '../../../shared/services/notification/notification.service';
+} from '../../../shared/services/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({

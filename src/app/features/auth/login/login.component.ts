@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 import {
   NotificationService,
   messageType,
-} from '../../../shared/services/notification/notification.service';
+} from '../../../shared/services/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthenticationService } from '../../shared/services/authentication/authentication.service';
+import { AuthenticationService } from '../../shared/services/authentication.service';
 import { initFlowbite, Dropdown } from 'flowbite';
 import type { DropdownOptions, DropdownInterface } from 'flowbite';
 import type { InstanceOptions } from 'flowbite';

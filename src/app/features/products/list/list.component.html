@@ -1,43 +1,343 @@
-<div *ngIf="!charging">
-  <div class="bg-white">
-    <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
-      <h2 class="text-2xl font-bold tracking-tight text-gray-900 uppercase">Products</h2>
-      <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-        <div *ngFor="let product of products" class="group relative">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 ">
-            <img
-              [src]="product.image"
-              [alt]="product.name"
-              class="h-full w-full object-cover object-center lg:h-full lg:w-full"
-              loading="lazy"
-            />
-          </div>
-          <div class="mt-4 hover:cursor-pointer">
-            <div>
-              <h3 class="text-sm text-gray-700">
-                <a (click)="viewDetail(product.id)">
-                  <span aria-hidden="true" class="absolute inset-0"></span>
-                  {{ product.name }}
-                </a>
-              </h3>
-              <p class="mt-1 text-sm text-gray-500">
-                {{ product.category.description }}
-              </p>
-              <div class="flex justify-between">
-                <p class="text-sm font-medium text-gray-900">
-                  Price
-                </p>
-                <p class="text-sm font-medium text-gray-900">
-                  {{ product.price | currency }}
-                </p>
+<section *ngIf="!charging" class="py-8 antialiased dark:bg-gray-900 md:py-12">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <!-- Heading & Filters -->
+    <div
+      class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8"
+    >
+      <div>
+        <nav class="flex" aria-label="Breadcrumb">
+          <ol
+            class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse"
+          >
+            <li class="inline-flex items-center">
+              <a
+                (click)="navigateTo('/home')"
+                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white hover:cursor-pointer"
+              >
+                <svg
+                  class="me-2.5 h-3 w-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"
+                  />
+                </svg>
+                Home
+              </a>
+            </li>
+            <li aria-current="page">
+              <div class="flex items-center">
+                <svg
+                  class="h-5 w-5 text-gray-400 rtl:rotate-180"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m9 5 7 7-7 7"
+                  />
+                </svg>
+                <span
+                  class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ms-2"
+                  >Products</span
+                >
               </div>
-            </div>
+            </li>
+          </ol>
+        </nav>
+        <h2
+          class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl"
+        >
+          Products
+        </h2>
+      </div>
+
+      <!-- Filters and sort -->
+      <div class="flex items-center space-x-4">
+        <button
+          type="button"
+          class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+        >
+          <svg
+            class="-ms-0.5 me-2 h-4 w-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+              d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z"
+            />
+          </svg>
+          Filters
+          <svg
+            class="-me-0.5 ms-2 h-4 w-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 9-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        <button
+          id="sortDropdownButton1"
+          data-dropdown-toggle="dropdownSort1"
+          type="button"
+          class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+        >
+          <svg
+            class="-ms-0.5 me-2 h-4 w-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 4v16M7 4l3 3M7 4 4 7m9-3h6l-6 6h6m-6.5 10 3.5-7 3.5 7M14 18h4"
+            />
+          </svg>
+          Sort
+          <svg
+            class="-me-0.5 ms-2 h-4 w-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 9-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        <div
+          id="dropdownSort1"
+          class="z-50 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+          data-popper-placement="bottom"
+        >
+          <ul
+            class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
+            aria-labelledby="sortDropdownButton"
+          >
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                The most popular
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Newest
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Increasing price
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Decreasing price
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                No. reviews
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Discount %
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4"
+    >
+      <div
+        *ngFor="let product of products"
+        class="flex flex-col justify-between h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:shadow-xl"
+      >
+        <div>
+          <div
+            class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
+          >
+            <a (click)="viewDetail(product.id)" class="hover:cursor-pointer">
+              <img
+                [src]="product.image"
+                [alt]="product.name"
+                class="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                loading="lazy"
+              />
+            </a>
           </div>
 
+          <div class="pt-2">
+            <div class="mb-4 flex items-center justify-end gap-1">
+              <div class="flex items-center justify-between gap-1">
+                <button
+                  type="button"
+                  data-tooltip-target="tooltip-quick-look"
+                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
+                  <span class="sr-only"> Quick look </span>
+                  <svg
+                    class="h-5 w-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-width="2"
+                      d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                    />
+                    <path
+                      stroke="currentColor"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
+                </button>
+                <div
+                  id="tooltip-quick-look"
+                  role="tooltip"
+                  class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
+                  data-popper-placement="top"
+                >
+                  Quick look
+                  <div class="tooltip-arrow" data-popper-arrow=""></div>
+                </div>
+              </div>
+            </div>
+
+            <a
+              (click)="viewDetail(product.id)"
+              class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white hover:cursor-pointer"
+              >{{ product.name }}</a
+            >
+
+            <ul class="mt-2 flex items-center gap-4">
+              <li class="flex items-center gap-2">
+                <svg
+                  class="h-4 w-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5.005 11.19V12l6.998 4.042L19 12v-.81M5 16.15v.81L11.997 21l6.998-4.042v-.81M12.003 3 5.005 7.042l6.998 4.042L19 7.042 12.003 3Z"
+                  />
+                </svg>
+
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {{ product.category.description }}
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between gap-4">
+          <p
+            class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"
+          >
+            {{ product.price | currency }}
+          </p>
+
+          <button
+            (click)="addToCart(product.id)"
+            type="button"
+            class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            <svg
+              class="-ms-2 me-2 h-5 w-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
+              />
+            </svg>
+            Add to cart
+          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 <app-spinner *ngIf="charging"></app-spinner>
-

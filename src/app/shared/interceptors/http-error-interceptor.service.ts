@@ -12,7 +12,7 @@ import { catchError } from 'rxjs/operators';
 import {
   NotificationService,
   messageType,
-} from '../services/notification/notification.service';
+} from '../services/notification.service';
 
 @Injectable({
   providedIn: 'root',

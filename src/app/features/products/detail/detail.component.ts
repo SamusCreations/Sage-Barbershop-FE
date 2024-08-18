@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CrudProductsService } from '../services/crud-products.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
   NotificationService,
   messageType,
-} from '../../../shared/services/notification/notification.service';
-import { ImageService } from '../../../shared/services/imageService/image.service';
-
+} from '../../../shared/services/notification.service';
+import { ImageService } from '../../../shared/services/image.service';
+import { CartService } from '../../../shared/services/cart.service';
 
 @Component({
   selector: 'app-detail',
@@ -21,10 +21,12 @@ export class DetailComponent implements OnInit, OnDestroy {
   idObject: number = 0;
 
   constructor(
+    private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudProductsService,
     private noti: NotificationService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +39,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           .subscribe(
             (data) => {
               this.product = data;
-              this.loadImagePreview(this.product)
+              this.loadImagePreview(this.product);
               this.charging = false;
             },
             (error) => {
@@ -59,12 +61,26 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
+
+  addToCart() {
+    //Agregarlo a la compra
+    this.cartService.addToCart(this.product);
+    this.noti.message(
+      'Order',
+      'Product ' + this.product.name + ' added to the order',
+      messageType.success
+    );
+  }
+
   loadImagePreview(product: any): void {
     const defaultImageName = 'image-not-found';
-  
+
     const handleImageError = (error: any, fallbackImage: string) => {
       console.error('Error fetching image:', error);
-  
+
       if (fallbackImage) {
         this.imageService.getImage(fallbackImage, 1024).subscribe(
           (fallbackBlob: Blob) => {
@@ -78,7 +94,7 @@ export class DetailComponent implements OnInit, OnDestroy {
         );
       }
     };
-  
+
     if (product.image) {
       this.imageService.getImage(product.image, 1024).subscribe(
         (imageBlob: Blob) => {

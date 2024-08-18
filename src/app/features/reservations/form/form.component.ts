@@ -16,9 +16,9 @@ import { CrudInvoicesService } from '../../invoices/services/crud-invoices.servi
 import {
   NotificationService,
   messageType,
-} from '../../../shared/services/notification/notification.service';
+} from '../../../shared/services/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
-import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-form',
@@ -401,7 +401,7 @@ export class FormComponent implements OnInit, OnDestroy {
     const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
     const year = today.getFullYear();
 
-    this.minDate = `${month}-${day}-${year}`;
+    this.minDate = `${day}-${month}-${year}`;
   }
 
   onReset() {

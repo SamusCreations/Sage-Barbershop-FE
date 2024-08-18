@@ -6,9 +6,9 @@ import { CrudServicesService } from '../../services/services/crud-services.servi
 import { CrudInvoicesService } from '../services/crud-invoices.service';
 import { CrudProductsService } from '../../products/services/crud-products.service';
 import { CrudBranchesService } from '../../branches/services/crud-branches.service';
-import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
+import { NotificationService, messageType } from '../../../shared/services/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
-import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-form',

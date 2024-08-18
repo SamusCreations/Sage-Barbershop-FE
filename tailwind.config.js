@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#0d1f1f",
+          DEFAULT: "#007480",
         },
       },
       gridTemplateRows: {

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CrudReservationsService } from '../services/crud-reservations.service';
 import { Router } from '@angular/router';
 import { Observer, Subject, takeUntil } from 'rxjs';
-import { AuthenticationService } from '../../../shared/services/authentication/authentication.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-table',

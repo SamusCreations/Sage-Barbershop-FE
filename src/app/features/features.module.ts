@@ -9,6 +9,8 @@ import { ServicesModule } from './services/services.module';
 import { BranchesModule } from './branches/branches.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { UsersModule } from './users/users.module';
+import { CartModule } from './cart/cart.module';
 
 @NgModule({
   declarations: [],
@@ -23,6 +25,8 @@ import { SchedulesModule } from './schedules/schedules.module';
     BranchesModule,
     SchedulesModule,
     ReservationsModule,
+    UsersModule,
+    CartModule,
   ],
 })
 export class FeaturesModule {}

@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../environments/environment.development';
+import { CartService } from './cart.service';
 import { jwtDecode } from 'jwt-decode';
 //npm install jwt-decode
 //npm audit fix --force
@@ -14,7 +15,7 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthenticationService {
   //Header para afirmar el tipo de contenido JSON
   //URL del API
-  ServerUrl = environment.apiURL + "/oauth";
+  ServerUrl = environment.apiURL + '/oauth';
   //Variable observable para gestionar la información del token del usuario, con características especiales
   private tokenUserSubject: BehaviorSubject<any>;
   //Variable observable para gestionar la información del token
@@ -24,7 +25,11 @@ export class AuthenticationService {
   //Variable observable para obtener la información del usuario
   private user = new BehaviorSubject<any>(null);
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cartService: CartService
+  ) {
     //Obtener los datos del usuario en localStorage, si existe
     this.tokenUserSubject = new BehaviorSubject<any>(
       JSON.parse(localStorage.getItem('currentUser'))
@@ -85,7 +90,7 @@ export class AuthenticationService {
       //Eliminarlo del observable del boleano si esta autenticado
       this.authenticated.next(false);
       //Eliminar carrito
-      //this.cartService.deleteCart();
+      this.cartService.deleteCart();
       return true;
     }
     return false;

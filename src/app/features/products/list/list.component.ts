@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CrudProductsService } from '../services/crud-products.service';
 import { Router } from '@angular/router';
-import { Observer } from 'rxjs';
-import { ImageService } from '../../../shared/services/imageService/image.service';
-import { NotificationService, messageType } from '../../../shared/services/notification/notification.service';
+import { Observer, Subject, takeUntil } from 'rxjs';
+import { ImageService } from '../../../shared/services/image.service';
+import {
+  NotificationService,
+  messageType,
+} from '../../../shared/services/notification.service';
+import { CartService } from '../../../shared/services/cart.service';
 
 @Component({
   selector: 'app-list',
@@ -11,6 +15,7 @@ import { NotificationService, messageType } from '../../../shared/services/notif
   styleUrls: ['./list.component.css'],
 })
 export class ListComponent implements OnInit {
+  destroy$: Subject<boolean> = new Subject<boolean>();
   products: any[] = [];
   charging: boolean = true;
   chargingSuccesfully: boolean = false;
@@ -20,6 +25,7 @@ export class ListComponent implements OnInit {
     private router: Router,
     private imageService: ImageService,
     private noti: NotificationService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -54,10 +60,10 @@ export class ListComponent implements OnInit {
 
   loadImagePreview(product: any): void {
     const defaultImageName = 'image-not-found';
-  
+
     const handleImageError = (error: any, fallbackImage: string) => {
       console.error('Error fetching image:', error);
-  
+
       if (fallbackImage) {
         this.imageService.getImage(fallbackImage, 300).subscribe(
           (fallbackBlob: Blob) => {
@@ -71,7 +77,7 @@ export class ListComponent implements OnInit {
         );
       }
     };
-  
+
     if (product.image) {
       this.imageService.getImage(product.image, 300).subscribe(
         (imageBlob: Blob) => {
@@ -82,5 +88,28 @@ export class ListComponent implements OnInit {
       );
     }
   }
-  
+
+  addToCart(id: number) {
+    this.productService
+      .findById(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        //Agregarlo a la compra
+        this.cartService.addToCart(res);
+        this.noti.message(
+          'Order',
+          'Product ' + res.name + ' added to the order',
+          messageType.success
+        );
+      });
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }
