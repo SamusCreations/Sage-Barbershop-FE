@@ -12,6 +12,7 @@ const routes: Routes = [
     children: [
       { path: 'list', component: ListComponent },
       { path: 'create', component: FormComponent },
+      { path: 'update/:id', component: FormComponent },
       { path: 'detail/:id', component: DetailComponent }
     ]
   }
