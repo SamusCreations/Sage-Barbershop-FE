@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { CrudServicesService } from '../../services/services/crud-services.service';
 import { CrudInvoicesService } from '../services/crud-invoices.service';
@@ -27,6 +27,10 @@ export class FormComponent implements OnInit, OnDestroy {
   titleForm = 'Create';
   invalidFormSubmitted: boolean = false
 
+  objectId: string
+  updateObject: any
+  isUpdate: boolean = false
+
   user: {
     Branch: { id: null };
     name: string;
@@ -41,10 +45,13 @@ export class FormComponent implements OnInit, OnDestroy {
     private productsCrud: CrudProductsService,
     private branchesCrud: CrudBranchesService,
     private noti: NotificationService,
+    private activeRouter: ActivatedRoute,
     private authService: AuthenticationService,
     private dialog: MatDialog
   ) {
+
     const today = new Date().toISOString().split('T')[0];
+
 
     this.form = this.fb.group({
       date: [today, [Validators.required]],
@@ -53,47 +60,91 @@ export class FormComponent implements OnInit, OnDestroy {
       total: [{ value: 0.00, disabled: true }],
       invoiceDetails: this.fb.array([], this.minItemsValidator(1))
     });
+
+
+    
+
+    
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.authService.decodeToken.subscribe((user: any) => (this.user = user));
     this.form.patchValue({
       branchId: this.user?.Branch?.id || null
     });
 
-    this.servicesCrud.getAll().subscribe((services) => (this.serviceList = services));
-    this.productsCrud.getAll().subscribe((products) => (this.productList = products));
-    this.invoicesCrud.getUsers().subscribe((users) => (this.userList = users));
-    this.branchesCrud.getAll().subscribe((branches) => (this.branchList = branches));
+    await this.servicesCrud.getAll().subscribe((services) => (this.serviceList = services));
+    await this.productsCrud.getAll().subscribe((products) => (this.productList = products));
+    await this.invoicesCrud.getUsers().subscribe((users) => (this.userList = users));
+    await this.branchesCrud.getAll().subscribe((branches) => (this.branchList = branches));
+
+
+    this.activeRouter.params.subscribe((params) => {
+      this.objectId = params['id'];
+      if (this.objectId != undefined) {
+        this.isUpdate = true;
+        this.titleForm = 'Update';
+        this.invoicesCrud
+          .findById(parseInt(this.objectId))
+          .subscribe((data) => {
+            this.updateObject = data[0];
+            this.form.patchValue({
+              date: new Date(this.updateObject.date).toISOString().split('T')[0],
+              userId: this.updateObject.userId
+            });
+
+
+            if(this.updateObject.InvoiceDetail && this.updateObject.InvoiceDetail.length > 0){
+              
+              this.updateObject.InvoiceDetail.forEach(element => {
+                this.addDetail(this.createDetail(element.serviceId, element.productId, element.quantity))
+              });
+            }
+            
+          });
+
+          this.form.get('date')?.disable();
+          this.form.get('userId')?.disable();
+      }
+    });
   }
 
 
   //Form actions
 
-  createDetail(serviceId?: string, productId?: string): FormGroup {
+  createDetail(serviceId?: string, productId?: string, quantity: number = 0): FormGroup {
     let price = 0
+    let subTotal = 0
     if (serviceId) {
-      const service = this.serviceList.find((s) => s.id === serviceId);
-      price = service.price
+      const service = this.serviceList.find((s) => s.id.toString() === serviceId.toString());
+      price = parseFloat(service.price)
+      if(quantity) subTotal = parseFloat(service.price) * quantity
     } else if (productId) {
-      const product = this.productList.find((s) => s.id === productId);
-      price = product.price
+      const product = this.productList.find((s) => s.id.toString() === productId.toString());
+      price = parseFloat(product.price)
+      if(quantity) subTotal = parseFloat(product.price) * quantity
+      
     }
 
     return this.fb.group(
       {
         serviceId: [serviceId || ''],
         productId: [productId || ''],
-        quantity: ['', Validators.required],
+        quantity: [quantity, Validators.required],
         price: [price, Validators.required],
-        subtotal: [{ value: '', disabled: true }, Validators.required]
+        subtotal: [{ value: subTotal, disabled: true }, Validators.required]
       },
       { validators: this.serviceOrProductValidator }
     );
   }
 
-  addDetail(): void {
-    this.invoiceDetails.push(this.createDetail());
+  addDetail(form? : FormGroup): void {
+    if(form) {
+      this.invoiceDetails.push(form);
+    }else {
+      this.invoiceDetails.push(this.createDetail());
+    }
+    this.updateTotal()
   }
 
   removeDetail(index: number): void {
@@ -117,41 +168,42 @@ export class FormComponent implements OnInit, OnDestroy {
         multipleLists: true
       }
     });
-
+  
     dialogRef.componentInstance.itemSelected.subscribe((result) => {
       if (result) {
-        const detail = index !== undefined ? this.invoiceDetails.at(index) : this.createDetail();
-        let price = 0
-
+        // Crear un nuevo detalle y añadirlo al array
+        const detailFormGroup = this.createDetail();
+  
+        // Setear valores seleccionados
+        let price = 0;
         if (result.listFrom === 'Products') {
-
-          const product = this.serviceList.find((s) => s.id === result.id);
-          price = product.price
-
-          detail.get('productId').setValue(result.id);
-          detail.get('serviceId').setValue('');
-          detail.get('serviceId').disable();
+          const product = this.productList.find((p) => p.id === result.id);
+          price = product.price;
+          detailFormGroup.patchValue({
+            productId: result.id,
+            serviceId: '',
+            price: price
+          });
+          detailFormGroup.get('serviceId')?.disable();
         } else if (result.listFrom === 'Services') {
-
           const service = this.serviceList.find((s) => s.id === result.id);
-          price = service.price
-
-          detail.get('serviceId').setValue(result.id);
-          detail.get('productId').setValue('');
-          detail.get('productId').disable();
+          price = service.price;
+          detailFormGroup.patchValue({
+            serviceId: result.id,
+            productId: '',
+            price: price
+          });
+          detailFormGroup.get('productId')?.disable();
         }
-
-        detail.get('price').setValue(price);
-
-        if (index === undefined) {
-          this.invoiceDetails.push(detail);
-        }
-
-        this.updateSubtotal(index || this.invoiceDetails.length - 1);
+  
+        // Agregar el nuevo detalle al array del formulario
+        this.invoiceDetails.push(detailFormGroup);
+  
+        this.updateSubtotal(this.invoiceDetails.length - 1);
       }
     });
   }
-
+  
   openUserModal(): void {
     const dialogRef = this.dialog.open(SearchModalComponent, {
       width: '600px',
@@ -205,9 +257,7 @@ export class FormComponent implements OnInit, OnDestroy {
   updateSubtotal(index: number): void {
     const detail = this.invoiceDetails.at(index);
     const serviceId = detail.get('serviceId').value;
-    console.log("🚀 ~ FormComponent ~ updateSubtotal ~ serviceId:", serviceId)
     const productId = detail.get('productId').value;
-    console.log("🚀 ~ FormComponent ~ updateSubtotal ~ productId:", productId)
     const quantity = detail.get('quantity').value;
     const price = detail.get('price').value;
 
@@ -267,9 +317,19 @@ export class FormComponent implements OnInit, OnDestroy {
       formData.append(`invoiceDetails[${index}][subtotal]`, detail.get('subtotal')?.value);
     });
 
-    this.invoicesCrud.create(formData).subscribe((data) => {
-      this.noti.messageRedirect('Create Invoice', `Invoice created successfully.`, messageType.success, '/invoices/list');
-    });
+    if(!this.isUpdate) {
+      this.invoicesCrud.create(formData).subscribe((data) => {
+        this.noti.messageRedirect('Create Invoice', `Invoice created successfully.`, messageType.success, '/invoices/list');
+      });
+    }else {
+      formData.append('id', this.objectId);
+      this.invoicesCrud.update(formData).subscribe((data) => {
+        this.noti.messageRedirect('Update Invoice', `Invoice Updated successfully.`, messageType.success, '/invoices/list');
+      });
+    }
+    
+
+    
   }
 
   onReset(): void {
@@ -282,6 +342,17 @@ export class FormComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
+  markAsInvoice(id: number): void {
+    this.invoicesCrud.setAsInvoice(id).subscribe({
+      next: (response) => {
+        this.noti.messageRedirect('Mark as Pais', `Invoice paid successfully.`, messageType.success, '/invoices/list');
+        console.log('Invoice status updated successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error updating invoice status:', error);
+      },
+    });
+  }
 
   //Validators
 

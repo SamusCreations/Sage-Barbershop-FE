@@ -43,6 +43,7 @@
         [value]="getUserName(form.get('userId')?.value)"
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
         readonly
+        [disabled]="this.isUpdate"
         (click)="openUserModal()"
       />
       <div *ngIf="form.get('userId').touched && form.get('userId').invalid" class="text-red-600 text-sm mt-1">
@@ -84,6 +85,7 @@
                 [value]="getServiceName(detail.get('serviceId').value)"
                 readonly
                 (click)="openLineModal(i)"
+                [disabled]="this.updateObject?.status"
               />
             </td>
             <!-- Product Input -->
@@ -95,6 +97,7 @@
                 [value]="getProductName(detail.get('productId').value)"
                 readonly
                 (click)="openLineModal(i)"
+                [disabled]="this.updateObject?.status"
               />
             </td>
             <!-- Quantity Input -->
@@ -106,6 +109,7 @@
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 [attr.max]="getMaxQuantity(i)"
                 (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
+                [readOnly]="this.updateObject?.status"
               />
             </td>
             <!-- Price and Subtotal fields -->
@@ -149,7 +153,8 @@
     <button
       type="button"
       (click)="openLineModal()"
-      [disabled]="!areInvoiceDetailsValid()"
+      *ngIf="!this.updateObject?.status"
+      [disabled]="!areInvoiceDetailsValid() || this.updateObject?.status"
       class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
     >
       Add Line
@@ -173,3 +178,11 @@
     </div>
   </div>
 </form>
+
+<button
+      *ngIf="!this.updateObject?.status"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      (click)="markAsInvoice(this.updateObject.id)"
+    >
+      Mark as Invoice
+    </button>

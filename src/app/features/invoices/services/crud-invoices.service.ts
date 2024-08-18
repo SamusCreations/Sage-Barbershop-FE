@@ -16,6 +16,9 @@ export class CrudInvoicesService {
   create(invoiceData: FormData): Observable<any> {
     return this.httpService.post<any>("invoice-header/", invoiceData);
   }
+  update(invoiceData: FormData): Observable<any> {
+    return this.httpService.put<any>("invoice-header/", invoiceData);
+  }
   findByEmployee(id: number) : Observable<any> {
     let urlSearchParams = new URLSearchParams()
     urlSearchParams.append("administratorId", id.toString())

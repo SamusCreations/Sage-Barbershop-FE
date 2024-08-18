@@ -57,4 +57,7 @@ export class ListComponent implements OnInit {
   create(): void {
     this.router.navigate(['/invoices/create']);
   }
+  update(id: number): void {
+    this.router.navigate(['/invoices/update', id]);
+  }
 }
