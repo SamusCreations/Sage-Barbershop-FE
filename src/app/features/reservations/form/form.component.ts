@@ -61,7 +61,6 @@ export class FormComponent implements OnInit, OnDestroy {
     private authService: AuthenticationService
   ) {
     this.reactiveForm();
-    this.setMinDate();
   }
 
   ngOnInit(): void {
@@ -138,8 +137,6 @@ export class FormComponent implements OnInit, OnDestroy {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const currentDate = new Date();
       const controlDate = new Date(control.value);
-      console.log(controlDate);
-      console.log(currentDate);
       return controlDate < currentDate
         ? { invalidDate: { value: control.value } }
         : null;
@@ -203,19 +200,16 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   checkScheduleAndService(): void {
-    const date = this.form.get('date')?.value;
+    let date = this.form.get('date')?.value;
 
     if (this.service && date) {
-      const [day, month, year] = date.split('-');
-      const formattedDate = `${year}-${month}-${day}`;
-
       this.crudSchedulesService
         .findByBranch(this.currentUser.branchId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (schedules) => {
             // Convertir la fecha seleccionada en un objeto Date sin horas
-            const selectedDate = new Date(formattedDate);
+            const selectedDate = new Date(date);
             selectedDate.setHours(0, 0, 0, 0);
 
             // Filtrar horarios que coincidan con la fecha seleccionada
@@ -267,13 +261,8 @@ export class FormComponent implements OnInit, OnDestroy {
     this.showModal = false;
   }
 
-  redirectToReservationsTable(): void {
-    this.router.navigate(['/reservations/table']);
-    this.closeModal();
-  }
-
-  redirectToCreateSchedule(): void {
-    this.router.navigate(['/schedules/create']);
+  navigateTo(path: string) {
+    this.router.navigate([path]);
     this.closeModal();
   }
 
@@ -307,17 +296,11 @@ export class FormComponent implements OnInit, OnDestroy {
     const formData = this.form.value;
     formData.branchId = this.currentUser?.Branch?.id;
 
-    // Cambia el formato de la fecha de dd-mm-yyyy a yyyy-mm-dd
-    const [day, month, year] = formData.date.split('-');
-    const formattedDate = `${year}-${month}-${day}`;
-
     // Combina date y time en un solo campo datetime
-    let datetime = new Date(`${formattedDate}T${formData.time}:00`);
-
-    // Suma 6 horas a la fecha y hora
-    datetime.setHours(datetime.getHours() + 6);
-  
-    formData.datetime = datetime.toISOString()
+    let datetime = formData.date;
+    datetime += `, ${formData.time}:00`;
+    datetime = new Date(datetime);
+    formData.datetime = datetime;
 
     // Print FormData to verify its content
     console.log(formData);
@@ -331,7 +314,7 @@ export class FormComponent implements OnInit, OnDestroy {
     const createInvoice = (reservationId: number) => {
       // Create FormData for the invoice
       const invoiceFormData = new FormData();
-      invoiceFormData.append('date', formattedDate);
+      invoiceFormData.append('date', datetime);
       invoiceFormData.append('branchId', formData.branchId);
       invoiceFormData.append('userId', formData.userId);
       invoiceFormData.append('total', this.service.price.toString());
@@ -400,15 +383,6 @@ export class FormComponent implements OnInit, OnDestroy {
     }
   }
 
-  setMinDate() {
-    const today = new Date();
-    const day = String(today.getDate() + 1).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
-    const year = today.getFullYear();
-
-    this.minDate = `${day}-${month}-${year}`;
-  }
-
   onReset() {
     this.form.reset({
       statusId: 1, // Reset al valor predeterminado
@@ -421,10 +395,6 @@ export class FormComponent implements OnInit, OnDestroy {
     this.user = null; // Reset de la duración del servicio
     this.scheduleAvailable = true; // Reset de la disponibilidad de horario
     this.form.get('time')?.disable(); // Deshabilitar tiempo al reiniciar
-  }
-
-  onBack() {
-    this.router.navigate(['/reservations/table']);
   }
 
   loadOptions() {

@@ -8,6 +8,7 @@ import { IndexComponent } from './index/index.component';
 import { SharedModule } from '../../shared/shared.module';
 import { CoreModule } from '../../core/core.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ListComponent } from './list/list.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     TableComponent,
     DetailComponent,
     FormComponent,
-    IndexComponent
+    IndexComponent,
+    ListComponent
   ],
   imports: [
     CommonModule,
@@ -24,6 +26,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     BranchesRoutingModule,
-  ]
+  ],
+  exports: [
+    ListComponent
+  ],
 })
 export class BranchesModule { }

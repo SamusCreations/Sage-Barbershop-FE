@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private noti: NotificationService
   ) {
     this.reactiveForm();
+    this.currentUser = null
   }
 
   ngOnInit(): void {}
@@ -38,7 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       ],
       password: [
         null,
-        Validators.compose([Validators.required, Validators.minLength(6)]),
+        Validators.compose([Validators.required]),
       ],
     });
   }

@@ -31,11 +31,7 @@ export class FormComponent implements OnInit, OnDestroy {
   updateObject: any
   isUpdate: boolean = false
 
-  user: {
-    Branch: { id: null };
-    name: string;
-    surname: string;
-  };
+  user: any
 
   constructor(
     private fb: FormBuilder,

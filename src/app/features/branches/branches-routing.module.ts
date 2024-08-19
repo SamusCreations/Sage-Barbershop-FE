@@ -4,6 +4,7 @@ import { TableComponent } from './table/table.component';
 import { FormComponent } from './form/form.component';
 import { DetailComponent } from './detail/detail.component';
 import { IndexComponent } from './index/index.component';
+import { ListComponent } from './list/list.component';
 
 const routes: Routes = [
   {
@@ -11,11 +12,24 @@ const routes: Routes = [
     component: IndexComponent,
     children: [
       { path: 'table', component: TableComponent },
+      { path: 'list', component: ListComponent },
       { path: 'create', component: FormComponent },
       { path: 'detail/:id', component: DetailComponent },
       { path: 'update/:id', component: FormComponent },
     ],
   },
+  {
+    path: 'stores',
+    component: IndexComponent,
+    children: [
+      { path: 'table', component: TableComponent },
+      { path: 'list', component: ListComponent },
+      { path: 'create', component: FormComponent },
+      { path: 'detail/:id', component: DetailComponent },
+      { path: 'update/:id', component: FormComponent },
+    ],
+  },
+  
 ];
 
 @NgModule({

@@ -37,10 +37,12 @@ export class AuthenticationService {
     //Establecer un observable para acceder a los datos del usuario
     this.currentUser = this.tokenUserSubject.asObservable();
   }
+
   //Obtener el valor del usuario actual
   public get tokenUserValue(): any {
     return this.tokenUserSubject.value;
   }
+
   //Establecer booleano verificando si esta autenticado
   get isAuthenticated() {
     if (this.tokenUserValue != null) {
@@ -50,6 +52,7 @@ export class AuthenticationService {
     }
     return this.authenticated.asObservable();
   }
+
   //Crear usuario
   register(user: any): Observable<any> {
     return this.http.post<any>(this.ServerUrl + '/register', user);
@@ -79,6 +82,7 @@ export class AuthenticationService {
       })
     );
   }
+
   //Logout de usuario autentificado
   logout() {
     let usuario = this.tokenUserSubject.value;
@@ -95,4 +99,6 @@ export class AuthenticationService {
     }
     return false;
   }
+
+  
 }

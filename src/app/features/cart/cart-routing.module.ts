@@ -5,9 +5,9 @@ import { OrderComponent } from './order/order.component';
 
 const routes: Routes = [
   {
-    path: 'cart',
+    path: 'orders',
     component: IndexComponent,
-    children: [{ path: 'order', component: OrderComponent }],
+    children: [{ path: 'cart', component: OrderComponent }],
   },
 ];
 

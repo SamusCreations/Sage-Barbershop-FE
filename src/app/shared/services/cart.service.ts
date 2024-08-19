@@ -37,9 +37,9 @@ export class CartService {
     localStorage.setItem(this.keyName, JSON.stringify(this.cart.getValue()));
   }
 
-  addToCart(item: any) {
+  addToCart(item: any, increase: boolean = true) {
     const newItem = new ItemCart();
-
+  
     if (item.hasOwnProperty('category')) {
       newItem.idProduct = item.id;
       newItem.product = item;
@@ -47,16 +47,17 @@ export class CartService {
       newItem.idService = item.id;
       newItem.service = item;
     }
+  
     newItem.name = item.name;
     newItem.price = item.price;
     newItem.quantity = 1;
     newItem.subtotal = newItem.price * newItem.quantity;
-
+  
     let listCart = this.cart.getValue();
-
+  
     if (listCart) {
       let objIndex = -1;
-
+  
       if (newItem.hasOwnProperty('idProduct')) {
         objIndex = listCart.findIndex(
           (obj) =>
@@ -70,32 +71,37 @@ export class CartService {
             obj.hasOwnProperty('idService')
         );
       }
+  
       if (objIndex != -1) {
-        if (item.hasOwnProperty('quantity')) {
-          if (item.quantity <= 0) {
+        if (increase) {
+          listCart[objIndex].quantity += 1;
+        } else {
+          listCart[objIndex].quantity -= 1;
+          if (listCart[objIndex].quantity <= 0) {
             this.removeFromCart(newItem);
             return;
-          } else {
-            listCart[objIndex].quantity += 1;
           }
-        } else {
-          listCart[objIndex].quantity += 1;
         }
         newItem.quantity = listCart[objIndex].quantity;
         listCart[objIndex].subtotal = newItem.price * newItem.quantity;
       } else {
-        listCart.push(newItem);
+        if (increase) {
+          listCart.push(newItem);
+        }
       }
     } else {
       listCart = [];
-      listCart.push(newItem);
+      if (increase) {
+        listCart.push(newItem);
+      }
     }
-
+  
     this.cart.next(listCart);
     this.qtyItems.next(this.quantityItems());
     this.total.next(this.calculateTotal());
     this.saveCart();
   }
+  
 
   //Elimina un elemento del carrito
   public removeFromCart(newData: ItemCart) {
