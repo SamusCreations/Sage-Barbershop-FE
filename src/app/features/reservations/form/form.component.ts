@@ -312,7 +312,12 @@ export class FormComponent implements OnInit, OnDestroy {
     const formattedDate = `${year}-${month}-${day}`;
 
     // Combina date y time en un solo campo datetime
-    formData.datetime = `${formattedDate}T${formData.time}:00.000Z`;
+    let datetime = new Date(`${formattedDate}T${formData.time}:00`);
+
+    // Suma 6 horas a la fecha y hora
+    datetime.setHours(datetime.getHours() + 6);
+  
+    formData.datetime = datetime.toISOString()
 
     // Print FormData to verify its content
     console.log(formData);

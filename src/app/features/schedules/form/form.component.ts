@@ -164,7 +164,8 @@ export class FormComponent implements OnInit, OnDestroy {
       );
       return;
     }
-
+    const startDateLocal = this.adjustDateToLocalTimezone(this.form.get('startDate')?.value);
+    const endDateLocal = this.adjustDateToLocalTimezone(this.form.get('endDate')?.value);
     const formData = new FormData();
     formData.append('id', this.form.get('id')?.value);
     formData.append('startDate', this.form.get('startDate')?.value);
@@ -218,7 +219,12 @@ export class FormComponent implements OnInit, OnDestroy {
         );
     }
   }
-
+  adjustDateToLocalTimezone(dateString: string): string {
+    const date = new Date(dateString);
+    const timezoneOffset = date.getTimezoneOffset() * 60000; // offset en milisegundos
+    const localDate = new Date(date.getTime() - timezoneOffset);
+    return localDate.toISOString().slice(0, 19); // Recorta el formato ISO para eliminar la 'Z'
+  }
   toggleStatus() {
     const currentStatus = this.form.get('status')?.value;
     this.form.patchValue({ status: !currentStatus });

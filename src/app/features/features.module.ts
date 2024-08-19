@@ -11,6 +11,7 @@ import { ReservationsModule } from './reservations/reservations.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { UsersModule } from './users/users.module';
 import { CartModule } from './cart/cart.module';
+import { AgendaModule } from './agenda/agenda.module';
 
 @NgModule({
   declarations: [],
@@ -27,6 +28,7 @@ import { CartModule } from './cart/cart.module';
     ReservationsModule,
     UsersModule,
     CartModule,
+    AgendaModule,
   ],
 })
 export class FeaturesModule {}

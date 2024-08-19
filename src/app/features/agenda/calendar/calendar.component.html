@@ -1,0 +1,18 @@
+
+<div  style="padding-top: 2%; display: flex; justify-content: center;">
+    <div style="width: 100%; max-width: 90%;">
+        <full-calendar [options]="calendarOptions" style="height: 60vh; max-height: 60vh;"></full-calendar>
+    </div>
+
+    <!-- Modal para mostrar detalles del evento -->
+    <div *ngIf="showModal" class="modal">
+        <div class="modal-content">
+            <h2>Detalles del Evento</h2>
+            <p><strong>Título:</strong> {{ selectedEvent.title }}</p>
+            <p><strong>Inicio:</strong> {{ selectedEvent.start }}</p>
+            <p><strong>Fin:</strong> {{ selectedEvent.end }}</p>
+            <p><strong>ID:</strong> {{ selectedEvent.id }}</p>
+            <button (click)="closeModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
