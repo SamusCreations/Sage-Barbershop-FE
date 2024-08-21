@@ -16,18 +16,39 @@ const routes: Routes = [
         component: TableComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['EMPLOYEE', 'ADMIN'],
+          roles: ['ADMIN'],
         },
       },
-      { path: 'create', component: FormComponent },
-      { path: 'detail/:id', component: DetailComponent },
-      { path: 'update/:id', component: FormComponent },
+      {
+        path: 'create',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['ADMIN'],
+        },
+      },
+      {
+        path: 'detail/:id',
+        component: DetailComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['ADMIN'],
+        },
+      },
+      {
+        path: 'update/:id',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['ADMIN'],
+        },
+      },
     ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class UsersRoutingModule { }
+export class UsersRoutingModule {}

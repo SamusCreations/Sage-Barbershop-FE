@@ -5,17 +5,53 @@ import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
 import { TableComponent } from './table/table.component';
 import { FormComponent } from './form/form.component';
+import { authGuard } from '../../shared/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: 'reservations',
     component: IndexComponent,
     children: [
-      { path: 'list', component: ListComponent },
-      { path: 'table', component: TableComponent },
-      { path: 'create', component: FormComponent },
-      { path: 'detail/:id', component: DetailComponent },
-      { path: 'update/:id', component: FormComponent },
+      {
+        path: 'list',
+        component: ListComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
+      {
+        path: 'table',
+        component: TableComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
+      {
+        path: 'create',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
+      {
+        path: 'detail/:id',
+        component: DetailComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
+      {
+        path: 'update/:id',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
     ],
   },
 ];

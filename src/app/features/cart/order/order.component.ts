@@ -74,6 +74,16 @@ export class OrderComponent {
       return;
     }
 
+    if (!this.user.Branch) {
+      this.noti.message(
+        'Store Required',
+        'Please select a store to proceed to Checkout.',
+        messageType.warning
+      );
+      this.router.navigate(['/stores/list']);
+      return;
+    }
+
     if (this.dataSource && this.dataSource.length > 0) {
       // Formatear la fecha
       const formattedDate = new Date(this.fecha).toISOString();

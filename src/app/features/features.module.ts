@@ -12,6 +12,7 @@ import { SchedulesModule } from './schedules/schedules.module';
 import { UsersModule } from './users/users.module';
 import { CartModule } from './cart/cart.module';
 import { AgendaModule } from './agenda/agenda.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @NgModule({
   declarations: [],
@@ -29,6 +30,7 @@ import { AgendaModule } from './agenda/agenda.module';
     UsersModule,
     CartModule,
     AgendaModule,
+    DashboardModule
   ],
 })
 export class FeaturesModule {}

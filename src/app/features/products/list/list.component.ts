@@ -8,6 +8,7 @@ import {
   messageType,
 } from '../../../shared/services/notification.service';
 import { CartService } from '../../../shared/services/cart.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-list',
@@ -19,16 +20,22 @@ export class ListComponent implements OnInit {
   products: any[] = [];
   charging: boolean = true;
   chargingSuccesfully: boolean = false;
+  user: any;
 
   constructor(
     private productService: CrudProductsService,
     private router: Router,
     private imageService: ImageService,
     private noti: NotificationService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit(): void {
+    this.authService.decodeToken.subscribe((user: any) => {
+      this.user = user;
+    });
+
     this.fetchProducts();
   }
 
@@ -90,6 +97,17 @@ export class ListComponent implements OnInit {
   }
 
   addToCart(id: number) {
+    // Verificar si el usuario está logueado
+    if (!this.user) {
+      this.noti.message(
+        'Login Required',
+        'Please log in to add services to the cart.',
+        messageType.warning
+      );
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
     this.productService
       .findById(id)
       .pipe(takeUntil(this.destroy$))

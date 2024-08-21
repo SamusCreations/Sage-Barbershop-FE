@@ -1,5 +1,5 @@
 <header
-  class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600"
+  class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 shadow-md"
 >
   <nav
     class="mx-auto flex max-w-7xl items-center justify-between p-2.5"
@@ -42,22 +42,22 @@
     <div class="hidden lg:flex lg:gap-x-12">
       <a
         (click)="navigateTo('/home')"
-        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        class="text-sm font-medium leading-6 text-gray-900 hover:cursor-pointer hover:text-teal-900 hover:font-bold"
         >Home</a
       >
       <a
         (click)="navigateTo('/products/list')"
-        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        class="text-sm font-medium leading-6 text-gray-900 hover:cursor-pointer hover:text-teal-900 hover:font-bold"
         >Products</a
       >
       <a
         (click)="navigateTo('/services/list')"
-        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        class="text-sm font-medium leading-6 text-gray-900 hover:cursor-pointer hover:text-teal-900 hover:font-bold"
         >Services</a
       >
       <a
         (click)="navigateTo('/stores/list')"
-        class="text-sm font-semibold leading-6 text-gray-900 hover:cursor-pointer"
+        class="text-sm font-medium leading-6 text-gray-900 hover:cursor-pointer hover:text-teal-900 hover:font-bold"
         >Stores</a
       >
 
@@ -69,9 +69,10 @@
         class="relative"
       >
         <button
-          (click)="toggleDropdown()"
+          (click)="toggleDropdown('maintenance')"
+          [attr.aria-expanded]="openDropdowns['maintenance'] ? 'true' : 'false'"
           type="button"
-          class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+          class="flex items-center gap-x-1 text-sm font-medium leading-6 text-gray-900 hover:text-teal-900 hover:font-bold"
         >
           Maintenance
           <svg
@@ -88,8 +89,12 @@
           </svg>
         </button>
         <div
-          *ngIf="isDropdownOpen"
-          class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5"
+          id="maintenance"
+          class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-xs overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5"
+          [@dropdownAnimation]="
+            openDropdowns['maintenance'] ? 'open' : 'closed'
+          "
+          [ngClass]="{ hidden: !openDropdowns['maintenance'] }"
         >
           <div class="p-4">
             <div
@@ -118,7 +123,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Products</a>
+                <a class="block font-medium text-gray-900">Products</a>
               </div>
             </div>
             <div
@@ -144,7 +149,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Services</a>
+                <a class="block font-medium text-gray-900">Services</a>
               </div>
             </div>
             <div
@@ -173,7 +178,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Reservations</a>
+                <a class="block font-medium text-gray-900">Reservations</a>
               </div>
             </div>
             <div
@@ -199,7 +204,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Invoices</a>
+                <a class="block font-medium text-gray-900">Invoices</a>
               </div>
             </div>
             <div
@@ -228,7 +233,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Branches</a>
+                <a class="block font-medium text-gray-900">Branches</a>
               </div>
             </div>
             <div
@@ -257,12 +262,13 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Schedule</a>
+                <a class="block font-medium text-gray-900">Schedule</a>
               </div>
             </div>
             <div
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 hover:cursor-pointer"
               (click)="navigateTo('/users/table')"
+              *ngIf="this.currentUser?.role === 'ADMIN'"
             >
               <div
                 class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
@@ -284,7 +290,7 @@
                 </svg>
               </div>
               <div class="flex-auto">
-                <a class="block font-semibold text-gray-900">Users</a>
+                <a class="block font-medium text-gray-900">Users</a>
               </div>
             </div>
             <div
@@ -325,7 +331,7 @@
           id="myCartDropdownButton1"
           data-dropdown-toggle="myCartDropdown1"
           type="button"
-          class="inline-flex items-center rounded-lg justify-center p-2 mr-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white hover:cursor-pointer"
+          class="inline-flex items-center rounded-lg justify-center p-2 mr-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-900 leading-none dark:text-white hover:cursor-pointer"
         >
           <span class="sr-only"> Cart </span>
           <svg
@@ -365,10 +371,12 @@
           </svg> -->
         </button>
         <button
-          id="dropdownAvatarNameButton"
-          data-dropdown-toggle="dropdownAvatarName"
           type="button"
-          class="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white"
+          class="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white "
+          (click)="toggleDropdown('userDropdown')"
+          [attr.aria-expanded]="
+            openDropdowns['userDropdown'] ? 'true' : 'false'
+          "
         >
           <svg
             class="w-5 h-5 me-1"
@@ -407,34 +415,34 @@
 
         <!-- Dropdown menu -->
         <div
-          id="dropdownAvatarName"
-          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-          data-dropdown
+          id="userDropdown"
+          class="absolute top-full z-10 divide-y divide-gray-100 max-w-xs dark:bg-gray-700 dark:divide-gray-600 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 mt-[-0.75rem] p-2"
+          [@dropdownAnimation]="
+            openDropdowns['userDropdown'] ? 'open' : 'closed'
+          "
+          [ngClass]="{ hidden: !openDropdowns['userDropdown'] }"
         >
           <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
             <div class="font-medium cap">{{ currentUser.role.toString() }}</div>
             <div class="truncate">{{ currentUser.email }}</div>
           </div>
-          <ul
-            class="py-2 text-sm text-gray-700 dark:text-gray-200"
-            aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton"
-          >
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
             <li
               *ngIf="
-                this.currentUser?.role === 'EMPLOYEE' ||
-                this.currentUser?.role === 'ADMIN'
+                currentUser?.role === 'EMPLOYEE' ||
+                currentUser?.role === 'ADMIN'
               "
             >
               <a
-                href="#"
-                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="navigateTo('/dashboard/reports')"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer rounded-lg"
                 >Dashboard</a
               >
             </li>
             <li>
               <a
                 href="#"
-                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg"
                 >Settings</a
               >
             </li>
@@ -442,7 +450,7 @@
           <div class="py-2">
             <a
               (click)="logout()"
-              class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white hover:cursor-pointer"
+              class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white hover:cursor-pointer rounded-lg"
               >Log out<span aria-hidden="true">&rarr;</span></a
             >
           </div>
@@ -507,24 +515,24 @@
           <div class="space-y-2 py-6">
             <a
               (click)="navigateTo('/products/list')"
-              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
               >Products</a
             >
             <a
               (click)="navigateTo('/services/list')"
-              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
               >Services</a
             >
             <a
               (click)="navigateTo('/stores/list')"
-              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              class="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
               >Stores</a
             >
 
             <div class="-mx-3">
               <button
                 type="button"
-                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                 aria-controls="disclosure-1"
                 aria-expanded="false"
               >
@@ -551,28 +559,28 @@
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
                   (click)="navigateTo('/products/table')"
-                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium leading-7 text-gray-900 hover:bg-gray-50"
                   >Products</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
                   (click)="navigateTo('/services/table')"
-                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium leading-7 text-gray-900 hover:bg-gray-50"
                   >Services</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
                   (click)="navigateTo('/reservations/list')"
-                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium leading-7 text-gray-900 hover:bg-gray-50"
                   >Reservations</a
                 >
               </div>
               <div class="mt-2 space-y-2" id="disclosure-1">
                 <a
                   (click)="navigateTo('/invoices/list')"
-                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  class="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium leading-7 text-gray-900 hover:bg-gray-50"
                   >Invoices</a
                 >
               </div>
@@ -581,7 +589,7 @@
           <div class="py-6">
             <a
               (click)="navigateTo('/auth/login')"
-              class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
               >Log in</a
             >
           </div>

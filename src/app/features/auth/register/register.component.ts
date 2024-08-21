@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
@@ -18,6 +23,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   form: FormGroup;
   maxDate: string;
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +54,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
           null,
           Validators.compose([Validators.required, Validators.minLength(8)]),
         ],
-        birthdate: [null, Validators.required],
+        birthdate: [
+          null,
+          Validators.compose([Validators.required, this.dateValidator]),
+        ],
         phone: [null, [Validators.required, Validators.pattern(/^\d{8,}$/)]],
         address: [null, Validators.required],
       },
@@ -64,7 +73,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
       const passwordControl = formGroup.controls[password];
       const confirmPasswordControl = formGroup.controls[confirmPassword];
 
-      if (confirmPasswordControl.errors && !confirmPasswordControl.errors['mustMatch']) {
+      if (
+        confirmPasswordControl.errors &&
+        !confirmPasswordControl.errors['mustMatch']
+      ) {
         return;
       }
 
@@ -76,10 +88,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
     };
   }
 
+  // Validator to check if birthdate is in the past
+  dateValidator(control: AbstractControl) {
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    if (selectedDate >= today) {
+      return { invalidDate: true };
+    }
+    return null;
+  }
+
   public errorHandling = (controlName: string) => {
     let messageError = '';
     const control = this.form.get(controlName);
-    if (control.errors) {
+
+    // Mostrar errores solo si el formulario ha sido enviado
+    if (this.submitted && control.errors) {
       for (const message of FormErrorMessage) {
         if (
           control.errors[message.forValidator] &&
@@ -98,11 +122,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const selectedDate = event.target.value;
     this.form.get('birthdate')?.setValue(selectedDate);
   }
-  
 
   submit(): void {
+    this.submitted = true; // Establecer submitted en true para mostrar errores
     if (this.form.invalid) {
-      console.log('Invalid Form');
       this.noti.message(
         'Form Error',
         'Please correct the form errors.',
@@ -159,6 +182,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   onReset() {
     this.form.reset();
+    this.submitted = false; // Resetear la bandera cuando se reinicia el formulario
   }
 
   ngOnDestroy() {

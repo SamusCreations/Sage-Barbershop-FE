@@ -14,6 +14,16 @@ export class CrudReservationsService {
     return this.httpService.get<any>(this.endpoint);
   }
 
+  getTodayCountByBranch(): Observable<any> {
+    return this.httpService.get<any>(`${this.endpoint}/getTodayCountByBranch`);
+  }
+
+  getCountByStatus(branchId: number): Observable<any> {
+    const params = new URLSearchParams();
+    params.append('branchId', branchId.toString());
+    return this.httpService.get<any>(`${this.endpoint}/getCountByStatus`, params);
+  }
+
   findById(id: number): Observable<any> {
     const params = new URLSearchParams();
     params.append('id', id.toString());
