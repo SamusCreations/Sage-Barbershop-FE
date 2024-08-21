@@ -50,10 +50,17 @@ export class TableComponent implements OnInit, OnDestroy {
         console.log('Fetch complete');
       },
     };
-    // Si no hay fechas seleccionadas, obtener todas las reservaciones
-    this.CrudService.findByManager(this.currentUser.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(observer);
+
+    if (this.currentUser.branchId) {
+      // Si no hay fechas seleccionadas, obtener todas las reservaciones
+      this.CrudService.findByManager(this.currentUser.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(observer);
+    } else {
+      this.CrudService.getAll()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(observer);
+    }
   }
 
   onStartDateChange(event: Event) {
@@ -70,7 +77,6 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   filterByDate(): void {
-    
     if (this.startDate && this.endDate) {
       this.dataList = this.dataList.filter((reservation) => {
         const reservationDate = new Date(reservation.date);

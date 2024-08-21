@@ -1,57 +1,87 @@
 <section class="bg-white dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-xl lg:py-16">
     <div class="flex mb-4">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ titleForm }} Schedule</h2>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+        {{ titleForm }} Schedule
+      </h2>
     </div>
     <form (ngSubmit)="submit()" novalidate class="my-6" [formGroup]="form">
       <div class="bg-white dark:bg-gray-800 p-8 rounded-md shadow-md">
-        
         <!-- Start Date -->
         <div class="mb-4">
-          <label for="startDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
+          <label
+            for="startDate"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Start Date</label
+          >
           <input
             type="datetime-local"
             id="startDate"
             formControlName="startDate"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
           />
-          <div *ngIf="form.get('startDate').touched && form.get('startDate').invalid" class="text-red-500 text-xs mt-2">
-            {{ errorHandling('startDate') }}
+          <div
+            *ngIf="
+              form.get('startDate').touched && form.get('startDate').invalid
+            "
+            class="text-red-500 text-xs mt-2"
+          >
+            {{ errorHandling("startDate") }}
           </div>
         </div>
 
         <!-- End Date -->
         <div class="mb-4">
-          <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <label
+            for="endDate"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >End Date</label
+          >
           <input
             type="datetime-local"
             id="endDate"
             formControlName="endDate"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
           />
-          <div *ngIf="form.get('endDate').touched && form.get('endDate').invalid" class="text-red-500 text-xs mt-2">
-            {{ errorHandling('endDate') }}
+          <div
+            *ngIf="form.get('endDate').touched && form.get('endDate').invalid"
+            class="text-red-500 text-xs mt-2"
+          >
+            {{ errorHandling("endDate") }}
           </div>
         </div>
 
         <!-- Branch Selection -->
         <div class="mb-4">
-          <label for="branchId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch</label>
+          <label
+            for="branchId"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Branch</label
+          >
           <select
             id="branchId"
             formControlName="branchId"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
           >
-            <option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</option>
+            <option *ngFor="let branch of branchList" [value]="branch.id">
+              {{ branch.name }}
+            </option>
           </select>
-          <div *ngIf="form.get('branchId').touched && form.get('branchId').invalid" class="text-red-500 text-xs mt-2">
-            {{ errorHandling('branchId') }}
+          <div
+            *ngIf="form.get('branchId').touched && form.get('branchId').invalid"
+            class="text-red-500 text-xs mt-2"
+          >
+            {{ errorHandling("branchId") }}
           </div>
         </div>
 
         <!-- Status Button -->
         <div class="mb-4">
-          <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+          <label
+            for="status"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Status</label
+          >
           <button
             type="button"
             (click)="toggleStatus()"
@@ -59,7 +89,7 @@
             [class.bg-red-500]="!form.get('status')?.value"
             class="text-white py-2 px-4 rounded-md shadow-md focus:ring-4 focus:ring-teal-500 dark:focus:ring-teal-500"
           >
-            {{ form.get('status')?.value ? 'Active' : 'Blocked' }}
+            {{ form.get("status")?.value ? "Active" : "Blocked" }}
           </button>
           <input type="hidden" formControlName="status" />
         </div>

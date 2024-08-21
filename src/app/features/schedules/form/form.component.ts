@@ -14,6 +14,7 @@ import {
   messageType,
 } from '../../../shared/services/notification.service';
 import { FormErrorMessage } from '../../../form-error-message';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-form',
@@ -31,19 +32,30 @@ export class FormComponent implements OnInit, OnDestroy {
   isCreate: boolean = true;
   message = '';
   imageInfos?: Observable<any>;
+  currentUser: any;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private activeRouter: ActivatedRoute,
     private crudService: CrudSchedulesService,
-    private noti: NotificationService
+    private noti: NotificationService,
+    private authService: AuthenticationService
   ) {
     this.reactiveForm();
     this.getBranches();
   }
 
   ngOnInit(): void {
+    this.authService.decodeToken.subscribe(
+      (user: any) => (this.currentUser = user)
+    );
+
+    if (this.currentUser?.role === 'EMPLOYEE') {
+      this.form.patchValue({ branchId: this.currentUser.branchId });
+      this.form.get('branchId')?.disable(); // Deshabilitar el select para que no se pueda cambiar
+    }
+
     this.activeRouter.params.subscribe((params) => {
       this.idObject = params['id'];
       if (this.idObject != undefined) {
@@ -56,16 +68,42 @@ export class FormComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe((data) => {
             this.toUpdateObject = data;
+
+            // Formatear las fechas antes de hacer patchValue
+            const formattedStartDate = this.formatDateToInput(
+              this.toUpdateObject.startDate
+            );
+            const formattedEndDate = this.formatDateToInput(
+              this.toUpdateObject.endDate
+            );
+
             this.form.patchValue({
               id: this.toUpdateObject.id,
-              startDate: this.toUpdateObject.startDate,
-              endDate: this.toUpdateObject.endDate,
+              startDate: formattedStartDate,
+              endDate: formattedEndDate,
               branchId: this.toUpdateObject.branchId,
               status: this.toUpdateObject.status,
             });
           });
+
+        if (this.currentUser?.role === 'EMPLOYEE') {
+          this.form.get('branchId')?.disable(); // Asegurarse de que el campo esté deshabilitado en la actualización también
+        }
       }
     });
+  }
+
+  // Esta función convierte una fecha a formato compatible con el input datetime-local
+  formatDateToInput(date: string): string {
+    const dateObj = new Date(date);
+    // Formato yyyy-MM-ddTHH:mm
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   reactiveForm() {
@@ -164,8 +202,12 @@ export class FormComponent implements OnInit, OnDestroy {
       );
       return;
     }
-    const startDateLocal = this.adjustDateToLocalTimezone(this.form.get('startDate')?.value);
-    const endDateLocal = this.adjustDateToLocalTimezone(this.form.get('endDate')?.value);
+    const startDateLocal = this.adjustDateToLocalTimezone(
+      this.form.get('startDate')?.value
+    );
+    const endDateLocal = this.adjustDateToLocalTimezone(
+      this.form.get('endDate')?.value
+    );
     const formData = new FormData();
     formData.append('id', this.form.get('id')?.value);
     formData.append('startDate', this.form.get('startDate')?.value);

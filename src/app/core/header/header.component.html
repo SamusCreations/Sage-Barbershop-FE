@@ -98,6 +98,7 @@
         >
           <div class="p-4">
             <div
+              *ngIf="currentUser?.role === 'ADMIN'"
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 hover:cursor-pointer"
               (click)="navigateTo('/products/table')"
             >
@@ -127,6 +128,7 @@
               </div>
             </div>
             <div
+              *ngIf="currentUser?.role === 'ADMIN'"
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 hover:cursor-pointer"
               (click)="navigateTo('/services/table')"
             >
@@ -208,6 +210,7 @@
               </div>
             </div>
             <div
+              *ngIf="currentUser?.role === 'ADMIN'"
               class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 hover:cursor-pointer"
               (click)="navigateTo('/branches/table')"
             >
@@ -372,7 +375,7 @@
         </button>
         <button
           type="button"
-          class="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white "
+          class="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white"
           (click)="toggleDropdown('userDropdown')"
           [attr.aria-expanded]="
             openDropdowns['userDropdown'] ? 'true' : 'false'

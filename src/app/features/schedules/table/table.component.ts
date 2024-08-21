@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CrudSchedulesService } from '../services/crud-schedules.service';
 import { Router } from '@angular/router';
 import { Observer, Subject, takeUntil } from 'rxjs';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-table',
@@ -15,13 +16,19 @@ export class TableComponent implements OnInit, OnDestroy {
   chargingSuccesfully: boolean = false;
   branchList: any;
   selectedBranch: number | null = null;
+  currentUser: any;
 
   constructor(
     private CrudService: CrudSchedulesService,
-    private router: Router
+    private router: Router,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit(): void {
+    this.authService.decodeToken.subscribe(
+      (user: any) => (this.currentUser = user)
+    );
+
     this.getAllSchedules();
     this.getBranches();
   }
@@ -42,7 +49,13 @@ export class TableComponent implements OnInit, OnDestroy {
       },
     };
 
-    this.CrudService.getAll().subscribe(observer);
+    if (this.currentUser.role === 'ADMIN') {
+      this.CrudService.getAll().subscribe(observer);
+    } else {
+      this.CrudService.findByBranch(this.currentUser.branchId).subscribe(
+        observer
+      );
+    }
   }
 
   getBranches() {
@@ -69,7 +82,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
   onBranchChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    const branchId = selectElement.value === 'all' ? null : Number(selectElement.value);
+    const branchId =
+      selectElement.value === 'all' ? null : Number(selectElement.value);
     this.selectedBranch = branchId;
     this.getScheduleByBranch(branchId);
   }
