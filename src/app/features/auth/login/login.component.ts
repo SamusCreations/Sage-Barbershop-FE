@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   form: FormGroup;
   currentUser: any;
+  submitted = false; 
 
   constructor(
     private fb: FormBuilder,
@@ -47,7 +48,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   public errorHandling = (controlName: string) => {
     let messageError = '';
     const control = this.form.get(controlName);
-    if (control.errors) {
+
+    // Mostrar errores solo si el formulario ha sido enviado
+    if (this.submitted && control.errors) {
       for (const message of FormErrorMessage) {
         if (
           control.errors[message.forValidator] &&
@@ -63,6 +66,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   };
 
   submit(): void {
+    this.submitted = true;
     if (this.form.invalid) {
       console.log('Invalid Form');
       this.noti.message(

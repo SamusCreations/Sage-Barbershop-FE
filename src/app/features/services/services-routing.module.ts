@@ -21,9 +21,23 @@ const routes: Routes = [
           roles: ['EMPLOYEE', 'ADMIN'],
         },
       },
-      { path: 'create', component: FormComponent },
+      {
+        path: 'create',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
       { path: 'detail/:id', component: DetailComponent },
-      { path: 'update/:id', component: FormComponent },
+      {
+        path: 'update/:id',
+        component: FormComponent,
+        canActivate: [authGuard],
+        data: {
+          roles: ['EMPLOYEE', 'ADMIN'],
+        },
+      },
     ],
   },
 ];

@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './index/index.component';
-import { CalendarComponent } from './calendar/calendar.component';
+import { ReportsComponent } from './reports/reports.component';
 import { authGuard } from '../../shared/guards/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'agenda',
+    path: 'dashboard',
     component: IndexComponent,
     children: [
       {
-        path: 'calendar',
-        component: CalendarComponent,
+        path: 'reports',
+        component: ReportsComponent,
         canActivate: [authGuard],
         data: {
           roles: ['EMPLOYEE', 'ADMIN'],
@@ -23,6 +23,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
-export class AgendaRoutingModule {}
+export class DashboardRoutingModule { }

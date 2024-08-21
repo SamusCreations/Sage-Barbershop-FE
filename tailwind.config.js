@@ -19,6 +19,7 @@ module.exports = {
     require("@tailwindcss/forms"),
     require("flowbite/plugin")({
       datatables: true,
+      charts: true,
     }),
   ],
 };

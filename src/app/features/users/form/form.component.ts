@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { CrudUsersService } from '../services/crud-users.service';
@@ -23,12 +23,11 @@ export class FormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   idObject: number = 0;
   isCreate: boolean = true;
-  currentUser: any;
   errorMessage: string;
   showModal: boolean;
-  roles: { id: number, name: string }[] = [
-    { id: 1, name: 'CLIENT' },
-    { id: 2, name: 'EMPLOYEE' }
+  roles: { id: string; name: string }[] = [
+    { id: 'CLIENT', name: 'Client' },
+    { id: 'EMPLOYEE', name: 'Employee' },
   ];
 
   constructor(
@@ -36,17 +35,12 @@ export class FormComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private usersService: CrudUsersService,
-    private noti: NotificationService,
-    private authService: AuthenticationService
+    private noti: NotificationService
   ) {
     this.reactiveForm();
   }
 
   ngOnInit(): void {
-    this.authService.decodeToken.subscribe((user: any) => {
-      this.currentUser = user;
-    });
-
     this.activeRouter.params.subscribe((params) => {
       this.idObject = params['id'];
       if (this.idObject !== undefined) {
@@ -65,29 +59,83 @@ export class FormComponent implements OnInit, OnDestroy {
               phone: this.toUpdateObject.phone,
               email: this.toUpdateObject.email,
               address: this.toUpdateObject.address,
-              birthdate: this.toUpdateObject.birthdate,
-              password: '', // Password should be handled separately
+              birthdate: this.toUpdateObject.birthdate.split('T')[0], // Formatear fecha para que se muestre correctamente
               role: this.toUpdateObject.role,
-              branchId: this.toUpdateObject.branchId,
             });
+
+            // Remove validators for password fields when updating
+            this.form.get('password')?.clearValidators();
+            this.form.get('confirmPassword')?.clearValidators();
+            this.form.get('password')?.updateValueAndValidity();
+            this.form.get('confirmPassword')?.updateValueAndValidity();
           });
       }
     });
   }
 
   reactiveForm() {
-    this.form = this.fb.group({
-      id: [null],
-      name: [null, Validators.required],
-      surname: [null, Validators.required],
-      phone: [null, [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      email: [null, [Validators.required, Validators.email]],
-      address: [null],
-      birthdate: [null, Validators.required],
-      password: [null, Validators.required],
-      role: ['CLIENT'], // Default role
-      branchId: [null],
-    });
+    this.form = this.fb.group(
+      {
+        id: [null, null],
+        name: [null, Validators.required],
+        surname: [null, Validators.required],
+        email: [
+          null,
+          Validators.compose([Validators.required, Validators.email]),
+        ],
+        password: [
+          null,
+          this.isCreate
+            ? Validators.compose([Validators.required, Validators.minLength(8)])
+            : Validators.nullValidator, // No validator for update
+        ],
+        confirmPassword: [
+          null,
+          this.isCreate
+            ? Validators.compose([Validators.required, Validators.minLength(8)])
+            : Validators.nullValidator, // No validator for update
+        ],
+        birthdate: [null, [Validators.required, this.dateValidator]],
+        phone: [null, [Validators.required, Validators.pattern(/^\d{8,}$/)]],
+        address: [null, Validators.required],
+        role: [null, Validators.required],
+      },
+      {
+        validator: this.isCreate
+          ? this.passwordMatchValidator('password', 'confirmPassword')
+          : Validators.nullValidator, // No validator for update
+      }
+    );
+  }
+
+  // Custom validator to check that two fields match
+  passwordMatchValidator(password: string, confirmPassword: string) {
+    return (formGroup: FormGroup) => {
+      const passwordControl = formGroup.controls[password];
+      const confirmPasswordControl = formGroup.controls[confirmPassword];
+
+      if (
+        confirmPasswordControl.errors &&
+        !confirmPasswordControl.errors['mustMatch']
+      ) {
+        return;
+      }
+
+      if (passwordControl.value !== confirmPasswordControl.value) {
+        confirmPasswordControl.setErrors({ mustMatch: true });
+      } else {
+        confirmPasswordControl.setErrors(null);
+      }
+    };
+  }
+  // Validator to check if birthdate is in the past
+  dateValidator(control: AbstractControl) {
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    if (selectedDate >= today) {
+      return { invalidDate: true };
+    }
+    return null;
   }
 
   public errorHandling = (controlName: string) => {
@@ -119,17 +167,18 @@ export class FormComponent implements OnInit, OnDestroy {
 
   submit(): void {
     if (this.form.invalid) {
-      console.log('Invalid Form');
-      console.log(this.form.value);
       this.noti.message(
         'Form Error',
         'Please correct the form errors.',
         messageType.error
       );
+      this.errorMessage = 'Please correct the form errors.';
+      this.showModal = true;
       return;
     }
 
     const formData = this.form.value;
+    console.log(formData);
 
     if (this.isCreate) {
       this.usersService
