@@ -8,6 +8,7 @@ import { Observer } from 'rxjs';
 import { CrudReservationsService } from '../../reservations/services/crud-reservations.service';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CrudBranchesService } from '../../branches/services/crud-branches.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-calendar',
@@ -35,7 +36,8 @@ export class CalendarComponent implements OnInit {
     private CrudScheduleService: CrudSchedulesService,
     private CrudReservationsService: CrudReservationsService,
     private authService: AuthenticationService,
-    private CrudBranchService: CrudBranchesService
+    private CrudBranchService: CrudBranchesService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -70,9 +72,20 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEventClick(info) {
-    this.selectedEvent = info.event; // Capturar el evento seleccionado
-    this.showModal = true; // Mostrar el modal
+    console.log("🚀 ~ CalendarComponent ~ handleEventClick ~ type:", info.event.extendedProps.type);
+  
+    const eventType = info.event.extendedProps.type;
+    
+    if (eventType === "Schedule") {
+      this.router.navigate(['/schedules/detail', info.event.id]);
+    } else if (eventType === "Reservation") {
+      this.router.navigate(['/reservations/detail', info.event.id]);
+    } else {
+      console.log("Unknown event type:", eventType);
+    }
   }
+  
+    
 
   closeModal() {
     this.showModal = false;
@@ -103,7 +116,9 @@ export class CalendarComponent implements OnInit {
             end: endDate,
             color: color,
             id: element.id.toString(),
-            type: "Schedule"
+            extendedProps: {
+              type: "Schedule"
+            }
           });
         });
         this.calendarRef?.getApi().refetchEvents(); // Refrescar los eventos
@@ -138,7 +153,9 @@ export class CalendarComponent implements OnInit {
             end: endDate,
             color: color,
             id: element.id.toString(),
-            type: "Reservation"
+            extendedProps: {
+              type: "Reservation"
+            }
           });
         });
         this.calendarRef?.getApi().refetchEvents(); // Refrescar los eventos

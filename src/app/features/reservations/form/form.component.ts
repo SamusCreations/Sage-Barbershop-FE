@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Observable, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { CrudReservationsService } from '../services/crud-reservations.service';
 import { CrudServicesService } from '../../services/services/crud-services.service';
 import { CrudUsersService } from '../../users/services/crud-users.service';
@@ -17,7 +17,6 @@ import {
   NotificationService,
   messageType,
 } from '../../../shared/services/notification.service';
-import { FormErrorMessage } from '../../../form-error-message';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 
 @Component({
@@ -38,10 +37,10 @@ export class FormComponent implements OnInit, OnDestroy {
   minDate: string;
   currentUser: any;
   availableTimes: string[] = [];
-  service: any | null = null; // Para mostrar la duración del servicio
-  user: any | null = null; // Para mostrar la duración del servicio
+  service: any | null = null;
+  user: any | null = null;
   status: any;
-  scheduleAvailable: boolean = true; // Para verificar si hay un horario disponible
+  scheduleAvailable: boolean = true;
   startHour: number = 0;
   endHour: number = 0;
   showModal: boolean = false;
@@ -64,11 +63,8 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Subscripción a la información del usuario actual
     this.authService.decodeToken.subscribe((user: any) => {
       this.currentUser = user;
-
-      // Set default branch from currentUser after user is loaded
       this.form.patchValue({
         branchId: this.currentUser?.Branch?.id || null,
       });
@@ -89,7 +85,6 @@ export class FormComponent implements OnInit, OnDestroy {
         this.isCreate = false;
         this.titleForm = 'Update';
 
-        // Obtener la reserva para actualizar
         this.crudReservationsService
           .findById(this.idObject)
           .pipe(takeUntil(this.destroy$))
@@ -109,8 +104,6 @@ export class FormComponent implements OnInit, OnDestroy {
             });
           });
       }
-
-      // Cargar listas de opciones
       this.loadOptions();
     });
   }
@@ -118,16 +111,13 @@ export class FormComponent implements OnInit, OnDestroy {
   reactiveForm() {
     this.form = this.fb.group({
       id: [null],
-      date: [
-        null,
-        Validators.compose([Validators.required, this.futureDateValidator()]),
-      ],
-      time: [{ value: null, disabled: true }, [Validators.required]], // Campo requerido y deshabilitado inicialmente
-      answer1: ['no'], // Valor por defecto
-      answer2: ['no'], // Valor por defecto
-      answer3: ['no'], // Valor por defecto
-      statusId: [1], // Estatus predeterminado en 1
-      branchId: [null], // Campo no requerido
+      date: [null, Validators.compose([Validators.required, this.futureDateValidator()])],
+      time: [{ value: null, disabled: true }, [Validators.required]],
+      answer1: ['no'],
+      answer2: ['no'],
+      answer3: ['no'],
+      statusId: [1],
+      branchId: [null],
       serviceId: [null, Validators.required],
       userId: [null, Validators.required],
     });
@@ -147,24 +137,20 @@ export class FormComponent implements OnInit, OnDestroy {
     let messageError = '';
     const control = this.form.get(controlName);
     if (control.errors) {
-      for (const message of FormErrorMessage) {
-        if (
-          control.errors[message.forValidator] &&
-          message.forControl == controlName
-        ) {
-          messageError = message.text;
-        }
+      if (control.errors['required']) {
+        return `${controlName} is required.`;
       }
-      return messageError;
-    } else {
-      return false;
+      return 'Invalid input';
     }
+    return false;
   };
 
   onDateChange(event: any): void {
     const selectedDate = event.target.value;
     this.form.get('date')?.setValue(selectedDate);
-    this.checkScheduleAndService(); // Verifica si el horario está disponible cuando se selecciona una fecha
+    if (this.form.get('serviceId')?.value) {
+      this.checkScheduleAndService();
+    }
   }
 
   onServiceChange(): void {
@@ -176,7 +162,9 @@ export class FormComponent implements OnInit, OnDestroy {
         .subscribe((service) => {
           if (service) {
             this.service = service;
-            this.checkScheduleAndService(); // Verifica si el horario está disponible cuando se selecciona un servicio
+            if (this.form.get('date')?.value) {
+              this.checkScheduleAndService();
+            }
           } else {
             this.service = null;
             this.form.get('time')?.disable();
@@ -201,54 +189,40 @@ export class FormComponent implements OnInit, OnDestroy {
 
   checkScheduleAndService(): void {
     let date = this.form.get('date')?.value;
-
     if (this.service && date) {
       this.crudSchedulesService
         .findByBranch(this.currentUser.branchId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (schedules) => {
-            // Convertir la fecha seleccionada en un objeto Date sin horas
             const selectedDate = new Date(date);
             selectedDate.setHours(0, 0, 0, 0);
-
-            // Filtrar horarios que coincidan con la fecha seleccionada
             const matchingSchedule = schedules.find((schedule) => {
               const startDate = new Date(schedule.startDate);
               const endDate = new Date(schedule.endDate);
-
-              // Eliminar horas para comparar solo las fechas
               startDate.setHours(0, 0, 0, 0);
               endDate.setHours(0, 0, 0, 0);
-
-              // Verificar si la fecha seleccionada está dentro del rango de fechas del horario
               return selectedDate >= startDate && selectedDate <= endDate;
             });
-
-            console.log(matchingSchedule);
-
             if (matchingSchedule) {
-              // Si se encontró un horario que coincide, obtener las horas de inicio y fin
               this.startHour = new Date(matchingSchedule.startDate).getHours();
               this.endHour = new Date(matchingSchedule.endDate).getHours();
               this.scheduleAvailable = true;
               this.calculateAvailableTimes(this.service.duration);
               this.form.get('time')?.enable();
             } else {
-              // No se encontró un horario disponible para la fecha seleccionada
               this.scheduleAvailable = false;
               this.form.get('time')?.disable();
-              this.errorMessage =
-                'No schedule available for the selected date.';
+              this.errorMessage = 'No schedule available for the selected date.';
               this.createSchedule = true;
-              this.showModal = true; // Mostrar el modal cuando no hay horarios disponibles
+              this.showModal = true;
             }
           },
           error: (errorResponse) => {
             this.scheduleAvailable = false;
             this.form.get('time')?.disable();
             this.errorMessage = errorResponse;
-            this.showModal = true; // Mostrar el modal cuando hay un error al obtener los horarios
+            this.showModal = true;
           },
         });
     } else {
@@ -261,7 +235,7 @@ export class FormComponent implements OnInit, OnDestroy {
     this.showModal = false;
   }
 
-  navigateTo(path: string) {
+  navigateTo(path: string): void {
     this.router.navigate([path]);
     this.closeModal();
   }
@@ -270,88 +244,50 @@ export class FormComponent implements OnInit, OnDestroy {
     const intervals = [];
     let currentTime = new Date();
     currentTime.setHours(this.startHour, 0, 0, 0);
-
     while (currentTime.getHours() < this.endHour) {
       const hours = currentTime.getHours().toString().padStart(2, '0');
       const minutes = currentTime.getMinutes().toString().padStart(2, '0');
       intervals.push(`${hours}:${minutes}`);
       currentTime.setMinutes(currentTime.getMinutes() + durationInMinutes);
     }
-
     this.availableTimes = intervals;
   }
 
   submit(): void {
     if (this.form.invalid) {
-      console.log('Invalid Form');
-      console.log(this.form.value);
-      this.noti.message(
-        'Form Error',
-        'Please correct the form errors.',
-        messageType.error
-      );
+      this.noti.message('Form Error', 'Please correct the form errors.', messageType.error);
       return;
     }
-
+  
     const formData = this.form.value;
-    formData.branchId = this.currentUser?.Branch?.id;
+  
+    // Obtener la fecha y hora seleccionadas del formulario en la zona horaria local
+    const [year, month, day] = formData.date.split('-').map(Number);
+    const [hours, minutes] = formData.time.split(':').map(Number);
+  
+    // Crear la fecha en la zona horaria local
+    const localDateTime = new Date(year, month - 1, day, hours, minutes);
+  
+    // Convertir la fecha local a UTC utilizando los métodos correctos
+    const utcDateTime = new Date(localDateTime.toISOString()); 
+  
+    // Actualizar formData.datetime con la fecha y hora en UTC para enviarlo al backend
+    formData.datetime = utcDateTime.toISOString();
 
-    // Combina date y time en un solo campo datetime
-    let datetime = formData.date;
-    datetime += `, ${formData.time}:00`;
-    datetime = new Date(datetime);
-    formData.datetime = datetime;
+    const date = utcDateTime.toISOString().split('T')[0];
+    const time = utcDateTime.toISOString().split('T')[1].split('.')[0].slice(0, 5);
 
-    // Print FormData to verify its content
-    console.log(formData);
-
+    formData.time = time
+    formData.date = date
+  
+    // Validar los datos antes de enviarlos
+    console.log('Form Data before submission:', formData);
+  
     const handleError = (error: any) => {
-      // Mostrar el mensaje de error en el modal
       this.errorMessage = error.message || 'An error occurred';
       this.showModal = true;
     };
-
-    const createInvoice = (reservationId: number) => {
-      // Create FormData for the invoice
-      const invoiceFormData = new FormData();
-      invoiceFormData.append('date', datetime);
-      invoiceFormData.append('branchId', formData.branchId);
-      invoiceFormData.append('userId', formData.userId);
-      invoiceFormData.append('total', this.service.price.toString());
-
-      // Add invoice details
-      invoiceFormData.append(
-        'invoiceDetails[0][serviceId]',
-        formData.serviceId
-      );
-      invoiceFormData.append('invoiceDetails[0][quantity]', '1');
-      invoiceFormData.append(
-        'invoiceDetails[0][price]',
-        this.service.price.toString()
-      );
-      invoiceFormData.append(
-        'invoiceDetails[0][subtotal]',
-        this.service.price.toString()
-      );
-
-      this.crudInvoicesService
-        .create(invoiceFormData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          (invoiceData) => {
-            console.log('Invoice created:', invoiceData);
-            this.noti.messageRedirect(
-              'Create Reservation and Invoice',
-              `Reservation and invoice created: ${reservationId}`,
-              messageType.success,
-              '/reservations/table'
-            );
-            this.router.navigate(['/reservations/table']);
-          },
-          (error) => handleError(error)
-        );
-    };
-
+  
     if (this.isCreate) {
       this.crudReservationsService
         .create(formData)
@@ -359,7 +295,13 @@ export class FormComponent implements OnInit, OnDestroy {
         .subscribe(
           (data) => {
             this.createResponse = data;
-            createInvoice(data.id); // Pass reservation ID to create invoice
+            this.noti.messageRedirect(
+              'Create Reservation',
+              `Reservation created successfully: ${data.id}`,
+              messageType.success,
+              '/reservations/table'
+            );
+            this.router.navigate(['/reservations/table']);
           },
           (error) => handleError(error)
         );
@@ -372,7 +314,7 @@ export class FormComponent implements OnInit, OnDestroy {
             this.createResponse = data;
             this.noti.messageRedirect(
               'Update Reservation',
-              `Reservation updated: ${data.id}`,
+              `Reservation updated successfully: ${data.id}`,
               messageType.success,
               '/reservations/table'
             );
@@ -382,23 +324,33 @@ export class FormComponent implements OnInit, OnDestroy {
         );
     }
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   onReset() {
     this.form.reset({
-      statusId: 1, // Reset al valor predeterminado
-      answer1: 'no', // Reset al valor predeterminado
-      answer2: 'no', // Reset al valor predeterminado
-      answer3: 'no', // Reset al valor predeterminado
+      statusId: 1,
+      answer1: 'no',
+      answer2: 'no',
+      answer3: 'no',
     });
     this.availableTimes = [];
-    this.service = null; // Reset de la duración del servicio
-    this.user = null; // Reset de la duración del servicio
-    this.scheduleAvailable = true; // Reset de la disponibilidad de horario
-    this.form.get('time')?.disable(); // Deshabilitar tiempo al reiniciar
+    this.service = null;
+    this.user = null;
+    this.scheduleAvailable = true;
+    this.form.get('time')?.disable();
   }
 
   loadOptions() {
-    // Load branch, service, and user lists for form selection
     this.crudServicesService
       .getAll()
       .pipe(takeUntil(this.destroy$))
