@@ -1,395 +1,54 @@
 <section class="bg-white dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
     <div class="flex mb-4">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-        {{ titleForm }} Reservation
-      </h2>
-      <span
-        class="inline-flex items-center rounded-md px-2 py-1 ml-2 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7"
-        [ngStyle]="{ 'background-color': status?.color }"
-        >{{ status?.description }}</span
-      >
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ titleForm }} Reservation</h2>
+      <span class="inline-flex items-center rounded-md px-2 py-1 ml-2 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10 h-7" [ngStyle]="{ 'background-color': status?.color }">{{ status?.description }}</span>
     </div>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 sm:gap-6">
-        <!-- Branch Input -->
         <div class="sm:col-span-2">
-          <label
-            for="branchId"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Branch</label
-          >
-          <input
-            type="text"
-            id="branchId"
-            [value]="currentUser?.Branch?.name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-            readonly
-          />
+          <label for="branchId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch</label>
+          <input type="text" id="branchId" [value]="currentUser?.Branch?.name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" readonly />
         </div>
-
-        <!-- User Input -->
         <div>
-          <label
-            for="userId"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >User</label
-          >
-          <select
-            id="userId"
-            formControlName="userId"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-            required
-            (change)="onUserChange()"
-          >
+          <label for="userId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
+          <select id="userId" formControlName="userId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" required (change)="onUserChange()">
             <option value="" disabled>Select user</option>
-            <option *ngFor="let user of userList" [value]="user.id">
-              {{ user.name }} {{ user.surname }}
-            </option>
+            <option *ngFor="let user of userList" [value]="user.id">{{ user.name }} {{ user.surname }}</option>
           </select>
-          <div
-            *ngIf="errorHandling('userId')"
-            class="text-red-500 text-xs mt-2"
-          >
-            {{ errorHandling("userId") }}
-          </div>
-
-          <!-- User Info -->
-          <div
-            class="mt-2 flex justify-between items-center bg-gray-100 rounded-full p-2"
-          >
-            <label
-              class="block text-xs font-medium text-gray-900 dark:text-white"
-              >Email</label
-            >
-            <p *ngIf="user" class="text-gray-700 dark:text-gray-300 text-xs">
-              {{ user.email }}
-            </p>
-          </div>
+          <div *ngIf="errorHandling('userId')" class="text-red-500 text-xs mt-2">{{ errorHandling('userId') }}</div>
         </div>
-
-        <!-- Service Input -->
         <div>
-          <label
-            for="serviceId"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Service</label
-          >
-          <select
-            id="serviceId"
-            formControlName="serviceId"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-            required
-            (change)="onServiceChange()"
-          >
+          <label for="serviceId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service</label>
+          <select id="serviceId" formControlName="serviceId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" required (change)="onServiceChange()">
             <option value="" disabled>Select service</option>
-            <option *ngFor="let service of serviceList" [value]="service.id">
-              {{ service.name }}
-            </option>
+            <option *ngFor="let service of serviceList" [value]="service.id">{{ service.name }}</option>
           </select>
-          <div
-            *ngIf="errorHandling('serviceId')"
-            class="text-red-500 text-xs mt-2"
-          >
-            {{ errorHandling("serviceId") }}
-          </div>
-
-          <!-- Service Duration -->
-          <div
-            class="mt-2 flex justify-between items-center bg-gray-100 rounded-full p-2"
-          >
-            <label
-              class="block text-xs font-medium text-gray-900 dark:text-white"
-              >Service Duration</label
-            >
-            <p *ngIf="service" class="text-gray-700 dark:text-gray-300 text-xs">
-              {{ service.duration }} minutes
-            </p>
+          <div *ngIf="errorHandling('serviceId')" class="text-red-500 text-xs mt-2">{{ errorHandling('serviceId') }}</div>
+          <div class="mt-2 flex justify-between items-center bg-gray-100 rounded-full p-2">
+            <label class="block text-xs font-medium text-gray-900 dark:text-white">Service Duration</label>
+            <p *ngIf="service" class="text-gray-700 dark:text-gray-300 text-xs">{{ service.duration }} minutes</p>
           </div>
         </div>
-
-        <!-- Date Input -->
         <div>
-          <label
-            for="date"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Date</label
-          >
-          <div class="relative">
-            <input
-              id="date"
-              formControlName="date"
-              name="date"
-              type="date"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-              (change)="onDateChange($event)"
-            />
-          </div>
-
-          <div *ngIf="errorHandling('date')" class="text-red-500 text-xs mt-2">
-            {{ errorHandling("date") }}
-          </div>
+          <label for="date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+          <input id="date" formControlName="date" name="date" type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" (change)="onDateChange($event)" />
+          <div *ngIf="errorHandling('date')" class="text-red-500 text-xs mt-2">{{ errorHandling('date') }}</div>
         </div>
-
-        <!-- Time Input -->
         <div>
-          <label
-            for="time"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Time</label
-          >
-          <div class="relative">
-            <div
-              class="absolute inset-y-0 start-0 top-0 flex items-center ps-3 pointer-events-none"
-            >
-              <svg
-                class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <select
-              id="time"
-              formControlName="time"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-              [disabled]="!availableTimes.length"
-              required
-            >
-              <option value="" disabled>Select time</option>
-              <option *ngFor="let time of availableTimes" [value]="time">
-                {{ time }}
-              </option>
-            </select>
-          </div>
-          <div *ngIf="errorHandling('time')" class="text-red-500 text-xs mt-2">
-            {{ errorHandling("time") }}
-          </div>
-        </div>
-
-        <!-- Answer 1 -->
-        <div class="sm:col-span-2">
-          <label
-            for="answer1"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Is this your first time visiting our barbershop?</label
-          >
-          <div class="flex items-center mb-4">
-            <input
-              id="answer1-yes"
-              type="radio"
-              formControlName="answer1"
-              value="yes"
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer1-yes"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Yes</label
-            >
-          </div>
-          <div class="flex items-center">
-            <input
-              id="answer1-no"
-              type="radio"
-              formControlName="answer1"
-              value="no"
-              checked
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer1-no"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >No</label
-            >
-          </div>
-        </div>
-
-        <!-- Answer 2 -->
-        <div class="sm:col-span-2">
-          <label
-            for="answer2"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Do you have any allergies or skin conditions?</label
-          >
-          <div class="flex items-center mb-4">
-            <input
-              id="answer2-yes"
-              type="radio"
-              formControlName="answer2"
-              value="yes"
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer2-yes"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Yes</label
-            >
-          </div>
-          <div class="flex items-center">
-            <input
-              id="answer2-no"
-              type="radio"
-              formControlName="answer2"
-              value="no"
-              checked
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer2-no"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >No</label
-            >
-          </div>
-        </div>
-
-        <!-- Answer 3 -->
-        <div class="sm:col-span-2">
-          <label
-            for="answer3"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Do you have a specific barber preference?</label
-          >
-          <div class="flex items-center mb-4">
-            <input
-              id="answer3-yes"
-              type="radio"
-              formControlName="answer3"
-              value="yes"
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer3-yes"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Yes</label
-            >
-          </div>
-          <div class="flex items-center">
-            <input
-              id="answer3-no"
-              type="radio"
-              formControlName="answer3"
-              value="no"
-              checked
-              class="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              for="answer3-no"
-              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >No</label
-            >
-          </div>
+          <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Time</label>
+          <select id="time" formControlName="time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" [disabled]="!availableTimes.length" required>
+            <option value="" disabled>Select time</option>
+            <option *ngFor="let time of availableTimes" [value]="time">{{ time }}</option>
+          </select>
+          <div *ngIf="errorHandling('time')" class="text-red-500 text-xs mt-2">{{ errorHandling('time') }}</div>
         </div>
       </div>
       <div class="flex justify-between">
-        <button
-          type="button"
-          (click)="navigateTo('/reservations/table')"
-          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-200"
-        >
-          Back
-        </button>
-        <button
-          type="submit"
-          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-teal-700 rounded-lg focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-900 hover:bg-teal-800"
-        >
-          {{ isCreate ? "Add Reservation" : "Update Reservation" }}
-        </button>
-        <button
-          type="button"
-          (click)="onReset()"
-          class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-red-500 bg-red-100 rounded-lg focus:ring-4 focus:ring-red-200 dark:focus:ring-teal-900 hover:bg-red-200"
-        >
-          Reset
-        </button>
+        <button type="button" (click)="navigateTo('/reservations/table')" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-200">Back</button>
+        <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-teal-700 rounded-lg focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-900 hover:bg-teal-800">{{ isCreate ? "Add Reservation" : "Update Reservation" }}</button>
+        <button type="button" (click)="onReset()" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-red-500 bg-red-100 rounded-lg focus:ring-4 focus:ring-red-200 dark:focus:ring-teal-900 hover:bg-red-200">Reset</button>
       </div>
     </form>
-
-    <!-- Modal -->
-    <div
-      id="popup-modal"
-      tabindex="-1"
-      class="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
-      [class.hidden]="!showModal"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-          <button
-            type="button"
-            class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            (click)="closeModal()"
-          >
-            <svg
-              class="w-3 h-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 14"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-              />
-            </svg>
-            <span class="sr-only">Close modal</span>
-          </button>
-          <div class="p-4 md:p-5 text-center">
-            <svg
-              class="mx-auto mb-4 text-red-400 w-12 h-12 dark:text-gray-200"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-            <h3
-              class="mb-5 text-lg font-normal text-red-500 dark:text-gray-400"
-            >
-              {{ errorMessage }}
-            </h3>
-            <div class="flex justify-between">
-              <button
-                (click)="navigateTo('/reservations/table')"
-                class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-200"
-              >
-                Back
-              </button>
-              <button
-                (click)="navigateTo('/schedules/create')"
-                *ngIf="createSchedule"
-                class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-teal-700 rounded-lg focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-900 hover:bg-teal-800"
-              >
-                Create Schedule
-              </button>
-              <button
-                (click)="closeModal()"
-                class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-200"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
