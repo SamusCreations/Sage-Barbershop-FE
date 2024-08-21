@@ -1,188 +1,195 @@
-<form (ngSubmit)="submit()" novalidate class="my-6" [formGroup]="form">
-  <div class="max-w-7xl mx-auto bg-white p-8 rounded-md shadow-md">
-    <!-- Form header -->
-    <div class="mb-4">
-      <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Invoice</h2>
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-7xl lg:py-16">
+    <div class="flex mb-4">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+        {{ titleForm }} Invoice
+      </h2>
     </div>
-    <div class="mb-4">
-      <h2 class="text-2xl font-bold mb-2">{{ this.user.name + " " + this.user.surname }}</h2>
-    </div>
-    <!-- Date field -->
-    <div class="mb-4">
-      <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-      <input
-        type="date"
-        id="date"
-        formControlName="date"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <div *ngIf="form.get('date').touched && form.get('date').invalid" class="text-red-600 text-sm mt-1">
-        {{ errorHandling('date') }}
-      </div>
-    </div>
-    <!-- Branch selection -->
-    <div class="mb-4">
-      <label for="branch" class="block text-sm font-medium text-gray-700">Branch</label>
-      <select
-        id="branch"
-        formControlName="branchId"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      >
-        <option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</option>
-      </select>
-      <div *ngIf="form.get('branchId').touched && form.get('branchId').invalid" class="text-red-600 text-sm mt-1">
-        {{ errorHandling('branchId') }}
-      </div>
-    </div>
-    <!-- User selection -->
-    <div class="mb-4">
-      <label for="user" class="block text-sm font-medium text-gray-700">User</label>
-      <input
-        type="text"
-        id="user"
-        [value]="getUserName(form.get('userId')?.value)"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        readonly
-        [disabled]="this.isUpdate"
-        (click)="openUserModal()"
-      />
-      <div *ngIf="form.get('userId').touched && form.get('userId').invalid" class="text-red-600 text-sm mt-1">
-        {{ errorHandling('userId') }}
-      </div>
-    </div>
-    <!-- Total field -->
-    <div class="mb-4">
-      <label for="total" class="block text-sm font-medium text-gray-700">Total</label>
-      <input
-        type="text"
-        id="total"
-        formControlName="total"
-        placeholder="Total"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        readonly
-      />
-    </div>
-    <!-- Invoice details table -->
-    <div formArrayName="invoiceDetails" class="overflow-x-auto" *ngIf="invoiceDetails.controls.length > 0">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr *ngFor="let detail of invoiceDetails.controls; let i = index" [formGroupName]="i">
-            <!-- Service Input -->
-            <td class="px-6 py-4 whitespace-nowrap" *ngIf="!detail.get('productId').value">
-              <input
-                type="text"
-                placeholder="Select a service"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                [value]="getServiceName(detail.get('serviceId').value)"
-                readonly
-                (click)="openLineModal(i)"
-                [disabled]="this.updateObject?.status"
-              />
-            </td>
-            <!-- Product Input -->
-            <td class="px-6 py-4 whitespace-nowrap" *ngIf="!detail.get('serviceId').value">
-              <input
-                type="text"
-                placeholder="Select a product"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                [value]="getProductName(detail.get('productId').value)"
-                readonly
-                (click)="openLineModal(i)"
-                [disabled]="this.updateObject?.status"
-              />
-            </td>
-            <!-- Quantity Input -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <input
-                type="number"
-                formControlName="quantity"
-                placeholder="Quantity"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                [attr.max]="getMaxQuantity(i)"
-                (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
-                [readOnly]="this.updateObject?.status"
-              />
-            </td>
-            <!-- Price and Subtotal fields -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <input
-                type="text"
-                formControlName="price"
-                placeholder="Price"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                readonly
-              />
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <input
-                type="text"
-                formControlName="subtotal"
-                placeholder="Subtotal"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                readonly
-              />
-            </td>
-            <!-- Actions -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <button
-                type="button"
-                (click)="removeDetail(i)"
-                class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <form (ngSubmit)="submit()" novalidate class="my-6" [formGroup]="form">
+      <div class="bg-white dark:bg-gray-800 p-8 rounded-md shadow-md">
+        <!-- User Header -->
+        <div class="mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {{ this.user.name + " " + this.user.surname }}
+          </h2>
+        </div>
 
-    <div *ngIf="invalidFormSubmitted && form.hasError('minItems', 'invoiceDetails')" class="text-red-600 text-sm mt-1">
-      At least one invoice line is required.
-    </div>
-    <!-- Add line button -->
+        <!-- Date field -->
+        <div class="mb-4">
+          <label for="date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+          <input
+            type="date"
+            id="date"
+            formControlName="date"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+          />
+          <div *ngIf="form.get('date').touched && form.get('date').invalid" class="text-red-500 text-xs mt-2">
+            {{ errorHandling('date') }}
+          </div>
+        </div>
+
+        <!-- Branch selection -->
+        <div class="mb-4">
+          <label for="branch" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch</label>
+          <select
+            id="branch"
+            formControlName="branchId"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+          >
+            <option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</option>
+          </select>
+          <div *ngIf="form.get('branchId').touched && form.get('branchId').invalid" class="text-red-500 text-xs mt-2">
+            {{ errorHandling('branchId') }}
+          </div>
+        </div>
+
+        <!-- User selection -->
+        <div class="mb-4">
+          <label for="user" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
+          <input
+            type="text"
+            id="user"
+            [value]="getUserName(form.get('userId')?.value)"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+            readonly
+            [disabled]="this.isUpdate"
+            (click)="openUserModal()"
+          />
+          <div *ngIf="form.get('userId').touched && form.get('userId').invalid" class="text-red-500 text-xs mt-2">
+            {{ errorHandling('userId') }}
+          </div>
+        </div>
+
+        <!-- Total field -->
+        <div class="mb-4">
+          <label for="total" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total</label>
+          <input
+            type="text"
+            id="total"
+            formControlName="total"
+            placeholder="Total"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+            readonly
+          />
+        </div>
+
+        <!-- Invoice details table -->
+        <div formArrayName="invoiceDetails" class="overflow-x-auto" *ngIf="invoiceDetails.controls.length > 0">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-600">
+              <tr *ngFor="let detail of invoiceDetails.controls; let i = index" [formGroupName]="i">
+                <!-- Service Input -->
+                <td class="px-6 py-4 whitespace-nowrap" *ngIf="!detail.get('productId').value">
+                  <input
+                    type="text"
+                    placeholder="Select a service"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    [value]="getServiceName(detail.get('serviceId').value)"
+                    readonly
+                    (click)="openLineModal(i)"
+                    [disabled]="this.updateObject?.status"
+                  />
+                </td>
+                <!-- Product Input -->
+                <td class="px-6 py-4 whitespace-nowrap" *ngIf="!detail.get('serviceId').value">
+                  <input
+                    type="text"
+                    placeholder="Select a product"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    [value]="getProductName(detail.get('productId').value)"
+                    readonly
+                    (click)="openLineModal(i)"
+                    [disabled]="this.updateObject?.status"
+                  />
+                </td>
+                <!-- Quantity Input -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input
+                    type="number"
+                    formControlName="quantity"
+                    placeholder="Quantity"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    [attr.max]="getMaxQuantity(i)"
+                    (change)="onProductOrServiceQuantityChange(i); updateSubtotal(i)"
+                    [readOnly]="this.updateObject?.status"
+                  />
+                </td>
+                <!-- Price and Subtotal fields -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input
+                    type="text"
+                    formControlName="price"
+                    placeholder="Price"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    readonly
+                  />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input
+                    type="text"
+                    formControlName="subtotal"
+                    placeholder="Subtotal"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    readonly
+                  />
+                </td>
+                <!-- Actions -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    (click)="removeDetail(i)"
+                    class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="invalidFormSubmitted && form.hasError('minItems', 'invoiceDetails')" class="text-red-500 text-xs mt-2">
+          At least one invoice line is required.
+        </div>
+
+        <!-- Add line button -->
+        <button
+          type="button"
+          (click)="openLineModal()"
+          *ngIf="!this.updateObject?.status"
+          [disabled]="!areInvoiceDetailsValid() || this.updateObject?.status"
+          class="bg-teal-700 text-white py-2 px-4 rounded-lg shadow-md hover:bg-teal-800 mt-4"
+        >
+          Add Line
+        </button>
+
+        <!-- Reset and Save buttons -->
+        <div class="flex space-x-4 mt-6">
+          <button
+            type="submit"
+            class="bg-teal-700 text-white py-2 px-4 rounded-lg shadow-md hover:bg-teal-800"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+
     <button
-      type="button"
-      (click)="openLineModal()"
-      *ngIf="!this.updateObject?.status"
-      [disabled]="!areInvoiceDetailsValid() || this.updateObject?.status"
-      class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
-    >
-      Add Line
-    </button>
-
-    <!-- Reset and Save buttons -->
-    <div class="flex space-x-4">
-<!--       <button
-        type="button"
-        (click)="onReset()"
-        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
-      >
-        Reset
-      </button> -->
-      <button
-        type="submit"
-        class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
-      >
-        Save
-      </button>
-    </div>
-  </div>
-</form>
-
-<button
-      *ngIf="!this.updateObject?.status"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      *ngIf="this.updateObject && !this.updateObject?.status"
+      class="bg-teal-700 hover:bg-teal-800 text-white font-bold py-2 px-4 rounded-lg mt-6"
       (click)="markAsInvoice(this.updateObject.id)"
     >
       Mark as Invoice
     </button>
+  </div>
+</section>

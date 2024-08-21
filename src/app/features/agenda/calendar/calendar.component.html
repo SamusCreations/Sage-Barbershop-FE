@@ -1,18 +1,27 @@
+<div class="container">
+  <div class="calendar-container">
+    <!-- Select para elegir la sucursal -->
+    <select class="branch-select" (change)="onBranchChange($event)" *ngIf="this.currentUser.role == 'ADMIN'">
+      <option *ngFor="let branch of branchList" [value]="branch.id">
+        {{ branch.name }}
+      </option>
+    </select>
 
-<div  style="padding-top: 2%; display: flex; justify-content: center;">
-    <div style="width: 100%; max-width: 90%;">
-        <full-calendar [options]="calendarOptions" style="height: 60vh; max-height: 60vh;"></full-calendar>
+    <!-- Calendario de FullCalendar -->
+    <div class="full-calendar-container">
+      <full-calendar [options]="calendarOptions"></full-calendar>
     </div>
+  </div>
 
-    <!-- Modal para mostrar detalles del evento -->
-    <div *ngIf="showModal" class="modal">
-        <div class="modal-content">
-            <h2>Detalles del Evento</h2>
-            <p><strong>Título:</strong> {{ selectedEvent.title }}</p>
-            <p><strong>Inicio:</strong> {{ selectedEvent.start }}</p>
-            <p><strong>Fin:</strong> {{ selectedEvent.end }}</p>
-            <p><strong>ID:</strong> {{ selectedEvent.id }}</p>
-            <button (click)="closeModal()">Cerrar</button>
-        </div>
+  <!-- Modal para mostrar detalles del evento -->
+  <div *ngIf="showModal" class="modal">
+    <div class="modal-content">
+      <h2>Detalles del Evento</h2>
+      <p><strong>Título:</strong> {{ selectedEvent.title }}</p>
+      <p><strong>Inicio:</strong> {{ selectedEvent.start | date:'short' }}</p>
+      <p><strong>Fin:</strong> {{ selectedEvent.end | date:'short' }}</p>
+      <p><strong>ID:</strong> {{ selectedEvent.id }}</p>
+      <button class="modal-close-btn" (click)="closeModal()">Cerrar</button>
     </div>
+  </div>
 </div>

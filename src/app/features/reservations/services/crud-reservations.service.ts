@@ -26,6 +26,12 @@ export class CrudReservationsService {
     return this.httpService.get<any>(`${this.endpoint}/getByManager`, params);
   }
 
+  findByBranch(id: number): Observable<any> {
+    const params = new URLSearchParams();
+    params.append('id', id.toString());
+    return this.httpService.get<any>(`${this.endpoint}/getByBranch`, params);
+  }
+
   findByClient(name: string, idManager?: number): Observable<any> {
     const params = new URLSearchParams();
     params.append('name', name.toString());
