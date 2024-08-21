@@ -6,6 +6,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { CrudSchedulesService } from '../../schedules/services/crud-schedules.service';
 import { Observer } from 'rxjs';
 import { CrudReservationsService } from '../../reservations/services/crud-reservations.service';
+import { AuthenticationService } from '../../../shared/services/authentication.service';
+import { CrudBranchesService } from '../../branches/services/crud-branches.service';
 
 @Component({
   selector: 'app-calendar',
@@ -19,29 +21,35 @@ export class CalendarComponent implements OnInit {
   schedules: any[] = [];
   reservations: any[] = [];
   events: any[] = [];
+  currentUser:any = {};
+  selectedBranchId: any = null; // Guardar el branchId seleccionado
 
   calendarOptions: CalendarOptions = {};
 
   calendarRef: any; // Referencia al calendario
 
+  showCalendar: boolean = false;
+  branchList: any[] = [];
+
   constructor(
     private CrudScheduleService: CrudSchedulesService,
-    private CrudReservationsService: CrudReservationsService
+    private CrudReservationsService: CrudReservationsService,
+    private authService: AuthenticationService,
+    private CrudBranchService: CrudBranchesService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.calendarOptions = {
       initialView: 'timeGridDay', // Vista de día por horas
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridDay'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       slotDuration: '00:30:00', // Duración de cada casilla (media hora)
       events: this.fetchEvents.bind(this), // Usamos una función para cargar los eventos
       eventClick: (info) => this.handleEventClick(info),
-
       eventTimeFormat: { 
         hour: '2-digit', 
         minute: '2-digit', 
@@ -49,9 +57,10 @@ export class CalendarComponent implements OnInit {
       }
     };
 
-    // Obtenemos los horarios
-    this.getAllSchedules();
-    this.getAllReservations();
+    await this.authService.decodeToken.subscribe((user: any) => (this.currentUser = user));
+    this.selectedBranchId = this.currentUser.branchId
+    console.log("🚀 ~ CalendarComponent ~ ngOnInit ~ this.currentUser:", this.currentUser)
+    await this.getAllBranches(); // Cargar las sucursales
   }
 
   adjustToGMTMinus6(dateString: string): string {
@@ -71,7 +80,6 @@ export class CalendarComponent implements OnInit {
   }
 
   fetchEvents(info, successCallback, failureCallback) {
-    // Esta función es llamada automáticamente por FullCalendar para cargar los eventos
     successCallback(this.events);
   }
 
@@ -98,36 +106,32 @@ export class CalendarComponent implements OnInit {
             type: "Schedule"
           });
         });
-
-        // Aquí usamos `refetchEvents` para actualizar los eventos
-        // this.calendarRef.getApi().refetchEvents();
+        this.calendarRef?.getApi().refetchEvents(); // Refrescar los eventos
       },
       error: (error) => {
         console.error('Error al obtener datos de horarios', error);
       },
       complete: () => {
         console.log('Fetch schedules complete');
-      },
+      }
     };
-
-    this.CrudScheduleService.getAll().subscribe(observer);
+  
+    if (this.selectedBranchId) {
+      this.CrudScheduleService.findByBranch(this.selectedBranchId).subscribe(observer);
+    }
   }
-
+  
   async getAllReservations(): Promise<void> {
     const observer: Observer<any> = {
       next: (data) => {
-        console.log("🚀 ~ CalendarComponent ~ getAllSchedules ~ data:", data)
         this.reservations = data;
-        console.log("🚀 ~ CalendarComponent ~ getAllReservations ~ this.reservations:", this.reservations)
         this.reservations.forEach(element => {
           let name = element.User.name + ' ' + element.User?.surname;
           let color = element.status.color;
-
           let startDate = this.adjustToGMTMinus6(element.date);
-          let endDate:any = new Date(startDate);
+          let endDate: any = new Date(startDate);
           endDate.setMinutes(endDate.getMinutes() + 30);
-          endDate = this.adjustToGMTMinus6(endDate)
-          console.log("🚀 ~ CalendarComponent ~ getAllReservations ~ endDate:", endDate)
+          endDate = this.adjustToGMTMinus6(endDate);
           this.events.push({
             title: name,
             start: startDate,
@@ -137,19 +141,51 @@ export class CalendarComponent implements OnInit {
             type: "Reservation"
           });
         });
-          
-
-        // Aquí usamos `refetchEvents` para actualizar los eventos
-        // this.calendarRef.getApi().refetchEvents();
+        this.calendarRef?.getApi().refetchEvents(); // Refrescar los eventos
       },
       error: (error) => {
-        console.error('Error al obtener datos de horarios', error);
+        console.error('Error al obtener datos de reservaciones', error);
       },
       complete: () => {
-        console.log('Fetch schedules complete');
-      },
+        console.log('Fetch reservations complete');
+      }
     };
+  
+    if (this.selectedBranchId) {
+      this.CrudReservationsService.findByBranch(this.selectedBranchId).subscribe(observer);
+    }
+  }
+  
+  async getAllBranches(): Promise<void> {
+    const observer: Observer<any> = {
+      next: (data) => {
+        this.branchList = data;
+        if (this.branchList.length > 0) {
+          this.selectedBranchId = this.branchList[0].id;
+          this.loadBranchData();
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener las sucursales', error);
+      },
+      complete: () => {
+        console.log('Fetch branches complete');
+      }
+    };
+  
+    this.CrudBranchService.getAll().subscribe(observer);
+  }
+  
 
-    this.CrudReservationsService.getAll().subscribe(observer);
+  // Método para cargar los datos de horarios y reservaciones
+  async loadBranchData() {
+    this.events = []; // Limpiar los eventos actuales
+    await this.getAllSchedules();
+    await this.getAllReservations();
+  }
+
+  onBranchChange(event: any) {
+    this.selectedBranchId = event.target.value;
+    this.loadBranchData(); // Cargar los datos de la sucursal seleccionada
   }
 }

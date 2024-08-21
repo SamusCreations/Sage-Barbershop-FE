@@ -1,142 +1,130 @@
-<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="my-6">
-  <input type="hidden" formControlName="id" />
-  <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
-    <div class="mb-4">
-      <h2 class="text-2xl font-bold mb-2">{{ titleForm }} Product</h2>
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-xl lg:py-16">
+    <div class="flex mb-4">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ titleForm }} Product</h2>
     </div>
-    <div class="mb-4">
-      <label for="name" class="block text-sm font-medium text-gray-700"
-        >Name</label
-      >
-      <input
-        type="text"
-        id="name"
-        formControlName="name"
-        maxlength="20"
-        placeholder="Name"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <div *ngIf="errorHandling('name')" class="text-red-600 text-sm mt-1">
-        {{ errorHandling("name") }}
-      </div>
-    </div>
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <label for="description" class="block text-sm font-medium text-gray-700"
-          >Description</label
-        >
-        <input
-          type="text"
-          id="description"
-          formControlName="description"
-          placeholder="Description"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        />
-        <div
-          *ngIf="errorHandling('description')"
-          class="text-red-600 text-sm mt-1"
-        >
-          {{ errorHandling("description") }}
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="my-6">
+      <input type="hidden" formControlName="id" />
+      <div class="bg-white dark:bg-gray-800 p-8 rounded-md shadow-md">
+        <!-- Name -->
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-900 dark:text-white">Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            maxlength="20"
+            placeholder="Name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+          />
+          <div *ngIf="errorHandling('name')" class="text-red-500 text-xs mt-2">
+            {{ errorHandling("name") }}
+          </div>
         </div>
-      </div>
-      <div>
-        <label for="price" class="block text-sm font-medium text-gray-700"
-          >Price</label
-        >
-        <input
-          type="text"
-          id="price"
-          formControlName="price"
-          placeholder="Price"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        />
-        <div *ngIf="errorHandling('price')" class="text-red-600 text-sm mt-1">
-          {{ errorHandling("price") }}
-        </div>
-      </div>
-      <div>
-        <label for="price" class="block text-sm font-medium text-gray-700"
-          >Quantity</label
-        >
-        <input
-          type="text"
-          id="quantity"
-          formControlName="quantity"
-          placeholder="Quantity"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        />
-        <div
-          *ngIf="errorHandling('quantity')"
-          class="text-red-600 text-sm mt-1"
-        >
-          {{ errorHandling("quantity") }}
-        </div>
-      </div>
-    </div>
-    <div class="mb-4">
-      <label for="category" class="block text-sm font-medium text-gray-700"
-        >Category</label
-      >
-      <select
-        id="category"
-        formControlName="category"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      >
-        <option
-          class="text-gray-700"
-          *ngFor="let item of categoryList"
-          [value]="item.id"
-        >
-          {{ item.description }}
-        </option>
-      </select>
-      <div *ngIf="errorHandling('category')" class="text-red-600 text-sm mt-1">
-        {{ errorHandling("category") }}
-      </div>
-    </div>
 
-    <div class="mb-4">
-      <span class="block text-sm font-medium text-gray-700">Image</span>
-      <div class="mt-2">
-        <input
-          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-          type="file"
-          id="image"
-          (change)="selectFile($event)"
-        />
-        <div
-          class="mt-1 text-sm text-gray-500 dark:text-gray-300"
-          id="user_avatar_help"
-        >
-          An image is useful to ilustrate the product or service
+        <!-- Description and Price -->
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-900 dark:text-white">Description</label>
+            <input
+              type="text"
+              id="description"
+              formControlName="description"
+              placeholder="Description"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+            />
+            <div *ngIf="errorHandling('description')" class="text-red-500 text-xs mt-2">
+              {{ errorHandling("description") }}
+            </div>
+          </div>
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-900 dark:text-white">Price</label>
+            <input
+              type="text"
+              id="price"
+              formControlName="price"
+              placeholder="Price"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+            />
+            <div *ngIf="errorHandling('price')" class="text-red-500 text-xs mt-2">
+              {{ errorHandling("price") }}
+            </div>
+          </div>
         </div>
-        <div *ngIf="preview" class="my-8 flex justify-center content-center">
-          <img [src]="preview" alt="Image preview" class="max-w-64" />
+
+        <!-- Quantity -->
+        <div class="mb-4">
+          <label for="quantity" class="block text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+          <input
+            type="text"
+            id="quantity"
+            formControlName="quantity"
+            placeholder="Quantity"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+          />
+          <div *ngIf="errorHandling('quantity')" class="text-red-500 text-xs mt-2">
+            {{ errorHandling("quantity") }}
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-4">
+          <label for="category" class="block text-sm font-medium text-gray-900 dark:text-white">Category</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+          >
+            <option *ngFor="let item of categoryList" [value]="item.id">{{ item.description }}</option>
+          </select>
+          <div *ngIf="errorHandling('category')" class="text-red-500 text-xs mt-2">
+            {{ errorHandling("category") }}
+          </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-4">
+          <span class="block text-sm font-medium text-gray-900 dark:text-white">Image</span>
+          <div class="mt-2">
+            <input
+              class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              type="file"
+              id="image"
+              (change)="selectFile($event)"
+            />
+            <div class="mt-1 text-xs text-gray-500 dark:text-gray-300">
+              An image is useful to illustrate the product or service
+            </div>
+            <div *ngIf="preview" class="my-8 flex justify-center content-center">
+              <img [src]="preview" alt="Image preview" class="max-w-64" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4">
+          <button
+            type="button"
+            (click)="onReset()"
+            class="bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            (click)="onBack()"
+            class="bg-gray-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-gray-600"
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            class="bg-teal-700 text-white py-2 px-4 rounded-lg shadow-md hover:bg-teal-800"
+          >
+            Save
+          </button>
         </div>
       </div>
-    </div>
-
-    <div class="flex space-x-4">
-      <button
-        type="button"
-        (click)="onReset()"
-        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-600"
-      >
-        Reset
-      </button>
-      <button
-        type="button"
-        (click)="onBack()"
-        class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-gray-600"
-      >
-        Back
-      </button>
-      <button
-        type="submit"
-        class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600"
-      >
-        Save
-      </button>
-    </div>
+    </form>
   </div>
-</form>
+</section>
